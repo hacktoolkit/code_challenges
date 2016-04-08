@@ -11,7 +11,9 @@ import time
 from bs4 import BeautifulSoup
 
 BASE_URL = 'http://projecteuler.net/problem=%s'
-NUM_PROBLEMS = 469
+PROBLEM_NUM_START = 1
+#PROBLEM_NUM_START = 545
+NUM_PROBLEMS = 544
 CRAWL_DELAY_SECONDS = 1
 
 def zero_pad(n, digits=3):
@@ -85,7 +87,7 @@ def save_problem(problem_num):
     return downloaded
 
 def main():
-    for k in xrange(1, NUM_PROBLEMS + 1):
+    for k in xrange(PROBLEM_NUM_START, NUM_PROBLEMS + 1):
         problem_num = zero_pad(k)
         downloaded = save_problem(problem_num)
         if downloaded:
