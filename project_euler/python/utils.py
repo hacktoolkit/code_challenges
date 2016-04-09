@@ -633,6 +633,21 @@ def list_product(num_list):
         product *= x
     return product
 
+def count_digits(n):
+    """Counts the number of digits in `n`
+
+    Test cases:
+    - 057
+    """
+    if n == 0:
+        return 1
+
+    num_digits = 0
+    while n > 0:
+        num_digits += 1
+        n /= 10
+    return num_digits
+
 def digits(n, string=False):
     """Get the digits of a number as a list of numbers
 
