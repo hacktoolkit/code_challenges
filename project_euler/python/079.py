@@ -8,21 +8,53 @@ Given that the three characters are always asked for in order, analyse the file 
 
 Solution by jontsai <hello@jontsai.com>
 """
+import itertools
+
 from utils import *
 
 EXPECTED_ANSWER = 0
 
-f = open('p079_keylog.txt', 'r')
-passcodes = sorted(list(set([int(line.strip()) for line in f.readlines()])))
-print passcodes
-# [129, 160, 162, 168, 180, 289, 290, 316, 318, 319, 362, 368, 380, 389, 620, 629, 680, 689, 690, 710, 716, 718, 719, 720, 728, 729, 731, 736, 760, 762, 769, 790, 890]
-print len(passcodes)
-# 33
-[362, 762, 620, 129, 289, 368, 380, 389, 710, 718, 719, 720, 728, 729, 319, 736, 760, 790, 160, 1680, 316, 716]
-7690
-6890
-16290
-73180
-answer = None
+def compress_passcode(passcode, lookahead=0):
+    """Compresses a passcode by replacing repeated subsequences with just one occurence
+    """
+    did_replace = True
+    while did_replace:
+        did_replace = False
+        for i in xrange(lookahead, 0, -1):
+            for j in xrange(len(passcode) - i - i):
+                a_start = j
+                a_end = j + i
+                b_start = a_end
+                b_end = b_start + i
+                a, b = passcode[a_start:a_end], passcode[b_start:b_end]
+                if a == b:
+                    passcode = passcode[:a_end] + passcode[b_end:]
+                    did_replace = True
+                    break
+                else:
+                    pass
+    return passcode
+
+def solve():
+    f = open('p079_keylog.txt', 'r')
+    sequences = sorted(list(set([line.strip() for line in f.readlines()])))
+    sequence_length = len(sequences[0])
+    best_so_far = None
+    count = 0
+    for permutation in itertools.permutations(sequences):
+        count += 1
+        print 'Checking permutation %s' % count
+        passcode = ''.join(permutation)
+        if best_so_far is None:
+            best_so_far = passcode
+            print 'Best so far: %s, %s' % (len(best_so_far), best_so_far,)
+        compressed = compress_passcode(passcode, lookahead=sequence_length - 1)
+        if len(compressed) < len(best_so_far):
+            best_so_far = compressed
+            print 'Best so far: %s, %s <- %s' % (len(best_so_far), best_so_far, passcode,)
+    answer = best_so_far
+    return answer
+
+answer = solve()
 
 print 'Expected: %s, Answer: %s' % (EXPECTED_ANSWER, answer)
