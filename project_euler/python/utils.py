@@ -648,6 +648,20 @@ def count_digits(n):
         n /= 10
     return num_digits
 
+def log_num_digits(n):
+    """Gets the number of digits in `n`
+
+    Utilizes log base 10
+
+    Test cases:
+    - 063
+    """
+    if n / 10 == 0:
+        num_digits = 1
+    else:
+        num_digits = int(math.ceil(math.log(n, 10)))
+    return num_digits
+
 def digits(n, string=False):
     """Get the digits of a number as a list of numbers
 
