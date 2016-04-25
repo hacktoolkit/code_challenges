@@ -17,27 +17,23 @@ from utils import *
 
 EXPECTED_ANSWER = 0
 
-def reduce(n, d):
-    _gcd = gcd(n, d)
-    a, b = (n / _gcd, d / _gcd)
-    return a, b
-
 def solve(marker, limit, lower=0):
     memo = {}
     best_so_far = {}
     # precompute
     for d in xrange(1, limit):
-        #print d
+        print d
         # optimization: don't test fractions below `lower`
         n = max(1, int(d * (marker + lower) / 2))
+        n_limit = d * marker
         while n < d:
-            if n / marker > d:
+            if n > n_limit:
                 # optimization: don't test fractions larger than `marker`
                 break
             a, b = reduce(n, d)
             key = '%s/%s' % (a, b)
             n += 1
-            if key in memo:
+            if False and key in memo:
                 # optimization: already computed the reduced version of this fraction
                 continue
             else:
@@ -45,7 +41,7 @@ def solve(marker, limit, lower=0):
                 # if value < lower:
                 # memoize
                 best_so_far[key] = value
-                memo[key] = value
+                #memo[key] = value
                 # pruning
                 if len(best_so_far) > 1:
                     sorted_fractions = sorted(best_so_far.items(), key=lambda x: x[1])
