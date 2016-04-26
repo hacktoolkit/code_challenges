@@ -15,46 +15,32 @@ Solution by jontsai <hello@jontsai.com>
 """
 from utils import *
 
-EXPECTED_ANSWER = 0
+#real30m14.628s
+#user29m44.546s
+#sys0m9.036s
+EXPECTED_ANSWER = 428570
 
-def solve(marker, limit, lower=0):
-    memo = {}
-    best_so_far = {}
+def solve(marker, limit):
+    best_so_far = None
+    best_so_far_key = None
     # precompute
     for d in xrange(1, limit):
-        print d
+        #print d
         # optimization: don't test fractions below `lower`
-        n = max(1, int(d * (marker + lower) / 2))
-        n_limit = d * marker
-        while n < d:
-            if n > n_limit:
-                # optimization: don't test fractions larger than `marker`
-                break
-            a, b = reduce(n, d)
-            key = '%s/%s' % (a, b)
-            n += 1
-            if False and key in memo:
-                # optimization: already computed the reduced version of this fraction
-                continue
-            else:
-                value = a / (b * 1.0)
-                # if value < lower:
-                # memoize
-                best_so_far[key] = value
-                #memo[key] = value
-                # pruning
-                if len(best_so_far) > 1:
-                    sorted_fractions = sorted(best_so_far.items(), key=lambda x: x[1])
-                    lower = sorted_fractions[-2][1]
-                    best_so_far = dict(sorted_fractions[-2:])
-                    n = max(1, n, int(d * (marker + lower) / 2))
+        n_upper = int(math.ceil(d * marker)) - 1
+        n = max(1, n_upper)
+        a, b = reduce(n, d)
+        key = '%s/%s' % (a, b)
+        value = a * 1.0 / b
+        if value < marker:
+            if best_so_far is None or value > best_so_far:
+                best_so_far = value
+                best_so_far_key = key
     # solve
-    sorted_fractions = sorted(best_so_far.items(), key=lambda x: x[1])
-    #print sorted_fractions
-    answer = sorted_fractions[-2][0].split('/')[0]
+    answer = best_so_far_key.split('/')[0]
     return answer
 
-#answer = solve(3/7., 8, lower=2/5.)
-answer = solve(3/7., 1000000, lower=2/5.)
+#answer = solve(3./7, 8)
+answer = solve(3./7, 1000000)
 
 print 'Expected: %s, Answer: %s' % (EXPECTED_ANSWER, answer)
