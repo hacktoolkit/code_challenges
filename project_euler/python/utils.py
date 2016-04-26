@@ -16,7 +16,7 @@ def is_even(n):
     even = not(n & 1)
     return even
 
-def gcd(a, b):
+def gcd_euclidean(a, b):
     """Efficiently finds the gcd of two integers
 
     Uses Euclidean algorithm
@@ -24,12 +24,24 @@ def gcd(a, b):
     http://en.wikipedia.org/wiki/Greatest_common_divisor
     http://en.wikipedia.org/wiki/Euclidean_algorithm
     """
+    if a == 0:
+        return b
+    if b == 0:
+        return a
     while a != b:
         if a > b:
             a = a - b
         else:
             b = b - a
     return a
+
+def gcd_modulo(a, b):
+    while b:
+        a, b = b, a % b
+    return a
+
+def gcd(a, b):
+    return gcd_modulo(a, b)
 
 def reduce_fraction(numerator, denominator):
     """Reduces a fraction to its lowest terms
