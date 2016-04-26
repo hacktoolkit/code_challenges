@@ -15,32 +15,64 @@ Solution by jontsai <hello@jontsai.com>
 """
 from utils import *
 
-#real30m14.628s
-#user29m44.546s
-#sys0m9.036s
 EXPECTED_ANSWER = 428570
 
-def solve(marker, limit):
-    best_so_far = None
+def solve1(marker, limit):
+    """
+    python 071.py
+    Expected: 428570, Answer: 428570
+
+    real30m14.628s
+    user29m44.546s
+    sys0m9.036s
+    """
+    best_so_far = -1
+    best_n = None
+    best_d = None
     best_so_far_key = None
     # precompute
-    for d in xrange(1, limit):
-        #print d
-        # optimization: don't test fractions below `lower`
+    for d in xrange(2, limit + 1):
+        print d
         n_upper = int(math.ceil(d * marker)) - 1
-        n = max(1, n_upper)
-        a, b = reduce(n, d)
-        key = '%s/%s' % (a, b)
-        value = a * 1.0 / b
-        if value < marker:
-            if best_so_far is None or value > best_so_far:
+        n = n_upper
+        hcf = gcd(n, d)
+        if hcf == 1:
+            value = n * 1.0 / d
+            if best_so_far < value < marker:
                 best_so_far = value
-                best_so_far_key = key
+                best_n = n
+                best_d = d
     # solve
-    answer = best_so_far_key.split('/')[0]
+    print '%s/%s' % (best_n, best_d,)
+    answer = best_n
     return answer
 
+def solve2(marker, limit):
+    """Attempt at a more efficient solution
+
+    The numerator of the reduced proper fraction
+    immediately to the left of 3/7 will be the fraction
+    with the greatest value -- largest numerator with smallest denominator
+    """
+    best_so_far = None
+    # precompute
+    for d in xrange(limit, 0, -1):
+        n_upper = int(math.ceil(d * marker)) - 1
+        n = max(1, n_upper)
+        hcf = gcd(n, d)
+        value = n * 1.0 / d
+        if hcf == 1 and value < marker:
+            print n, d
+            best_so_far = n
+            break
+    # solve
+    answer = best_so_far
+    return answer
+
+def solve(marker, limit):
+    return solve1(marker, limit)
+
 #answer = solve(3./7, 8)
-answer = solve(3./7, 1000000)
+answer = solve(3./7, 10**6)
 
 print 'Expected: %s, Answer: %s' % (EXPECTED_ANSWER, answer)
