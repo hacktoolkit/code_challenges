@@ -16,39 +16,33 @@ Solution by jontsai <hello@jontsai.com>
 """
 from utils import *
 
-EXPECTED_ANSWER = 0
+EXPECTED_ANSWER = 7295372
 
 def solve(lower, upper, limit):
-    memo = {}
-    memo2 = {}
+    """
+    $ time python 073.py 
+    Expected: 7295372, Answer: 7295372
+
+    real0m13.999s
+    user0m13.606s
+    sys0m0.134s
+    """
     count = 0
-    for d in xrange(1, limit + 1):
+    for d in xrange(2, limit + 1):
         #print d
         # optimization: don't test fractions below `lower` or above `upper`
         n_lower = int(math.floor(d * lower)) + 1
         n_upper = int(math.ceil(d * upper)) - 1
-        n = max(1, n_lower)
+        n = n_lower
         for n in xrange(max(1, n_lower), n_upper + 1):
-            key = '%s/%s' % (n, d)
-            a, b = reduce(n, d)
-            key2 = '%s/%s' % (a, b)
-            if key2 not in memo2:
-                memo2[key2] = True
-            if key in memo:
-                break
+            hcf = gcd(n, d)
+            if hcf != 1:
+                continue
             else:
                 value = n * 1.0 / d
-                for k in xrange(1, limit / d + 1):
-                    # mark all expanded fractions
-                    key = '%s/%s' % (n * k, d * k)
-                    memo[key] = value
                 count += 1
     # solve
-    #sorted_fractions = sorted(memo.items(), key=lambda x: x[1])
-    #print sorted_fractions
-    #answer = count
-    print count
-    answer = len(memo2)
+    answer = count
     return answer
 
 #answer = solve(lower=1/3., upper=1/2., limit=8)
