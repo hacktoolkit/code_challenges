@@ -9,6 +9,10 @@ def solve():
     answer = None
     return answer
 
-answer = solve()
+def main():
+    answer = solve()
 
-print 'Expected: %s, Answer: %s' % (EXPECTED_ANSWER, answer)
+    print 'Expected: %s, Answer: %s' % (EXPECTED_ANSWER, answer)
+
+if __name__ == '__main__':
+    main()
