@@ -39,6 +39,7 @@ NUM_COLS = 9
 NUM_BOXES = 9
 DEFAULT_GRID = '0' * NUM_ROWS * NUM_COLS
 
+SOLVED_SORTED_GRID = ''.join([str(v) * NUM_COLS for v in xrange(1, NUM_ROWS + 1)])
 
 class Sudoku(object):
     def __init__(self, name='Sudoku', grid=DEFAULT_GRID, *args, **kwargs):
@@ -76,8 +77,7 @@ class Sudoku(object):
         for n in xrange(NUM_COLS):
             col_values = []
             for m in xrange(NUM_ROWS):
-                index = m * NUM_COLS + n
-                value = int(self.grid[index])
+                value = self.get_cell_value(m, n)
                 if value:
                     col_values.append(value)
             if len(set(col_values)) != len(col_values):
@@ -88,12 +88,31 @@ class Sudoku(object):
     def has_valid_boxes(self):
         valid = True
         for k in xrange(NUM_BOXES):
+            row = k / 3
+            col = k % 3
             box_values = []
-            # TODO
+            for m in xrange(row * 3, row * 3 + 3):
+                for n in xrange(col * 3, col * 3 + 3):
+                    value = self.get_cell_value(m, n)
+                    if value:
+                        box_values.append(value)
             if len(set(box_values)) != len(box_values):
                 valid = False
                 break
         return valid
+
+    def get_cell_index(self, m, n):
+        """Gets the index of the grid cell `(m, n)`
+        """
+        index = m * NUM_COLS + n
+        return index
+
+    def get_cell_value(self, m, n):
+        """Gets the value of the grid cell `(m, n)`
+        """
+        index = self.get_cell_index(m, n)
+        value = int(self.grid[index])
+        return value
 
     def is_filled(self):
         """Checks whether every cell is filled
@@ -101,10 +120,25 @@ class Sudoku(object):
         filled = '0' not in self.grid
         return filled
 
+    def is_solved(self):
+        #solved = self.is_filled() and self.is_valid()
+        solved = ''.join(sorted(self.grid)) == SOLVED_SORTED_GRID
+        return solved
+
     def solve_brute_force(self):
         """Attempts to solve this Sudoku puzzle by trying every combination
         """
-        pass
+        for m in xrange(NUM_ROWS):
+            for n in xrange(NUM_COLS):
+                index = self.get_cell_index(m, n)
+                value = self.get_cell_value(m, n)
+                if value:
+                    continue
+                else:
+                    for i in xrange(1, 10):
+                        self.grid[index] = i
+                        self.solve_brute_force
+
 
     def solve(self):
         """Attempts to solve this Sudoku puzzle, if it is solvable
