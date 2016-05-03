@@ -12,10 +12,12 @@ import itertools
 
 from utils import *
 
-EXPECTED_ANSWER = 0
+EXPECTED_ANSWER = 73162890
 
 def compress_passcode(passcode, lookahead=0):
     """Compresses a passcode by replacing repeated subsequences with just one occurence
+
+    Note: This function is no longer relevant, as I initially interpreted the problem to mean that the three characters were in _consecutive_ order.
     """
     did_replace = True
     while did_replace:
@@ -35,10 +37,17 @@ def compress_passcode(passcode, lookahead=0):
                     pass
     return passcode
 
-def solve():
+def get_login_sequences():
     f = open('p079_keylog.txt', 'r')
-    sequences = sorted(list(set([line.strip() for line in f.readlines()])))
-    sequence_length = len(sequences[0])
+    logins = sorted(list(set([line.strip() for line in f.readlines()])))
+    return logins
+
+def solve_incorrectly():
+    """
+    Note: This function is no longer relevant, as I initially interpreted the problem to mean that the three characters were in _consecutive_ order.
+    """
+    logins = get_login_sequences()
+    sequence_length = len(logins[0])
     best_so_far = None
     count = 0
     for permutation in itertools.permutations(sequences):
@@ -53,6 +62,31 @@ def solve():
             best_so_far = compressed
             print 'Best so far: %s, %s <- %s' % (len(best_so_far), best_so_far, passcode,)
     answer = best_so_far
+    return answer
+
+def solve():
+    """
+    $ time python 079.py
+    [('7', 0), ('3', 1), ('1', 2), ('6', 3), ('2', 4), ('8', 5), ('9', 6), ('0', 7)]
+    Expected: 73162890, Answer: 73162890
+
+    real0m0.030s
+    user0m0.015s
+    sys0m0.011s
+    """
+    logins = get_login_sequences()
+    # build a precedes table
+    precedes = {}
+    for login in logins:
+        preceding_chars = set()
+        for c in login:
+            if c not in precedes:
+                precedes[c] = set()
+            precedes[c] = precedes[c].union(preceding_chars)
+            preceding_chars.add(c)
+    char_precedence_frequency = sorted([(k, len(precedes[k]),) for k in precedes.iterkeys()], key=lambda x: x[1])
+    print char_precedence_frequency
+    answer = ''.join([c[0] for c in char_precedence_frequency])
     return answer
 
 answer = solve()
