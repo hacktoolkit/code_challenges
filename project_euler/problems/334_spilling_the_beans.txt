@@ -12,13 +12,13 @@ You are given the following sequences:
 
 
 t0 = 123456.
-   
 
 
 
 
-ti = 
-   
+
+ti =
+
 
 
 
@@ -32,11 +32,11 @@ ti-1
 
 
          ,
-      
+
 
 
          if ti-1 is even
-      
+
 
 
 
@@ -50,11 +50,11 @@ ti-1
 
 
 
-         926252, 
-      
+         926252,
+
 
          if ti-1 is odd
-      
+
 
 
 
@@ -64,20 +64,20 @@ ti-1
 
 
       where x is the floor function
-   
+
 
 
 
 
 
       and  is the bitwise XOR operator.
-   
+
 
 
 
 
 bi = ( ti mod 211) + 1.
-   
+
 
 The first two terms of the last sequence are b1 = 289 and b2 = 145.
 If we start with b1 and b2 beans in two adjacent bowls, 3419100 moves would be required to finish the game.

@@ -2,7 +2,7 @@ http://projecteuler.net/problem=328
 
 Lowest-cost Search
 
-We are trying to find a hidden number selected from the set of integers {1, 2, ..., n} by asking questions. 
+We are trying to find a hidden number selected from the set of integers {1, 2, ..., n} by asking questions.
 Each number (question) we ask, has a cost equal to the number asked and we get one of three possible answers:
 
  "Your guess is lower than the hidden number", or

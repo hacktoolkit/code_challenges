@@ -14,7 +14,7 @@ Let $C(R, r)$ be the set of distinct points with integer coordinates on the hypo
 Let $S(R, r) = \sum_{(x,y) \in C(R, r)} |x| + |y|$ be the sum of the absolute values of the x and y coordinates of the points in $C(R, r)$.
 
 
-Let $T(N) = \sum_{R = 3}^N \sum_{r=1}^{\lfloor \frac {R - 1} 2 \rfloor} S(R, r)$ be the sum of $S(R, r)$ for R and r positive integers, $R\leq N$  and $2r 
+Let $T(N) = \sum_{R = 3}^N \sum_{r=1}^{\lfloor \frac {R - 1} 2 \rfloor} S(R, r)$ be the sum of $S(R, r)$ for R and r positive integers, $R\leq N$  and $2r
 
 
 You are given:
