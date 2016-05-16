@@ -2,7 +2,7 @@ http://projecteuler.net/problem=194
 
 Coloured Configurations
 
-Consider graphs built with the units A: 
+Consider graphs built with the units A:
 and B: , where the units are glued along
 the vertical edges as in the graph .
 A configuration of type (a,b,c) is a graph thus built of a units A and b units B, where the graph's vertices are coloured using up to c colours, so that no two adjacent vertices have the same colour.

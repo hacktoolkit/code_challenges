@@ -25,8 +25,7 @@ If for example we divide 5 by 1+2i we can simplify  in the following manner:
 
 Multiply numerator and denominator by the complex conjugate of 1+2i: 12i.
 
-The result is 
-.
+The result is <image>.
 
 So 1+2i is a divisor of 5.
 
