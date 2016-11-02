@@ -1,3 +1,4 @@
+"""
 http://projecteuler.net/problem=054
 
 Poker hands
@@ -52,3 +53,48 @@ Player 1
 The file, poker.txt, contains one-thousand random hands dealt to two players. Each line of the file contains ten cards (separated by a single space): the first five are Player 1's cards and the last five are Player 2's cards. You can assume that all hands are valid (no invalid characters or repeated cards), each player's hand is in no specific order, and in each hand there is a clear winner.
 
 How many hands does Player 1 win?
+
+Solution by jontsai <hello@jontsai.com>
+"""
+from utils import *
+
+EXPECTED_ANSWER = 0
+
+def get_poker_hands():
+    poker_hands_file = 'p054_poker.txt'
+    f = open(poker_hands_file, 'r')
+    lines = f.readlines()
+    poker_hands = []
+    for line in lines:
+        cards = line.strip().split(' ')
+        assert(len(cards) == 10)
+        hand1 = cards[:5]
+        hand2 = cards[-5:]
+        poker_hands.append((hand1, hand2,))
+    f.close()
+    return poker_hands
+
+def get_poker_hand_winner(hand1, hand2):
+    return 1
+
+def solve():
+    poker_hands = get_poker_hands()
+    p1_wins = 0
+    p2_wins = 0
+    
+    for (hand1, hand2,) in poker_hands:
+        winner = get_poker_hand_winner(hand1, hand2)
+        if winner == 1:
+            p1_wins += 1
+        else:
+            p2_wins += 1
+    answer = p1_wins
+    return answer
+
+def main():
+    answer = solve()
+
+    print 'Expected: %s, Answer: %s' % (EXPECTED_ANSWER, answer)
+
+if __name__ == '__main__':
+    main()
