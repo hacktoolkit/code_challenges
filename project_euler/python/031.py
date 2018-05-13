@@ -31,19 +31,24 @@ COINS = [
 # start with the largest coin
 # gradually use one-less of the current coin
 
-combinations = 0
-
+COIN_SUMS_MEMO = {}
 def coin_sums(amount, coin_index):
-    if amount == 0:
-        ways = 1
+    key = '%s:%s' % (amount, coin_index,)
+
+    if key in COIN_SUMS_MEMO:
+        num_ways = COIN_SUMS_MEMO[key]
+    elif amount == 0:
+        num_ways = 1
     else:
         coin = COINS[coin_index]
-        ways = 0
+        num_ways = 0
         if coin <= amount:
-            ways += coin_sums(amount - coin, coin_index)
+            num_ways += coin_sums(amount - coin, coin_index)
         if coin_index + 1 < len(COINS):
-            ways += coin_sums(amount, coin_index + 1)
-    return ways
+            num_ways += coin_sums(amount, coin_index + 1)
+
+        COIN_SUMS_MEMO[key] = num_ways
+    return num_ways
 
 answer = coin_sums(200, 0)
 
