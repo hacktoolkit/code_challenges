@@ -14,17 +14,19 @@ from utils import *
 
 EXPECTED_ANSWER = 0
 
-limit = 10**3
+LIMIT = 10**3
+# TODO:
+#LIMIT = 10**9
 
 reversible_count = 0
 
 reversible_dict = {}
 
-for n in xrange(1, limit + 1):
+for n in xrange(1, LIMIT + 1):
     if n % 10**6 == 0:
+        # print progress
         print n
     if is_reversible(n):
-
         reversible_count += 1
 
 answer = reversible_count

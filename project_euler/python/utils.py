@@ -274,18 +274,49 @@ def is_reversible(n):
     if n in REVERSIBLE_MEMO:
         reversible = REVERSIBLE_MEMO[n]
     elif last_digit == 0:
+        # the reversed number would have a leading 0, which is not allowed
         reversible = False
     elif is_even((first_digit + last_digit) % 10):
         reversible = False
     else:
         digits_n_str = digits(n, string=True)
         reverse_n = int(''.join(digits_n_str[::-1]))
-        n_plus_reverse_n = n + reverse_n
-        reversible = True
-        for digit in digits(n_plus_reverse_n):
-            if is_even(digit):
-                reversible = False
-                break
+
+        def _check_digits_slow():
+            # slow method - sum, then check each digit
+            _reversible = True
+
+            n_plus_reverse_n = n + reverse_n
+            for digit in digits(n_plus_reverse_n):
+                if is_even(digit):
+                    _reversible = False
+                    break
+            return _reversible
+
+        def _check_digits_fast():
+            # fast method - sum from right to left, check as we go
+            _reversible = True
+            a = n
+            b = reverse_n
+
+            carry = 0
+            while a > 0 and b > 0:
+                x = a % 10
+                y = b % 10
+                digit_sum = x + y + carry
+                digit = digit_sum % 10
+                if is_even(digit):
+                    _reversible = False
+                    break
+                # update for next iteration
+                carry = digit_sum / 10
+                a /= 10
+                b /= 10
+            return _reversible
+
+        reversible = _check_digits_slow()
+        #reversible = _check_digits_fast()
+
         REVERSIBLE_MEMO[n] = reversible
         REVERSIBLE_MEMO[reverse_n] = reversible
     return reversible
