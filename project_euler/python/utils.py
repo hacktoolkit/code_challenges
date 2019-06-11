@@ -281,8 +281,12 @@ def is_hexagon_num(n):
 
 
 REVERSIBLE_MEMO = {}
-def is_reversible(n):
+REVERSIBLE_MEMO_LARGEST = 0
+def is_reversible(n, memo_gc_auto=True):
     """Determines if n is a reversible number
+
+    `memo_gc_auto` - automatically clean up the REVERSIBLE_MEMO dict if True
+    Resets every power of 10
 
     Reversible numbers:
     36 + 63 = 99
@@ -291,6 +295,9 @@ def is_reversible(n):
     Test cases:
     - 145
     """
+    if memo_gc_auto and n > REVERSIBLE_MEMO_LARGEST:
+        REVERSIBLE_MEMO = {}
+
     first_digit = int(str(n)[0])
     last_digit = n % 10
     if n in REVERSIBLE_MEMO:
