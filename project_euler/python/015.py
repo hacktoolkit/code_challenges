@@ -12,8 +12,8 @@ from utils import *
 
 EXPECTED_ANSWER = 137846528820
 
-rows = 20
-cols = 20
+ROWS = 20
+COLS = 20
 
 LATTICE_MEMO = {}
 
@@ -34,7 +34,7 @@ def lattice_paths(rows, cols):
             num_paths = LATTICE_MEMO[rows][cols]
     return num_paths
 
-answer = lattice_paths(rows, cols)
+answer = lattice_paths(ROWS, COLS)
 
 print 'Expected: %s, Answer: %s' % (EXPECTED_ANSWER, answer)
 
