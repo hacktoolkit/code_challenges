@@ -21,15 +21,15 @@ from utils import *
 #LIMIT = 10**5
 #EXPECTED_ANSWER = 720 # 1x previous
 
-# LIMIT = 10**6
-# EXPECTED_ANSWER = 18720 # 18x previous
+#LIMIT = 10**6
+#EXPECTED_ANSWER = 18720 # 18x previous
 
-LIMIT = 10**7
-EXPECTED_ANSWER = 68720 # 3x previous
+#LIMIT = 10**7
+#EXPECTED_ANSWER = 68720 # 3x previous
 
 # TODO:
-#LIMIT = 10**9
-#EXPECTED_ANSWER = 0
+LIMIT = 10**9
+EXPECTED_ANSWER = 0
 
 reversible_count = 0
 

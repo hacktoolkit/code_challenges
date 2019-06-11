@@ -280,6 +280,25 @@ def is_hexagon_num(n):
     return is_hexagon
 
 
+DIGISUM_MEMO = [None] * 200
+def digisum(a, b, carry):
+    """A method for quickly computing the some of two integers and a carry bit
+
+    Results are memoized for fast lookup
+    """
+    index = carry * 100 + a * 10 + b
+
+    memoized_result = DIGISUM_MEMO[index]
+    if memoized_result is None:
+        # calculate value for first time
+        result = a + b + carry
+        DIGISUM_MEMO[index] = result
+    else:
+        # previously memoized
+        result = memoized_result
+    return result
+
+
 def reversed_int(n):
     """Returns an integer with the digits in `n` reversed
     """
@@ -335,7 +354,7 @@ def is_reversible(n):
             while a > 0 and b > 0:
                 x = a % 10
                 y = b % 10
-                digit_sum = x + y + carry
+                digit_sum = digisum(x, y, carry)
                 digit = digit_sum % 10
                 if is_even(digit):
                     _reversible = False
