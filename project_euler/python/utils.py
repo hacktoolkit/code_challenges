@@ -2,6 +2,7 @@ import math
 
 from constants import *
 
+
 def is_odd(n):
     """Determines whether `n` is odd
     """
@@ -9,12 +10,14 @@ def is_odd(n):
     odd = bool(n & 1)
     return odd
 
+
 def is_even(n):
     """Determines whether `n` is even
     """
     # even = n % 2 == 0
     even = not(n & 1)
     return even
+
 
 def gcd_euclidean(a, b):
     """Efficiently finds the gcd of two integers
@@ -35,13 +38,16 @@ def gcd_euclidean(a, b):
             b = b - a
     return a
 
+
 def gcd_modulo(a, b):
     while b:
         a, b = b, a % b
     return a
 
+
 def gcd(a, b):
     return gcd_modulo(a, b)
+
 
 def reduce_fraction(numerator, denominator):
     """Reduces a fraction to its lowest terms
@@ -50,10 +56,12 @@ def reduce_fraction(numerator, denominator):
     reduced = (numerator / _gcd, denominator / _gcd,)
     return reduced
 
+
 def reduce(n, d):
     """Alias for reduce_fraction
     """
     return reduce_fraction(n, d)
+
 
 def lcm(num_list):
     """Finds the lcm of a list of numbers
@@ -84,6 +92,7 @@ def lcm(num_list):
     result = list_product(factors)
     return result
 
+
 FIB_MEMO = [1, 1]
 def fibonacci(n):
     """Get the `n`th Fibonacci number
@@ -98,6 +107,7 @@ def fibonacci(n):
         FIB_MEMO.append(answer)
     return answer
 
+
 def fib_up_to(n, repeat_1=False):
     """Fibonacci numbers up to `n` (inclusive)
     """
@@ -108,6 +118,7 @@ def fib_up_to(n, repeat_1=False):
     end = k
     numbers = FIB_MEMO[start:end]
     return numbers
+
 
 CUBE_ROOTS = { 1: 1, }
 LARGEST_CUBE_GENERATED = 1
@@ -124,6 +135,7 @@ def generate_cubes(n):
     LARGEST_CUBE_GENERATED = max(LARGEST_CUBE_GENERATED, (n + 1) ** 3)
     return CUBE_ROOTS
 
+
 GENERATE_CUBES_BATCH_SIZE = 100000
 def get_perfect_cubic_root(n):
     """Gets the cubic root of a perfect cube
@@ -135,6 +147,7 @@ def get_perfect_cubic_root(n):
     cubic_root = CUBE_ROOTS.get(n, None)
     return cubic_root
 
+
 def is_perfect_cube(n):
     """Determines whether a number is a perfect cube
 
@@ -144,6 +157,7 @@ def is_perfect_cube(n):
     cubic_root = get_perfect_cubic_root(n)
     is_cube = cubic_root is not None
     return is_cube
+
 
 def nth_root(number, n):
     """Gets the integral nth-root
@@ -156,6 +170,7 @@ def nth_root(number, n):
         nth_root = None
     return nth_root
 
+
 def quadratic(a, b, c):
     """Solves the quadratic equation
     ax^2 + b + c = 0
@@ -163,6 +178,7 @@ def quadratic(a, b, c):
     """
     x = (math.sqrt((b * b) - (4 * a * c)) - b) / (2 * a)
     return x
+
 
 def triangle_number(n):
     """Get the nth triangle number
@@ -177,6 +193,7 @@ def triangle_number(n):
     """
     triangle = (n * (n + 1)) / 2
     return triangle
+
 
 def is_triangle_num(n):
     """Determines if n is a triangle number
@@ -202,6 +219,7 @@ def is_triangle_num(n):
     is_triangle = int(x) == x # x is a whole number
     return is_triangle
 
+
 def pentagon_number(n):
     """Get the nth pentagon number
 
@@ -212,6 +230,7 @@ def pentagon_number(n):
     """
     pentagon = (n * (3 * n - 1)) / 2
     return pentagon
+
 
 def is_pentagon_num(n):
     """Determines if n is a pentagon number
@@ -230,6 +249,7 @@ def is_pentagon_num(n):
     is_pentagon = int(x) == x # x is a whole number
     return is_pentagon
 
+
 def hexagon_number(n):
     """Get the nth hexagon number
 
@@ -240,6 +260,7 @@ def hexagon_number(n):
     """
     hexagon = n * (2 * n - 1)
     return hexagon
+
 
 def is_hexagon_num(n):
     """Determines if n is a hexagon number
@@ -257,6 +278,7 @@ def is_hexagon_num(n):
     x = quadratic(2, -1, -n)
     is_hexagon = int(x) == x # x is a whole number
     return is_hexagon
+
 
 REVERSIBLE_MEMO = {}
 def is_reversible(n):
@@ -314,12 +336,13 @@ def is_reversible(n):
                 b /= 10
             return _reversible
 
-        reversible = _check_digits_slow()
-        #reversible = _check_digits_fast()
+        #reversible = _check_digits_slow()
+        reversible = _check_digits_fast()
 
         REVERSIBLE_MEMO[n] = reversible
         REVERSIBLE_MEMO[reverse_n] = reversible
     return reversible
+
 
 def collatz_sequence(n):
     """Produces the Collatz sequence for a starting number, n
@@ -337,6 +360,7 @@ def collatz_sequence(n):
         sequence.append(n)
     return sequence
 
+
 COLLATZ_LENGTH_MEMO = { 0 : 0, 1 : 1,}
 def collatz_sequence_length(n):
     """Finds the length of the Collatz sequence for a starting number, n
@@ -352,6 +376,7 @@ def collatz_sequence_length(n):
         COLLATZ_LENGTH_MEMO[n] = length
     return length
 
+
 def get_proper_divisors(n):
     """Get proper divisors of n
     Number less than n which divide evenly into n
@@ -363,6 +388,7 @@ def get_proper_divisors(n):
     divisors = get_divisors(n)[:-1]
     return divisors
 
+
 def sum_proper_divisors(n):
     """Get the sum of the proper divisors of n
 
@@ -373,11 +399,13 @@ def sum_proper_divisors(n):
     value = sum(get_proper_divisors(n))
     return value
 
+
 def is_perfect_number(n):
     """A perfect number n is a number whose sum of its proper divisors is equal to n
     """
     perfectness = sum_proper_divisors(n) == n
     return perfectness
+
 
 def is_abundant_number(n):
     """An abundant number n is a number whose sum of its proper divisors exceeds n
@@ -387,6 +415,7 @@ def is_abundant_number(n):
     """
     abundance = sum_proper_divisors(n) > n
     return abundance
+
 
 def get_amicable_pair(n):
     """Get amicable pair for n, if one exists
@@ -407,6 +436,7 @@ def get_amicable_pair(n):
         pair = None
     return pair
 
+
 def get_divisors(n):
     """Get integer divisors of n
 
@@ -423,6 +453,7 @@ def get_divisors(n):
     divisors = sorted(divisors)
     return divisors
 
+
 FACT_MEMO = [1, 1]
 def factorial(n):
     """Computes n!
@@ -433,6 +464,7 @@ def factorial(n):
         value = n * factorial(n-1)
         FACT_MEMO.append(value)
     return value
+
 
 PRIME_MEMO_TRIAL_DIVISION = []
 def generate_primes_trial_division(n):
@@ -447,6 +479,7 @@ def generate_primes_trial_division(n):
             PRIME_MEMO_TRIAL_DIVISION.append(x)
         else:
             pass
+
 
 def is_prime_trial_division(n):
     """Determines whether `n` is a prime number
@@ -464,6 +497,7 @@ def is_prime_trial_division(n):
     if primeness:
         PRIME_MEMO_TRIAL_DIVISION.append(n)
     return primeness
+
 
 # seed with basic primes
 PRIMES = [2, 3]
@@ -527,6 +561,7 @@ def generate_primes(n):
 
     return PRIMES
 
+
 def is_prime(n):
     """Determines whether n is a prime number
 
@@ -546,6 +581,7 @@ def is_prime(n):
         primes = PRIMES
     primeness = n in primes
     return primeness
+
 
 def primality(n):
     """A basic primality test
@@ -569,6 +605,7 @@ def primality(n):
                 break
     return primeness
 
+
 def possibly_prime(n):
     """Determines whether n is possibly a prime number
 
@@ -577,6 +614,7 @@ def possibly_prime(n):
     """
     possible = not is_even(n) and n % 3 > 0
     return possible
+
 
 def get_truncations(s, dir='all'):
     """Get truncations
@@ -593,6 +631,7 @@ def get_truncations(s, dir='all'):
         if dir in ('rtl', 'all',):
             truncations.append(s[:-i])
     return truncations
+
 
 def is_truncatable_prime(n):
     """A truncatable prime is a prime number that, when continuously removing digits from the left to right or right to left, the subsequent numbers are also prime
@@ -617,6 +656,7 @@ def is_truncatable_prime(n):
         pass
     return truncatable
 
+
 def factor(n):
     """Get the factors of `n`
 
@@ -640,6 +680,7 @@ def factor(n):
         divisors.append(reduced)
     return divisors
 
+
 def is_palindromic(n):
     """Determines whether a number or a string is palindromic
 
@@ -648,6 +689,7 @@ def is_palindromic(n):
     """
     palindromic = str(n) == str(n)[::-1]
     return palindromic
+
 
 def is_lychrel_number(n, iterations=50):
     """Determines if a number is a Lychrel number within `iterations`
@@ -666,12 +708,14 @@ def is_lychrel_number(n, iterations=50):
     is_lychrel = not(found_palindrome)
     return is_lychrel
 
+
 def range_sum(lower, upper):
     """Find the sum of a range of numbers
     """
     # sum(xrange(lower, upper + 1))
     total = (upper + lower) * (upper - lower + 1) / 2
     return total
+
 
 def list_product(num_list):
     """Multiplies all of the numbers in a list
@@ -680,6 +724,7 @@ def list_product(num_list):
     for x in num_list:
         product *= x
     return product
+
 
 def count_digits(n):
     """Counts the number of digits in `n`
@@ -696,6 +741,7 @@ def count_digits(n):
         n /= 10
     return num_digits
 
+
 def log_num_digits(n):
     """Gets the number of digits in `n`
 
@@ -710,6 +756,7 @@ def log_num_digits(n):
         num_digits = int(math.ceil(math.log(n, 10)))
     return num_digits
 
+
 def digits(n, string=False):
     """Get the digits of a number as a list of numbers
 
@@ -721,11 +768,13 @@ def digits(n, string=False):
         list_of_digits = [int(digit) for digit in str(n)]
     return list_of_digits
 
+
 def str_to_digits(s):
     """Get a list of digits from a numeric string or numeric list
     """
     digits = [int(digit) for digit in s]
     return digits
+
 
 def sum_digits(n):
     """Find the sum of the digits of n
@@ -737,10 +786,12 @@ def sum_digits(n):
     summation = sum(digits_n)
     return summation
 
+
 def has_even_digits(n):
     even_digits = filter(is_even, digits(n))
     has_even = len(even_digits) > 0
     return has_even
+
 
 def number_to_words(n):
     words = ''
@@ -774,6 +825,7 @@ def number_to_words(n):
         words += NUM_WORDS[n]
     return words
 
+
 def letter_score(letter):
     """Gets the value of a letter
 
@@ -782,6 +834,7 @@ def letter_score(letter):
     letter = letter.upper()
     score = ord(letter) - ord('A') + 1
     return score
+
 
 def word_score(word):
     """Computes the sum of the alphabetical value of each character
@@ -793,10 +846,12 @@ def word_score(word):
     score = sum(letter_scores)
     return score
 
+
 def word_number(word):
     """Converts a word to a number
     """
     pass
+
 
 def is_pandigital(n):
     """An n-digit number is pandigital if it makes use of all the digits 1 to n exactly once
@@ -811,6 +866,7 @@ def is_pandigital(n):
     pandigitalness = len(digits_n) == max(digits_n) == len(set(digits_n)) and min(digits_n) == 1
     return pandigitalness
 
+
 def rotations(s):
     """Get all the rotations of a string
     E.g.
@@ -821,6 +877,7 @@ def rotations(s):
         rotation = s[i:] + s[:i]
         all_rotations.append(rotation)
     return all_rotations
+
 
 def is_circular_prime(n):
     """Determines if n is a circular prime
@@ -835,6 +892,7 @@ def is_circular_prime(n):
     rotations_of_n = [int(rotation) for rotation in rotations(str(n))]
     circular_primeness = is_prime(n) and len(filter(is_prime, rotations_of_n)) == len(rotations_of_n)
     return circular_primeness
+
 
 def permutations(s):
     """Get all the permutations of a string, i.e. anagrams
@@ -856,6 +914,7 @@ def permutations(s):
             all_permutations += sub_permutations
     return all_permutations
 
+
 def numeric_permutations(n):
     """Find the permutations of a number n
 
@@ -866,6 +925,7 @@ def numeric_permutations(n):
     permutations_of_n = sorted(set([int(permutation) for permutation in permutations(str(n))]))
     return permutations_of_n
 
+
 def prime_permutations(n):
     """Find all permutations of the digits of the numbers in n that are primes
 
@@ -875,6 +935,7 @@ def prime_permutations(n):
     permutations_of_n = numeric_permutations(n)
     prime_permutations_of_n = filter(is_prime, permutations_of_n)
     return prime_permutations_of_n
+
 
 def arithmetic_series_subset(num_list):
     """Given a list of numbers in increasing order, return the subset of numbers that are in an arithmetic series
@@ -902,6 +963,7 @@ def arithmetic_series_subset(num_list):
                     break
     return subset
 
+
 ROMAN_NUMERALS = {
     # core Roman numerals
     1000 : 'M',
@@ -924,6 +986,7 @@ ROMAN_VALUES = sorted(ROMAN_NUMERALS.keys(), reverse=True)
 
 ROMAN_NUMERAL_VALUES = dict([(roman_numeral, value,) for (value, roman_numeral,) in ROMAN_NUMERALS.items()])
 
+
 def roman(n):
     """Find the Roman numeral string representing `n`
 
@@ -942,6 +1005,7 @@ def roman(n):
         else:
             index += 1
     return roman_str
+
 
 def roman_value(roman_str):
     """Given a Roman numeral string, find its value
