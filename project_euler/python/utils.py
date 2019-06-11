@@ -280,9 +280,16 @@ def is_hexagon_num(n):
     return is_hexagon
 
 
+def reversed_int(n):
+    """Returns an integer with the digits in `n` reversed
+    """
+    digits_n_str = digits(n, string=True)
+    reversed_n = int(''.join(digits_n_str[::-1]))
+    return reversed_n
+
+
 REVERSIBLE_MEMO = {}
-REVERSIBLE_MEMO_LARGEST = 0
-def is_reversible(n, memo_gc_auto=True):
+def is_reversible(n):
     """Determines if n is a reversible number
 
     `memo_gc_auto` - automatically clean up the REVERSIBLE_MEMO dict if True
@@ -295,11 +302,10 @@ def is_reversible(n, memo_gc_auto=True):
     Test cases:
     - 145
     """
-    if memo_gc_auto and n > REVERSIBLE_MEMO_LARGEST:
-        REVERSIBLE_MEMO = {}
-
     first_digit = int(str(n)[0])
     last_digit = n % 10
+    n2 = reversed_int(n)
+
     if n in REVERSIBLE_MEMO:
         reversible = REVERSIBLE_MEMO[n]
     elif last_digit == 0:
@@ -308,15 +314,12 @@ def is_reversible(n, memo_gc_auto=True):
     elif is_even((first_digit + last_digit) % 10):
         reversible = False
     else:
-        digits_n_str = digits(n, string=True)
-        reverse_n = int(''.join(digits_n_str[::-1]))
-
         def _check_digits_slow():
             # slow method - sum, then check each digit
             _reversible = True
 
-            n_plus_reverse_n = n + reverse_n
-            for digit in digits(n_plus_reverse_n):
+            reversed_sum = n + n2
+            for digit in digits(reversed_sum):
                 if is_even(digit):
                     _reversible = False
                     break
@@ -326,7 +329,7 @@ def is_reversible(n, memo_gc_auto=True):
             # fast method - sum from right to left, check as we go
             _reversible = True
             a = n
-            b = reverse_n
+            b = n2
 
             carry = 0
             while a > 0 and b > 0:
@@ -347,7 +350,7 @@ def is_reversible(n, memo_gc_auto=True):
         reversible = _check_digits_fast()
 
         REVERSIBLE_MEMO[n] = reversible
-        REVERSIBLE_MEMO[reverse_n] = reversible
+        REVERSIBLE_MEMO[n2] = reversible
     return reversible
 
 
