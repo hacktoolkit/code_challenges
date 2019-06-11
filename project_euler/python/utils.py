@@ -302,8 +302,33 @@ def digisum(a, b, carry):
 def reversed_int(n):
     """Returns an integer with the digits in `n` reversed
     """
+    #reversed_n = _reversed_int_str(n)
+    reversed_n = _reversed_int_fast(n)
+    return reversed_n
+
+
+def _reversed_int_str(n):
+    """Returns an integer with the digits in `n` reversed
+
+    It converts to string, and then back to integer.
+
+    This is just a reference implementation, but in practice _reversed_int_fast should be used instead
+    """
     digits_n_str = digits(n, string=True)
     reversed_n = int(''.join(digits_n_str[::-1]))
+    return reversed_n
+
+
+def _reversed_int_fast(n):
+    """A faster implementation of reversed_int that keeps types as integers
+    """
+    reversed_n = n % 10
+    while n > 0:
+        n /= 10
+        if n > 0:
+            reversed_n *= 10
+            reversed_n += n % 10
+
     return reversed_n
 
 
