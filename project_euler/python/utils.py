@@ -299,6 +299,27 @@ def digisum(a, b, carry):
     return result
 
 
+def leading_digit(n):
+    """Returns the leading digit of `n`
+    """
+    # str manipulation is slow
+    #first_digit = int(str(n)[0])
+    shifted = n / 10
+    while shifted > 0:
+        n = shifted
+        shifted /= 10
+    first_digit = n
+
+    return first_digit
+
+
+def trailing_digit(n):
+    """Returns the trailing digit of `n`
+    """
+    last_digit = n % 10
+    return last_digit
+
+
 def reversed_int(n):
     """Returns an integer with the digits in `n` reversed
     """
@@ -336,9 +357,6 @@ REVERSIBLE_MEMO = {}
 def is_reversible(n):
     """Determines if n is a reversible number
 
-    `memo_gc_auto` - automatically clean up the REVERSIBLE_MEMO dict if True
-    Resets every power of 10
-
     Reversible numbers:
     36 + 63 = 99
     409 + 904 = 1313
@@ -346,8 +364,8 @@ def is_reversible(n):
     Test cases:
     - 145
     """
-    first_digit = int(str(n)[0])
-    last_digit = n % 10
+    first_digit = leading_digit(n)
+    last_digit = trailing_digit(n)
     n2 = reversed_int(n)
 
     if n in REVERSIBLE_MEMO:
@@ -355,7 +373,8 @@ def is_reversible(n):
     elif last_digit == 0:
         # the reversed number would have a leading 0, which is not allowed
         reversible = False
-    elif is_even((first_digit + last_digit) % 10):
+    elif (is_even(first_digit) and is_even(last_digit)) or (is_odd(first_digit) and is_odd(last_digit)):
+        # the first and last digit summed would be an even number
         reversible = False
     else:
         def _check_digits_slow():
