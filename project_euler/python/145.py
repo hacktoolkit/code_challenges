@@ -12,17 +12,20 @@ Solution by jontsai <hello@jontsai.com>
 """
 from utils import *
 
+#LIMIT = 10**2
+#EXPECTED_ANSWER = 20
+
 #LIMIT = 10**3
 #EXPECTED_ANSWER = 120
 
 #LIMIT = 10**4
 #EXPECTED_ANSWER = 720 # 6x previous
 
-#LIMIT = 10**5
-#EXPECTED_ANSWER = 720 # 1x previous
+# LIMIT = 10**5
+# EXPECTED_ANSWER = 720 # 1x previous
 
-#LIMIT = 10**6
-#EXPECTED_ANSWER = 18720 # 18x previous
+# LIMIT = 10**6
+# EXPECTED_ANSWER = 18720 # 18x previous
 
 #LIMIT = 10**7
 #EXPECTED_ANSWER = 68720 # 3x previous

@@ -373,6 +373,8 @@ def is_reversible(n):
     elif last_digit == 0:
         # the reversed number would have a leading 0, which is not allowed
         reversible = False
+    elif n2 in REVERSIBLE_MEMO:
+        reversible = REVERSIBLE_MEMO[n2]
     elif (is_even(first_digit) and is_even(last_digit)) or (is_odd(first_digit) and is_odd(last_digit)):
         # the first and last digit summed would be an even number
         reversible = False
@@ -412,8 +414,12 @@ def is_reversible(n):
         #reversible = _check_digits_slow()
         reversible = _check_digits_fast()
 
-        REVERSIBLE_MEMO[n] = reversible
+        # update memo for reverse(n)
         REVERSIBLE_MEMO[n2] = reversible
+    
+    # always update memo for `n`
+    REVERSIBLE_MEMO[n] = reversible
+
     return reversible
 
 
