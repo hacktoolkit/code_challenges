@@ -24,7 +24,7 @@ def pattern_match_factory(pattern):
     return pattern_matcher
 
 
-def _solve_brute_force(pattern):
+def _solve_brute_force1(pattern):
     """Brute force solution
     Very inefficient, takes approx 10 minutes
     """
@@ -56,6 +56,51 @@ def _solve_brute_force(pattern):
     return answer
 
 
+def _solve_brute_force2(pattern):
+    """Brute force solution
+
+    Since the last 3 digits of the square are `9_0`, the number must end in 30 or 70
+
+    Better than _solve_brute_force1 by factor of 5x (?)
+    - 5x increase from only testing 2 numbers per 100, instead of 10 numbers per 100
+
+    real	0m31.459s
+    user	0m31.159s
+    sys	0m0.023s
+    """
+    answer = None
+    pattern_matcher = pattern_match_factory(pattern)
+
+    # the answer lies somewhere between sqrt(min_square) and sqrt(max_square)
+    min_square = int('0'.join(pattern.split('_')))
+    max_square = int('9'.join(pattern.split('_')))
+
+    lower = int(math.floor(math.sqrt(min_square)))
+    upper = int(math.ceil(math.sqrt(max_square)))
+
+    lower = lower - (lower % 100)
+    upper = upper - (upper % 100)
+
+    suffixes = [30, 70,]
+
+    guess_prefix = lower
+
+    while guess_prefix <= upper:
+        for suffix in suffixes:
+            guess = guess_prefix + suffix
+            square = guess * guess
+            #print guess, upper, square
+            if pattern_matcher(square):
+                answer = guess
+                break
+
+        # optimizations
+        # the last two digits are fixed, so advance by 10
+        guess_prefix += 100
+
+    return answer
+
+
 def _solve_efficiently(pattern):
     """Idea: like picking a lock, solve one level at a time, right to left
 
@@ -74,7 +119,8 @@ def solve():
     answer = None
     pattern = '1_2_3_4_5_6_7_8_9_0'
 
-    answer = _solve_brute_force(pattern)
+    #answer = _solve_brute_force1(pattern)
+    answer = _solve_brute_force2(pattern)
     #answer = _solve_efficiently(pattern)
 
     return answer
