@@ -1,3 +1,4 @@
+"""
 http://projecteuler.net/problem=078
 
 Coin partitions
@@ -21,3 +22,22 @@ O   O   O   O   O
 
 
 Find the least value of n for which p(n) is divisible by one million.
+
+
+Solution by jontsai <hello@jontsai.com>
+"""
+from utils import *
+
+EXPECTED_ANSWER = 0
+
+def solve():
+    answer = None
+    return answer
+
+def main():
+    answer = solve()
+
+    print 'Expected: %s, Answer: %s' % (EXPECTED_ANSWER, answer)
+
+if __name__ == '__main__':
+    main()
