@@ -19,10 +19,13 @@ Solution by jontsai <hello@jontsai.com>
 """
 from utils import *
 
+
 EXPECTED_ANSWER = 427337
+
 
 NUM_ROWS = 80
 NUM_COLS = 80
+
 
 def get_matrix():
     #matrix_file = 'test_matrix.txt'
@@ -38,9 +41,11 @@ def get_matrix():
     assert(len(matrix) == NUM_ROWS)
     return matrix
 
+
 MEMO = []
 for i in xrange(NUM_ROWS):
     MEMO.append([None] * 80)
+
 
 def min_path_sum(matrix, i, j):
     if MEMO[i][j] is not None:
@@ -62,6 +67,7 @@ def min_path_sum(matrix, i, j):
         MEMO[i][j] = answer
     return answer
 
+
 def solve():
     matrix = get_matrix()
     for i in xrange(NUM_ROWS):
@@ -69,6 +75,8 @@ def solve():
             answer = min_path_sum(matrix, i, j)
     return answer
 
+
 answer = solve()
+
 
 print 'Expected: %s, Answer: %s' % (EXPECTED_ANSWER, answer)
