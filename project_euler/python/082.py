@@ -1,3 +1,4 @@
+"""
 http://projecteuler.net/problem=082
 
 Path sum: three ways
@@ -15,3 +16,24 @@ Minimal Path: 201 96 342 234 103 18
 
 Find the minimal path sum, in matrix.txt (right click and 'Save Link/Target As...'), a 31K text file containing a 80 by 80 matrix, from the left column to the right column.
 
+Solution by jontsai <hello@jontsai.com>
+"""
+from utils import *
+
+
+EXPECTED_ANSWER = 0
+
+
+def solve():
+    answer = None
+    return answer
+
+
+def main():
+    answer = solve()
+
+    print 'Expected: %s, Answer: %s' % (EXPECTED_ANSWER, answer)
+
+
+if __name__ == '__main__':
+    main()
