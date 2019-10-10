@@ -63,6 +63,25 @@ def reduce(n, d):
     return reduce_fraction(n, d)
 
 
+def power(x, n):
+    """Computes x^n fast by using the squaring method
+
+    https://en.wikipedia.org/wiki/Exponentiation_by_squaring
+
+    Test cases:
+    - 099
+    """
+    result = 1
+    while n != 0:
+        if is_odd(n):
+            result *= x
+            n -= 1
+        x *= x
+        n /= 2
+
+    return result
+
+
 def lcm(num_list):
     """Finds the lcm of a list of numbers
 
