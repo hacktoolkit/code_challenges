@@ -12,39 +12,61 @@ Solution by jontsai <hello@jontsai.com>
 """
 from utils import *
 
-#LIMIT = 10**2
-#EXPECTED_ANSWER = 20
 
-#LIMIT = 10**3
-#EXPECTED_ANSWER = 120
-
-#LIMIT = 10**4
-#EXPECTED_ANSWER = 720 # 6x previous
-
-#LIMIT = 10**5
-#EXPECTED_ANSWER = 720 # 1x previous
-
-#LIMIT = 10**6
-#EXPECTED_ANSWER = 18720 # 26x previous
-
-#LIMIT = 10**7
-#EXPECTED_ANSWER = 68720 # 3x previous
-
-# TODO:
-LIMIT = 10**9
 EXPECTED_ANSWER = 0
 
-reversible_count = 0
 
-reversible_dict = {}
+def solve():
+    global EXPECTED_ANSWER
 
-for n in xrange(1, LIMIT + 1):
-    if n % 10**6 == 0:
-        # print progress
-        print n
-    if is_reversible(n):
-        reversible_count += 1
+    # LIMIT = 10**2
+    # EXPECTED_ANSWER = 20
 
-answer = reversible_count
+    # LIMIT = 10**3
+    # EXPECTED_ANSWER = 120
 
-print 'Expected: %s, Answer: %s' % (EXPECTED_ANSWER, answer)
+    # LIMIT = 10**4
+    # EXPECTED_ANSWER = 720 # 6x previous
+
+    # LIMIT = 10**5
+    # EXPECTED_ANSWER = 720 # 1x previous
+
+    # LIMIT = 10**6
+    # EXPECTED_ANSWER = 18720 # 26x previous
+    
+    # LIMIT = 10**7
+    # EXPECTED_ANSWER = 68720 # no relationship to previous
+
+    # LIMIT = 10**8
+    # EXPECTED_ANSWER = 608720 # no relationship to previous
+
+    # TODO:
+    LIMIT = 10**9
+    EXPECTED_ANSWER = 0 # ???
+
+    # re-initialize the global `REVERSIBLE_MEMO` to be a fixed array for faster lookups
+    global REVERSIBLE_MEMO
+    REVERSIBLE_MEMO = [None] * LIMIT
+
+    reversible_count = 0
+
+    for n in xrange(1, LIMIT + 1):
+        if n % 10**6 == 0:
+            # print progress
+            print n
+        if is_reversible(n):
+            reversible_count += 1
+
+    answer = reversible_count
+
+    return answer
+
+
+def main():
+    answer = solve()
+
+    print 'Expected: %s, Answer: %s' % (EXPECTED_ANSWER, answer)
+
+
+if __name__ == '__main__':
+    main()
