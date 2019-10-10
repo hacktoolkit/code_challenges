@@ -47,7 +47,7 @@ for i in xrange(NUM_ROWS):
     MEMO.append([None] * 80)
 
 
-def min_path_sum(matrix, i, j):
+def min_path_sum2(matrix, i, j):
     if MEMO[i][j] is not None:
         answer = MEMO[i][j]
     else:
@@ -55,13 +55,13 @@ def min_path_sum(matrix, i, j):
         if i == 0 and j == 0:
             answer = current_value
         elif i == 0:
-            answer = current_value + min_path_sum(matrix, i, j - 1)
+            answer = current_value + min_path_sum2(matrix, i, j - 1)
         elif j == 0:
-            answer = current_value + min_path_sum(matrix, i - 1, j)
+            answer = current_value + min_path_sum2(matrix, i - 1, j)
         else:
             sub_problem = min(
-                min_path_sum(matrix, i, j - 1),
-                min_path_sum(matrix, i - 1, j)
+                min_path_sum2(matrix, i, j - 1),
+                min_path_sum2(matrix, i - 1, j)
             )
             answer = current_value + sub_problem
         MEMO[i][j] = answer
@@ -72,7 +72,7 @@ def solve():
     matrix = get_matrix()
     for i in xrange(NUM_ROWS):
         for j in xrange(NUM_COLS):
-            answer = min_path_sum(matrix, i, j)
+            answer = min_path_sum2(matrix, i, j)
     return answer
 
 
