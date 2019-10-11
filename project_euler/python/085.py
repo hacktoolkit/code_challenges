@@ -15,51 +15,82 @@ Although there exists no rectangular grid that contains exactly two million rect
 
 Solution by jontsai <hello@jontsai.com>
 """
-import math
+from collections import namedtuple
 
 from utils import *
 
-EXPECTED_ANSWER = 0
 
-MEMO = {}
+EXPECTED_ANSWER = 2772
 
-def get_subrectangles(m, n):
-    m, n = (max(m, n), min(m, n))
+
+def count_rectangles(m, n):
+    """Returns the number of sub-rectangles in a rectangular grid of size m x n
+    """
+    def _place_subrectangles(mm, nn):
+        """Returns the number of ways an mm x nn sub-rectangle can be placed within the larger m x n rectagle
+        """
+        num_placements = 0
+
+        # TODO: use maths to make more efficient
+        for i in xrange(m + 1):
+            for j in xrange(n + 1):
+                if i - mm >= 0 and j - nn >= 0:
+                    num_placements += 1
+        return num_placements
+
     num_rectangles = 0
-    if m <= 0 or n <= 0:
-        num_rectangles = 0
-    elif m == 1:
-        num_rectangles = sum([math.ceil(n / (n - j)) for j in xrange(n)])
-    elif n == 1:
-        num_rectangles = sum([math.ciel(m / (m - i)) for i in xrange(m)])
-    else:
-        # number of subrectangles in (m * n) =
-        #   number of unique unit rectangles in this level: m + n - 1
-        #   number of row-wise: m
-        #   number of col-wise: n
-        #
-        parts = (
-            # number of subrectangles in smaller problem: get_subrectangles(m - 1, n - 1)
-            get_subrectangles(m - 1, n - 1),
-            # number of unique unit rectangles in this level: m + n - 1
-            m + n - 1,
-            # number of new subrectangles formed by (m * (n - j)) for j = [0, n)
-            m * sum([math.ceil(n / (n - j)) for j in xrange(n)]),
-            # number of new subrectangles formed by (n * (m - i)) for i = [0, m)
-            sum([math.ciel(m / (m - i)) for i in xrange(m)]),
-            # number of new subrectangles sized (m - 1, n - 1): 3
-            3,
-        )
-        num_rectangles = sum(parts)
+
+    for i in xrange(m, 0, -1):
+        for j in xrange(n, 0, -1):
+            num_rectangles += _place_subrectangles(i, j)
+
     return num_rectangles
 
+
 def solve():
-    for i in xrange(3):
-        for j in xrange(3):
-            answer = get_subrectangles(i, j)
-            print i, j, answer
+    target = 2 * 10**6
+
+    memo = {}
+
+    best_so_far = None
+
+    Result = namedtuple('result', 'm n num_rectangles delta')
+
+
+    # 1x2000 grid will already exceed 2M sub-rectangles
+    for i in xrange(2001):
+        for j in xrange(2001):
+            m, n = (min(i, j), max(i, j),)
+
+            key = '%sx%s' % (m, n,)
+            if key in memo:
+                num_rectangles = memo[key]
+            else:
+                num_rectangles = count_rectangles(m, n)
+                memo[key] = num_rectangles
+
+            delta = abs(target - num_rectangles)
+            result = Result(m, n, num_rectangles, delta)
+            print result
+
+            if best_so_far is None or delta < best_so_far.delta:
+                best_so_far = result
+
+            if num_rectangles > target:
+                break
+
+        # TODO: optimize this loop by breaking earlier
+
+    print best_so_far
+    answer = best_so_far.m * best_so_far.n
     return answer
 
-answer = solve()
 
-print 'Expected: %s, Answer: %s' % (EXPECTED_ANSWER, answer)
+def main():
+    answer = solve()
+
+    print 'Expected: %s, Answer: %s' % (EXPECTED_ANSWER, answer)
+
+
+if __name__ == '__main__':
+    main()
