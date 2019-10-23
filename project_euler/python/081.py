@@ -23,11 +23,14 @@ from utils import *
 class Solution:
     EXPECTED_ANSWER = 427337
 
+
+    # MATRIX_INPUT_FILE = 'p081_test_matrix.txt'
+    # NUM_ROWS = 5
+    # NUM_COLS = 5
+
+    MATRIX_INPUT_FILE = 'p081_matrix.txt'
     NUM_ROWS = 80
     NUM_COLS = 80
-
-    #MATRIX_INPUT_FILE = 'test_matrix.txt'
-    MATRIX_INPUT_FILE = 'p081_matrix.txt'
 
     def __init__(self):
         self.matrix = self.get_matrix()
