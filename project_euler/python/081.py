@@ -20,63 +20,69 @@ Solution by jontsai <hello@jontsai.com>
 from utils import *
 
 
-EXPECTED_ANSWER = 427337
+class Solution:
+    EXPECTED_ANSWER = 427337
 
+    NUM_ROWS = 80
+    NUM_COLS = 80
 
-NUM_ROWS = 80
-NUM_COLS = 80
+    #MATRIX_INPUT_FILE = 'test_matrix.txt'
+    MATRIX_INPUT_FILE = 'p081_matrix.txt'
 
+    def __init__(self):
+        self.matrix = self.get_matrix()
 
-def get_matrix():
-    #matrix_file = 'test_matrix.txt'
-    matrix_file = 'p081_matrix.txt'
-    f = open(matrix_file, 'r')
-    lines = f.readlines()
-    matrix = []
-    for line in lines:
-        row = [int(x) for x in line.strip().split(',')]
-        assert(len(row) == NUM_COLS)
-        matrix.append(row)
-    f.close()
-    assert(len(matrix) == NUM_ROWS)
-    return matrix
+        self.memo = []
+        for i in xrange(self.NUM_ROWS):
+            self.memo.append([None] * 80)
 
+    def get_matrix(self):
+        f = open(self.MATRIX_INPUT_FILE, 'r')
+        lines = f.readlines()
+        matrix = []
+        for line in lines:
+            row = [int(x) for x in line.strip().split(',')]
+            assert(len(row) == self.NUM_COLS)
+            matrix.append(row)
+            f.close()
+        assert(len(matrix) == self.NUM_ROWS)
+        return matrix
 
-MEMO = []
-for i in xrange(NUM_ROWS):
-    MEMO.append([None] * 80)
+    def solve(self):
+        for i in xrange(self.NUM_ROWS):
+            for j in xrange(self.NUM_COLS):
+                answer = self.min_path_sum2(i, j)
+        return answer
 
+    def min_path_sum2(self, i, j):
+        matrix = self.matrix
 
-def min_path_sum2(matrix, i, j):
-    if MEMO[i][j] is not None:
-        answer = MEMO[i][j]
-    else:
-        current_value = matrix[i][j]
-        if i == 0 and j == 0:
-            answer = current_value
-        elif i == 0:
-            answer = current_value + min_path_sum2(matrix, i, j - 1)
-        elif j == 0:
-            answer = current_value + min_path_sum2(matrix, i - 1, j)
+        if self.memo[i][j] is not None:
+            answer = self.memo[i][j]
         else:
-            sub_problem = min(
-                min_path_sum2(matrix, i, j - 1),
-                min_path_sum2(matrix, i - 1, j)
-            )
-            answer = current_value + sub_problem
-        MEMO[i][j] = answer
-    return answer
+            current_value = matrix[i][j]
+            if i == 0 and j == 0:
+                answer = current_value
+            elif i == 0:
+                answer = current_value + self.min_path_sum2(i, j - 1)
+            elif j == 0:
+                answer = current_value + self.min_path_sum2(i - 1, j)
+            else:
+                sub_problem = min(
+                    self.min_path_sum2(i, j - 1),
+                    self.min_path_sum2(i - 1, j)
+                )
+                answer = current_value + sub_problem
+                self.memo[i][j] = answer
+        return answer
 
 
-def solve():
-    matrix = get_matrix()
-    for i in xrange(NUM_ROWS):
-        for j in xrange(NUM_COLS):
-            answer = min_path_sum2(matrix, i, j)
-    return answer
+def main():
+    solution = Solution()
+    answer = solution.solve()
+
+    print 'Expected: %s, Answer: %s' % (Solution.EXPECTED_ANSWER, answer)
 
 
-answer = solve()
-
-
-print 'Expected: %s, Answer: %s' % (EXPECTED_ANSWER, answer)
+if __name__ == '__main__':
+    main()
