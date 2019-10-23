@@ -20,7 +20,7 @@ Solution by jontsai <hello@jontsai.com>
 from utils import *
 
 
-class Solution:
+class Solution(object):
     EXPECTED_ANSWER = 427337
 
 
