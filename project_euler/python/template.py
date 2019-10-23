@@ -4,12 +4,11 @@ Solution by jontsai <hello@jontsai.com>
 from utils import *
 
 
-class Solution:
+class Solution(object):
     EXPECTED_ANSWER = 0
 
     def __init__(self):
         pass
-
     
     def solve(self):
         answer = None
