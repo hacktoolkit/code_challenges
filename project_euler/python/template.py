@@ -4,18 +4,23 @@ Solution by jontsai <hello@jontsai.com>
 from utils import *
 
 
-EXPECTED_ANSWER = 0
+class Solution:
+    EXPECTED_ANSWER = 0
 
+    def __init__(self):
+        pass
 
-def solve():
-    answer = None
-    return answer
+    
+    def solve(self):
+        answer = None
+        return answer
 
 
 def main():
-    answer = solve()
+    solution = Solution()
+    answer = solution.solve()
 
-    print 'Expected: %s, Answer: %s' % (EXPECTED_ANSWER, answer)
+    print 'Expected: %s, Answer: %s' % (Solution.EXPECTED_ANSWER, answer)
 
 
 if __name__ == '__main__':
