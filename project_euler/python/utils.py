@@ -1,3 +1,5 @@
+# coding=utf-8
+
 import math
 
 from constants import *
@@ -818,13 +820,13 @@ def is_palindromic(n):
 def is_lychrel_number(n, iterations=50):
     """Determines if a number is a Lychrel number within `iterations`
     """
-    summation = n
+    _summation = n
     found_palindrome = False
     count = 0
     while not found_palindrome and count < iterations:
-        reversed_digits = int(''.join(reversed(digits(summation, string=True))))
-        summation += reversed_digits
-        if is_palindromic(str(summation)):
+        reversed_digits = int(''.join(reversed(digits(_summation, string=True))))
+        _summation += reversed_digits
+        if is_palindromic(str(_summation)):
             found_palindrome = True
             break
         else:
@@ -907,8 +909,8 @@ def sum_digits(n):
     - 056
     """
     digits_n = digits(n)
-    summation = sum(digits_n)
-    return summation
+    result = sum(digits_n)
+    return result
 
 
 def has_even_digits(n):
@@ -1059,6 +1061,19 @@ def prime_permutations(n):
     permutations_of_n = numeric_permutations(n)
     prime_permutations_of_n = filter(is_prime, permutations_of_n)
     return prime_permutations_of_n
+
+
+def summation(series, f):
+    """Calculations the summation of a `series` with function `f`
+
+    aka "Capital-sigma notation"
+
+    https://en.wikipedia.org/wiki/Summation
+    https://en.wikipedia.org/wiki/Arithmetic_function#Notation
+    """
+    values = (f(value) for value in series)
+    result = sum(values)
+    return result
 
 
 def arithmetic_series_subset(num_list):
