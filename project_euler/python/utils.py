@@ -47,6 +47,27 @@ def gcd_modulo(a, b):
 
 def gcd(a, b):
     return gcd_modulo(a, b)
+    return result
+
+
+def is_relatively_prime(a, b):
+    result = gcd(a, b) == 1
+    return result
+
+
+def phi(n):
+    """Euler's Totient function
+
+    Test cases:
+    - 069
+    """
+    # 1 is always relatively prime to `n`
+    num_relative_primes = 1
+    for k in xrange(2, n):
+        if is_relatively_prime(n, k):
+            num_relative_primes += 1
+
+    return num_relative_primes
 
 
 def reduce_fraction(numerator, denominator):

@@ -26,17 +26,37 @@ Find the value of n <= 1,000,000 for which n/φ(n) is a maximum.
 
 Solution by jontsai <hello@jontsai.com>
 """
+from collections import namedtuple
+
 from utils import *
 
 
 class Solution(object):
+    # TARGET = 10
+    # EXPECTED_ANSWER = 6
+
+    TARGET = 10**6
     EXPECTED_ANSWER = 0
 
     def __init__(self):
         pass
-    
+
     def solve(self):
-        answer = None
+        Result = namedtuple('Result', 'n phi_ratio')
+        best_so_far = None
+
+        for n in xrange(2, Solution.TARGET + 1):
+            if n % 1000 == 0:
+                print n
+            phi_result = phi(n)
+            phi_ratio =  n * 1.0 / phi_result
+
+            #print n, phi_result, phi_ratio
+
+            if best_so_far is None or phi_ratio > best_so_far.phi_ratio:
+                best_so_far = Result(n, phi_ratio)
+
+        answer = best_so_far.n
         return answer
 
 
