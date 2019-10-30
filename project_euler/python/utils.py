@@ -1,6 +1,7 @@
 # coding=utf-8
 
 import math
+import operator
 
 from constants import *
 
@@ -83,12 +84,6 @@ def reduce_fraction(numerator, denominator):
     _gcd = gcd(numerator, denominator)
     reduced = (numerator / _gcd, denominator / _gcd,)
     return reduced
-
-
-def reduce(n, d):
-    """Alias for reduce_fraction
-    """
-    return reduce_fraction(n, d)
 
 
 def power(x, n):
@@ -1073,6 +1068,12 @@ def summation(series, f):
     """
     values = (f(value) for value in series)
     result = sum(values)
+    return result
+
+
+def product_sequence(series, f):
+    values = (f(value) for value in series)
+    result = reduce(operator.mul, values)
     return result
 
 
