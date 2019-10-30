@@ -32,11 +32,11 @@ from utils import *
 
 
 class Solution(object):
-    # TARGET = 10
-    # EXPECTED_ANSWER = 6
+    TARGET = 10
+    EXPECTED_ANSWER = 6
 
-    TARGET = 10**6
-    EXPECTED_ANSWER = 0
+    # TARGET = 10**6
+    # EXPECTED_ANSWER = 0
 
     def __init__(self):
         pass

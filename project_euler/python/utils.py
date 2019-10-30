@@ -61,6 +61,11 @@ def phi(n):
     Test cases:
     - 069
     """
+    return phi_naive(n)
+
+def phi_naive(n):
+    """Naive implementation of Euler's Totient function
+    """
     # 1 is always relatively prime to `n`
     num_relative_primes = 1
     for k in xrange(2, n):
