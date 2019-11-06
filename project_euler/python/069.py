@@ -32,11 +32,11 @@ from utils import *
 
 
 class Solution(object):
-    TARGET = 10
-    EXPECTED_ANSWER = 6
+    # TARGET = 10
+    # EXPECTED_ANSWER = 6
 
-    # TARGET = 10**6
-    # EXPECTED_ANSWER = 0
+    TARGET = 10**6
+    EXPECTED_ANSWER = 510510
 
     def __init__(self):
         pass
@@ -45,13 +45,35 @@ class Solution(object):
         Result = namedtuple('Result', 'n phi_ratio')
         best_so_far = None
 
+        primes = generate_primes(Solution.TARGET)
+
+        def _calculate_phi_ratio(n):
+            #phi_ratio =  n * 1.0 / phi(n, memoize=True)
+            #
+            # optimizations:
+            # - don't multiply by n when calculating phi, since it is a common factor
+            # - since we are dividing, just calculate the product_sequence of (p / (p - 1))
+
+            if n == 2:
+                phi_ratio = 1
+            else:
+                prime_divisors = []
+                # use a for loop instead of list comprehension in order to break early
+                for p in primes:
+                    if n % p == 0:
+                        prime_divisors.append(p)
+                    if p > n:
+                        break
+
+                phi_ratio = product_sequence(prime_divisors, lambda p: 1.0 * p / (p - 1))
+
+            return phi_ratio
+
         for n in xrange(2, Solution.TARGET + 1):
             if n % 1000 == 0:
                 print n
-            phi_result = phi(n)
-            phi_ratio =  n * 1.0 / phi_result
 
-            #print n, phi_result, phi_ratio
+            phi_ratio = _calculate_phi_ratio(n)
 
             if best_so_far is None or phi_ratio > best_so_far.phi_ratio:
                 best_so_far = Result(n, phi_ratio)

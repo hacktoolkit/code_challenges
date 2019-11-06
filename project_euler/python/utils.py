@@ -54,20 +54,42 @@ def gcd(a, b):
 
 
 def is_relatively_prime(a, b):
+    """Determines whether `a` and `b` are relatively prime to each other ("coprime")
+    """
     result = gcd(a, b) == 1
     return result
 
 
-def phi(n):
+PHI_MEMO = {}
+def phi(n, memoize=False):
     """Euler's Totient function
+
+    https://en.wikipedia.org/wiki/Euler's_totient_function
 
     Test cases:
     - 069
     """
-    return phi_naive(n)
+    global PHI_MEMO
+
+    if memoize and n in PHI_MEMO:
+        result = PHI_MEMO[n]
+    else:
+        # result = phi_naive(n)
+        # result = phi_eulers_product(n)
+        result = phi_eulers_product_with_factorization(n, memoize=memoize)
+        if memoize:
+            PHI_MEMO[n] = result
+
+    return result
+
 
 def phi_naive(n):
     """Naive implementation of Euler's Totient function
+
+    https://en.wikipedia.org/wiki/Euler's_totient_function
+
+    Test cases:
+    - 069 (basic)
     """
     # 1 is always relatively prime to `n`
     num_relative_primes = 1
@@ -76,6 +98,51 @@ def phi_naive(n):
             num_relative_primes += 1
 
     return num_relative_primes
+
+
+def phi_eulers_product(n):
+    """Euler's Totient function using Euler's product formula
+
+    https://en.wikipedia.org/wiki/Euler's_totient_function
+
+    Euler's product formula states:
+
+        φ(n) = n * Π(p|n) (1 - 1/p)
+
+    Test cases:
+    - 069
+    """
+    primes_up_to_n = generate_primes(n)
+    # TODO: optimize
+    primes_dividing_n = filter(lambda p: n % p == 0, primes_up_to_n)
+
+    result = n * product_sequence(primes_dividing_n, lambda p: (1 - 1.0 / p))
+    return result
+
+
+def phi_eulers_product_with_factorization(n, memoize=False):
+    """Euler's Totient function using Euler's product formula with factorization
+
+    Test cases:
+    - 069
+    """
+    global PHI_MEMO
+
+    if memoize and n in PHI_MEMO:
+        result = PHI_MEMO[n]
+    else:
+        if is_prime(n):
+            distinct_factors = [n,]
+        else:
+            # TODO: optimize
+            # distinct_factors = factor(n, distinct=True)
+            distinct_factors = distinct_factors_memoized(n)
+
+        result = n * product_sequence(distinct_factors, lambda p: (1 - 1.0 / p))
+        if memoize:
+            PHI_MEMO[n] = result
+
+    return result
 
 
 def reduce_fraction(numerator, denominator):
@@ -778,7 +845,7 @@ def is_truncatable_prime(n):
     return truncatable
 
 
-def factor(n):
+def factor(n, distinct=False):
     """Get the factors of `n`
 
     E.g. numbers that evenly divide `n`
@@ -788,17 +855,63 @@ def factor(n):
     Test cases:
     - 003
     - 047
+    - 069
     """
     limit = int(math.sqrt(n))
-    primes = generate_primes(limit)
+    primes = filter(lambda p: p <= n, generate_primes(limit))
     divisors = []
     reduced = n
+
+    prev_prime = None
     for prime in primes[::-1]:
         while reduced % prime == 0:
             reduced /= prime
-            divisors.append(prime)
+            if distinct:
+                # set sentinel value
+                if prime != prev_prime:
+                    divisors.append(prime)
+                    prev_prime = prime
+            else:
+                divisors.append(prime)
+
     if reduced != 1:
         divisors.append(reduced)
+
+    return divisors
+
+
+DISTINCT_FACTORS_MEMO = {}
+def distinct_factors_memoized(n):
+    """
+    """
+    global DISTINCT_FACTORS_MEMO
+
+    if n in DISTINCT_FACTORS_MEMO:
+        divisors = DISTINCT_FACTORS_MEMO[n]
+    else:
+        divisors = []
+
+        limit = int(math.sqrt(n))
+        primes = filter(lambda p: p <= n, generate_primes(limit))
+
+        reduced = n
+
+        for prime in primes[::-1]:
+            is_divisible = reduced % prime == 0
+
+            if is_divisible:
+                divisors.append(prime)
+
+                while is_divisible:
+                    reduced /= prime
+                    is_divisible = reduced % prime == 0
+
+                if reduced in DISTINCT_FACTORS_MEMO:
+                    divisors += DISTINCT_FACTORS_MEMO[reduced]
+                    break
+
+        DISTINCT_FACTORS_MEMO[n] = divisors
+
     return divisors
 
 
@@ -1063,7 +1176,9 @@ def summation(series, f):
 
     aka "Capital-sigma notation"
 
-    https://en.wikipedia.org/wiki/Summation
+    Σ(f(n)) = f(k0) + f(k1) + f(k2) + ... + f(kn)
+
+    https://en.wikipedia.org/wiki/Summation#Capital-sigma_notation
     https://en.wikipedia.org/wiki/Arithmetic_function#Notation
     """
     values = (f(value) for value in series)
@@ -1072,6 +1187,14 @@ def summation(series, f):
 
 
 def product_sequence(series, f):
+    """Calculates the product sequence of a `series` of numbers 
+
+    aka "Capital-pi notation"
+
+    Π(f(n)) = f(k0) * f(k1) * f(k2) * ... * f(kn)
+
+    https://en.wikipedia.org/wiki/Arithmetic_function#Notation
+    """
     values = (f(value) for value in series)
     result = reduce(operator.mul, values)
     return result
