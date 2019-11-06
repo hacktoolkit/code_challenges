@@ -1,0 +1,20 @@
+# http://editorconfig.org
+# Properties: https://github.com/editorconfig/editorconfig/wiki/EditorConfig-Properties
+
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+end_of_line = lf
+
+# Docstrings and comments use max_line_length = 79
+[*.py]
+max_line_length = 119
+indent_size = 4
+
+[**.txt]
+max_line_length = 79
