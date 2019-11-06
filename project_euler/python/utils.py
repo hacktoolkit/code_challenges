@@ -642,6 +642,32 @@ def get_divisors(n):
     return divisors
 
 
+def get_prime_divisors(n):
+    """Get prime numbers that divide evenly into `n`
+
+    Test cases:
+    - 069
+    """
+    primes = generate_primes(n)
+
+    # prime_divisors = filter(lambda p: p <= n and n % p == 0, primes)
+
+    # use a for loop instead of list comprehension in order to break early
+    p = None
+    prime_divisors = []
+    for i in xrange(len(primes) + 1):
+        p = primes[i]
+        if n % p == 0:
+            prime_divisors.append(p)
+        if p * p > n:
+            break
+
+    if n in primes:
+        prime_divisors.append(n)
+
+    return prime_divisors
+
+
 FACT_MEMO = [1, 1]
 def factorial(n):
     """Computes n!

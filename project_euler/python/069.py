@@ -45,6 +45,7 @@ class Solution(object):
         Result = namedtuple('Result', 'n phi_ratio')
         best_so_far = None
 
+        # prime the global PRIMES memo
         primes = generate_primes(Solution.TARGET)
 
         def _calculate_phi_ratio(n):
@@ -57,14 +58,7 @@ class Solution(object):
             if n == 2:
                 phi_ratio = 1
             else:
-                prime_divisors = []
-                # use a for loop instead of list comprehension in order to break early
-                for p in primes:
-                    if n % p == 0:
-                        prime_divisors.append(p)
-                    if p > n:
-                        break
-
+                prime_divisors = get_prime_divisors(n)
                 phi_ratio = product_sequence(prime_divisors, lambda p: 1.0 * p / (p - 1))
 
             return phi_ratio
