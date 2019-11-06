@@ -630,6 +630,7 @@ def get_divisors(n):
 
     Test cases:
     - 012
+    - 179
     """
     divisors = []
     for k in xrange(1, int(math.sqrt(n)) + 1):
