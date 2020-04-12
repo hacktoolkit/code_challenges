@@ -1,5 +1,6 @@
 # coding=utf-8
 
+# Python Standard Library Imports
 import math
 import operator
 
@@ -53,11 +54,14 @@ def gcd(a, b):
     return result
 
 
-def is_relatively_prime(a, b):
-    """Determines whether `a` and `b` are relatively prime to each other ("coprime")
+def is_coprime(a, b):
+    """Determines whether `a` and `b` are relatively prime to each other
     """
     result = gcd(a, b) == 1
     return result
+
+def is_relatively_prime(a, b):
+    return is_coprime(a, b)
 
 
 PHI_MEMO = {}
@@ -525,7 +529,7 @@ def is_reversible(n):
 
         # update memo for reverse(n)
         REVERSIBLE_MEMO[n2] = reversible
-    
+
     # always update memo for `n`
     REVERSIBLE_MEMO[n] = reversible
 
@@ -745,7 +749,7 @@ def generate_primes(n):
         # generate the next batch of numbers to sieve
         # always increment by 2, since primes cannot be even
         num_range = xrange(lower, upper + 1, 2)
-        local_memo = dict(zip(num_range, [True] * len(num_range))) 
+        local_memo = dict(zip(num_range, [True] * len(num_range)))
 
         # mark off the composite numbers, sieve style
         for k in PRIMES:
@@ -1214,7 +1218,7 @@ def summation(series, f):
 
 
 def product_sequence(series, f):
-    """Calculates the product sequence of a `series` of numbers 
+    """Calculates the product sequence of a `series` of numbers
 
     aka "Capital-pi notation"
 
