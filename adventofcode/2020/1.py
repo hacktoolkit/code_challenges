@@ -9,8 +9,7 @@ def solve():
 
     TARGET_SUM = 2020
 
-    a = None
-    b = None
+    a, b = None, None
 
     for i in range(len(numbers)):
         for j in range(len(numbers)):
