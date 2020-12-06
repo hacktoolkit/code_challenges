@@ -13,23 +13,24 @@ EXPECTED_ANSWERS = (250, 158, )
 
 
 def main():
-    answers = (solve1(), solve2(), )
+    solution = Solution()
+    answers = (solution.solve1(), solution.solve2(), )
     print(answers)
     assert(answers == EXPECTED_ANSWERS)
 
 
-def solve1():
-    data = ingest(INPUT_FILE, as_groups=True)
-    passports = [Passport(lines) for lines in data]
-    answer = len(filter(lambda passport: passport.is_valid1, passports))
-    return answer
+class Solution:
+    def __init__(self):
+        self.data = ingest(INPUT_FILE, as_groups=True)
+        self.passports = [Passport(lines) for lines in self.data]
 
+    def solve1(self):
+        answer = len(filter(lambda passport: passport.is_valid1, self.passports))
+        return answer
 
-def solve2():
-    data = ingest(INPUT_FILE, as_groups=True)
-    passports = [Passport(lines) for lines in data]
-    answer = len(filter(lambda passport: passport.is_valid2, passports))
-    return answer
+    def solve2(self):
+        answer = len(filter(lambda passport: passport.is_valid2, self.passports))
+        return answer
 
 
 def is_valid_height(hgt):
