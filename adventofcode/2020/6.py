@@ -1,30 +1,23 @@
+from utils import ingest
+
+
 INPUT_FILE = '6.in'
+EXPECTED_ANSWERS = (6437, 3229, )
+
 # INPUT_FILE = '6.test.in'
+# EXPECTED_ANSWERS = (11, 6, )
 
 
 def main():
-    answer1 = solve1()
-    answer2 = solve2()
-    print(answer1, answer2)
+    answers = (solve1(), solve2(), )
+    print(answers)
+    assert(answers == EXPECTED_ANSWERS)
 
 
 def solve1():
-    data = ingest()
+    data = ingest(INPUT_FILE, as_groups=True)
 
-    groups = []
-
-    group = None
-    for line in data:
-        if group is None:
-            group = Group()
-        if line:
-            group.add_line(line)
-        else:
-            groups.append(group)
-            group = None
-
-    if group:
-        groups.append(group)
+    groups = [Group(lines) for lines in data]
 
     scores = [group.num_yes_answers for group in groups]
     answer = sum(scores)
@@ -32,22 +25,9 @@ def solve1():
 
 
 def solve2():
-    data = ingest()
+    data = ingest(INPUT_FILE, as_groups=True)
 
-    groups = []
-
-    group = None
-    for line in data:
-        if group is None:
-            group = Group()
-        if line:
-            group.add_line(line)
-        else:
-            groups.append(group)
-            group = None
-
-    if group:
-        groups.append(group)
+    groups = [Group(lines) for lines in data]
 
     scores = [group.num_shared_yes_answers for group in groups]
     answer = sum(scores)
@@ -55,11 +35,8 @@ def solve2():
 
 
 class Group:
-    def __init__(self):
-        self.lines = []
-
-    def add_line(self, line):
-        self.lines.append(line)
+    def __init__(self, lines):
+        self.lines = lines
 
     @property
     def yes_answers(self):
@@ -90,12 +67,6 @@ class Group:
     @property
     def num_shared_yes_answers(self):
         return len(self.shared_yes_answers)
-
-
-def ingest():
-    with open(INPUT_FILE, 'r') as f:
-        data = [line.strip() for line in f.readlines()]
-    return data
 
 
 if __name__ == '__main__':
