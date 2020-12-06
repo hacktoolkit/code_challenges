@@ -10,38 +10,39 @@ EXPECTED_ANSWERS = (959, 527, )
 
 def main():
     # print(BoardingPass('FBFBBFFRLR').seat_id)
-    answers = (solve1(), solve2(), )
+    solution = Solution()
+    answers = (solution.solve1(), solution.solve2(), )
     print(answers)
     assert(answers == EXPECTED_ANSWERS)
 
 
-def solve1():
-    data = ingest(INPUT_FILE)
-    boarding_pass_seat_ids = [BoardingPass(code).seat_id for code in data]
-    answer = max(boarding_pass_seat_ids)
-    return answer
+class Solution:
+    def __init__(self):
+        self.data = ingest(INPUT_FILE)
+        self.boarding_pass_seat_ids = [BoardingPass(code).seat_id for code in self.data]
 
+    def solve1(self):
+        answer = max(self.boarding_pass_seat_ids)
+        return answer
 
-def solve2():
-    data = ingest(INPUT_FILE)
-    boarding_pass_seat_ids = [BoardingPass(code).seat_id for code in data]
-    unoccupied_seats = set(list(range(128 * 8))) - set(boarding_pass_seat_ids)
+    def solve2(self):
+        unoccupied_seats = set(list(range(128 * 8))) - set(self.boarding_pass_seat_ids)
 
-    # print(unoccupied_seats)
+        # print(unoccupied_seats)
 
-    answer = None
+        answer = None
 
-    prev_seat = None
-    for seat_id in unoccupied_seats:
-        if prev_seat is None:
-            prev_seat = seat_id
-        else:
-            if seat_id > prev_seat + 1:
-                answer = seat_id
-                break
-            prev_seat = seat_id
+        prev_seat = None
+        for seat_id in unoccupied_seats:
+            if prev_seat is None:
+                prev_seat = seat_id
+            else:
+                if seat_id > prev_seat + 1:
+                    answer = seat_id
+                    break
+                prev_seat = seat_id
 
-    return answer
+        return answer
 
 
 class BoardingPass:
