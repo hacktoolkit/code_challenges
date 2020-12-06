@@ -1,20 +1,46 @@
 # Python Standard Library Imports
 import math
 
+from utils import ingest
+
 
 INPUT_FILE = '5.in'
+EXPECTED_ANSWERS = (959, 527, )
 
 
 def main():
     # print(BoardingPass('FBFBBFFRLR').seat_id)
-    answer = solve()
-    print(answer)
+    answers = (solve1(), solve2(), )
+    print(answers)
+    assert(answers == EXPECTED_ANSWERS)
 
 
-def solve():
-    data = ingest()
+def solve1():
+    data = ingest(INPUT_FILE)
     boarding_pass_seat_ids = [BoardingPass(code).seat_id for code in data]
     answer = max(boarding_pass_seat_ids)
+    return answer
+
+
+def solve2():
+    data = ingest(INPUT_FILE)
+    boarding_pass_seat_ids = [BoardingPass(code).seat_id for code in data]
+    unoccupied_seats = set(list(range(128 * 8))) - set(boarding_pass_seat_ids)
+
+    # print(unoccupied_seats)
+
+    answer = None
+
+    prev_seat = None
+    for seat_id in unoccupied_seats:
+        if prev_seat is None:
+            prev_seat = seat_id
+        else:
+            if seat_id > prev_seat + 1:
+                answer = seat_id
+                break
+            prev_seat = seat_id
+
     return answer
 
 
@@ -64,12 +90,6 @@ def binary_walk(dirs, lower, upper):
     else:
         raise Exception('lower != upper, %s != %s' % (lower, upper))
     return result
-
-
-def ingest():
-    with open(INPUT_FILE, 'r') as f:
-        data = [line.strip() for line in f.readlines()]
-    return data
 
 
 if __name__ == '__main__':

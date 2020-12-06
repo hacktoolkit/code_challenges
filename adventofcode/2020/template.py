@@ -11,6 +11,7 @@ INPUT_FILE = 'n.in'
 def main():
     answers = (solve1(), solve2(), )
     print(answers)
+    assert(answers == EXPECTED_ANSWERS)
 
 
 def solve1():
