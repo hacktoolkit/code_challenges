@@ -9,21 +9,23 @@ EXPECTED_ANSWERS = (None, None, )
 
 
 def main():
-    answers = (solve1(), solve2(), )
+    solution = Solution()
+    answers = (solution.solve1(), solution.solve2(), )
     print(answers)
     assert(answers == EXPECTED_ANSWERS)
 
 
-def solve1():
-    data = ingest(INPUT_FILE)
-    answer = None
-    return answer
+class Solution:
+    def __init__(self):
+        self.data = ingest(INPUT_FILE)
 
+    def solve1(self):
+        answer = None
+        return answer
 
-def solve2():
-    data = ingest(INPUT_FILE)
-    answer = None
-    return answer
+    def solve2(self):
+        answer = None
+        return answer
 
 
 if __name__ == '__main__':
