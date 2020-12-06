@@ -1,76 +1,102 @@
+# Python Standard Library Imports
+import re
+
+from utils import ingest
+
+
 INPUT_FILE = '4.in'
+EXPECTED_ANSWERS = (250, 158, )
+
 # INPUT_FILE = '4.test.in'
+# INPUT_FILE = '4b.test.in'
+# EXPECTED_ANSWERS = (2, 4, )
 
 
 def main():
-    answer = solve()
-    print(answer)
+    answers = (solve1(), solve2(), )
+    print(answers)
+    assert(answers == EXPECTED_ANSWERS)
 
 
-def solve():
-    data = ingest()
-    passports = get_passports(data)
-    answer = len(filter(lambda passport: passport.is_valid, passports))
+def solve1():
+    data = ingest(INPUT_FILE, as_groups=True)
+    passports = [Passport(lines) for lines in data]
+    answer = len(filter(lambda passport: passport.is_valid1, passports))
     return answer
 
 
-def get_passports(data):
-    passports = []
+def solve2():
+    data = ingest(INPUT_FILE, as_groups=True)
+    passports = [Passport(lines) for lines in data]
+    answer = len(filter(lambda passport: passport.is_valid2, passports))
+    return answer
 
-    passport = None
 
-    for line in data:
-        if passport is None:
-            passport = Passport()
+def is_valid_height(hgt):
+    is_valid = False
 
-        if line:
-            fields = line.split()
-            passport.add_fields(fields)
+    m = re.match(r'^(?P<value>\d+)(?P<unit>(cm)|(in))$', hgt)
+    if m:
+        height = int(m.group('value'))
+        unit = m.group('unit')
+        if unit == 'cm':
+            is_valid = 150 <= height <= 193
+        elif unit == 'in':
+            is_valid = 59 <= height <= 76
         else:
-            passports.append(passport)
-            passport = None
+            raise Exception('invalid unit')
 
-    if passport:
-        passports.append(passport)
-
-    return passports
+    return is_valid
 
 
 class Passport:
-    REQUIRED_FIELDS = [
-        'byr',
-        'iyr',
-        'eyr',
-        'hgt',
-        'hcl',
-        'ecl',
-        'pid',
+    REQUIRED_FIELDS = {
+        'byr': lambda x: 1920 <= int(x) <= 2002,
+        'iyr': lambda x: 2010 <= int(x) <= 2020,
+        'eyr': lambda x: 2020 <= int(x) <= 2030,
+        'hgt': is_valid_height,
+        'hcl': lambda x: bool(re.match(r'^#[0-9a-f]{6}$', x)),
+        'ecl': lambda x: x in ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth'],
+        'pid': lambda x: bool(re.match(r'^[0-9]{9}$', x)),
         # 'cid',  # optional
-    ]
+    }
 
-    def __init__(self):
+    def __init__(self, lines):
         self.data = {}
 
-    def add_fields(self, fields):
-        for field in fields:
-            key, value = field.split(':')
-            self.data[key] = value
+        for line in lines:
+            fields = line.split()
+            for field in fields:
+                key, value = field.split(':')
+                self.data[key] = value
 
     @property
     def keys(self):
         return list(self.data.keys())
 
     @property
-    def is_valid(self):
+    def is_valid1(self):
         missing_keys = set(self.REQUIRED_FIELDS) - set(list(self.keys))
         is_valid = len(missing_keys) == 0
         return is_valid
 
+    @property
+    def is_valid2(self):
+        missing_keys = set((self.REQUIRED_FIELDS.keys())) - set(list(self.keys))
 
-def ingest():
-    with open(INPUT_FILE, 'r') as f:
-        data = [line.strip() for line in f.readlines()]
-    return data
+        if len(missing_keys) == 0:
+            is_valid = True
+
+            for key, rule in self.REQUIRED_FIELDS.items():
+                value = self.data[key]
+                if not rule(value):
+                    # print(key, value)
+                    is_valid = False
+                    break
+        else:
+            is_valid = False
+
+        return is_valid
 
 
 if __name__ == '__main__':

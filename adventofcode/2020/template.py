@@ -2,7 +2,7 @@ from utils import ingest
 
 
 INPUT_FILE = 'n.in'
-# EXPECTED_ANSWERS = (None, None, )
+EXPECTED_ANSWERS = (None, None, )
 
 # INPUT_FILE = 'n.test.in'
 # EXPECTED_ANSWERS = (None, None, )
