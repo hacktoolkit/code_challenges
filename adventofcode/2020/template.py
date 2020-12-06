@@ -1,6 +1,7 @@
 INPUT_FILE = 'n.in'
 # INPUT_FILE = 'n.test.in'
 
+
 def main():
     answer = solve()
     print(answer)
