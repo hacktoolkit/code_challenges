@@ -1,8 +1,11 @@
+# Python Standard Library Imports
+import copy
+
 from utils import ingest
 
 
 INPUT_FILE = '2.in'
-EXPECTED_ANSWERS = (4945026, None, )
+EXPECTED_ANSWERS = (4945026, 5296, )
 
 # INPUT_FILE = '2.test.in'
 # EXPECTED_ANSWERS = (3500, None, )
@@ -19,41 +22,62 @@ class Solution:
     def __init__(self):
         self.data = ingest(INPUT_FILE)
         self.numbers = [int(x) for x in ','.join(self.data).split(',')]
+        self.intcode_prog = IntcodeProg(self.numbers)
+
 
     def solve1(self):
-        self.numbers[1] = 12
-        self.numbers[2] = 2
-        self.run()
-        answer = self.numbers[0]
+        answer = self.intcode_prog.run(12, 2)
         return answer
 
     def solve2(self):
+        TARGET = 19690720
+
         answer = None
+
+        for noun in range(100):
+            for verb in range(100):
+                result = self.intcode_prog.run(noun, verb)
+                if result == TARGET:
+                    answer = 100 * noun + verb
+
         return answer
 
-    def run(self):
-        index = 0
-        while index < len(self.numbers):
+
+class IntcodeProg:
+    def __init__(self, instructions):
+        self.instructions = copy.copy(instructions)
+
+    def run(self, noun, verb):
+        instructions = copy.copy(self.instructions)
+
+        instructions[1] = noun
+        instructions[2] = verb
+
+        pointer = 0
+        while pointer < len(instructions):
             opcode, in1, in2, dest = (
-                self.numbers[index],
-                self.numbers[index + 1],
-                self.numbers[index + 2],
-                self.numbers[index + 3]
+                instructions[pointer],
+                instructions[pointer + 1],
+                instructions[pointer + 2],
+                instructions[pointer + 3]
             )
 
             if opcode in (1, 2):
-                val1, val2 = self.numbers[in1], self.numbers[in2]
+                val1, val2 = instructions[in1], instructions[in2]
                 if opcode == 1:
-                    self.numbers[dest] = val1 + val2
+                    instructions[dest] = val1 + val2
                 else:
-                    self.numbers[dest] = val1 * val2
+                    instructions[dest] = val1 * val2
 
             elif opcode == 99:
                 break
             else:
                 raise Exception('Unknown opcode: %s' % opcode)
 
-            index += 4
+            pointer += 4
+
+        result = instructions[0]
+        return result
 
 
 if __name__ == '__main__':
