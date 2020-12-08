@@ -1,4 +1,4 @@
-def ingest(filename, as_groups=False):
+def ingest(filename, as_groups=False, as_oneline=False):
     with open(filename, 'r') as f:
         lines = [line.strip() for line in f.readlines()]
 
@@ -17,6 +17,8 @@ def ingest(filename, as_groups=False):
 
         if group:
             data.append(group)
+    elif as_oneline:
+        data = ''.join(lines)
     else:
         data = lines
 

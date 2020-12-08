@@ -14,8 +14,8 @@ def main():
 
 class Solution:
     def __init__(self):
-        self.data = ingest(INPUT_FILE)
-        self.instructions = ''.join(self.data)
+        data = ingest(INPUT_FILE, as_oneline=True)
+        self.instructions = data
 
     def solve1(self):
         floor = 0

@@ -17,8 +17,8 @@ def main():
 
 class Solution:
     def __init__(self):
-        self.data = ingest(INPUT_FILE)
-        self.directions = ''.join(self.data)
+        data = ingest(INPUT_FILE, as_oneline=True)
+        self.directions = data
         self.delivery_map = DeliveryMap(self.directions)
 
     def solve1(self):
