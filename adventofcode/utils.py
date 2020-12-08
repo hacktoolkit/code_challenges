@@ -39,6 +39,21 @@ def ingest(filename, as_groups=False, as_oneline=False, as_table=False, cell_fun
     return data
 
 
+def transpose(matrix):
+    """Transposes a 2D array
+    """
+    transposed = [
+        [
+            matrix[j][i]
+            for j
+            in range(len(matrix))
+        ]
+        for i
+        in range(len(matrix[0]))
+    ]
+    return transposed
+
+
 class Re(object):
     def __init__(self):
         self.last_match = None
