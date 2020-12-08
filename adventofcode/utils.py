@@ -1,7 +1,8 @@
+# Python Standard Library Imports
 import re
 
 
-def ingest(filename, as_groups=False, as_oneline=False):
+def ingest(filename, as_groups=False, as_oneline=False, as_table=False, cell_func=None):
     with open(filename, 'r') as f:
         lines = [line.strip() for line in f.readlines()]
 
@@ -22,6 +23,16 @@ def ingest(filename, as_groups=False, as_oneline=False):
             data.append(group)
     elif as_oneline:
         data = ''.join(lines)
+    elif as_table:
+        data = []
+
+        for line in lines:
+            cells = list(filter(lambda x: x is not None, line.split()))
+
+            if cell_func:
+                cells = [cell_func(value) for value in cells]
+
+            data.append(cells)
     else:
         data = lines
 
