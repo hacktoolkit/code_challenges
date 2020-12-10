@@ -1,9 +1,14 @@
+# Python Standard Library Imports
+import json
 
-def ingest(filename, as_groups=False, as_oneline=False, as_table=False, cell_func=None):
+
+def ingest(filename, as_json=False, as_groups=False, as_oneline=False, as_table=False, cell_func=None):
     with open(filename, 'r') as f:
         lines = [line.strip() for line in f.readlines()]
 
-    if as_groups:
+    if as_json:
+        data = json.loads(''.join(lines))
+    elif as_groups:
         data = []
 
         group = None
