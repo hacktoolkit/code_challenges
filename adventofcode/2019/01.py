@@ -4,7 +4,7 @@ import math
 from utils import ingest
 
 
-INPUT_FILE = '1.in'
+INPUT_FILE = '01.in'
 EXPECTED_ANSWERS = (3369286, 5051054, )
 
 

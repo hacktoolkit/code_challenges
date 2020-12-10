@@ -4,7 +4,7 @@ from collections import defaultdict
 from utils import ingest
 
 
-INPUT_FILE = '3.in'
+INPUT_FILE = '03.in'
 EXPECTED_ANSWERS = (2565, 2639, )
 
 

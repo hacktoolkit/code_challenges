@@ -6,11 +6,11 @@ from operator import mul
 from utils import ingest
 
 
-INPUT_FILE = '3.in'
+INPUT_FILE = '03.in'
 EXPECTED_ANSWERS = (195, 3772314000, )
 
-# INPUT_FILE = 'n.test.in'
-# EXPECTED_ANSWERS = (None, None, )
+# INPUT_FILE = '03.test.in'
+# EXPECTED_ANSWERS = (7, 336, )
 
 
 def main():

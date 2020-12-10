@@ -1,11 +1,8 @@
 from utils import ingest
 
 
-INPUT_FILE = '2.in'
+INPUT_FILE = '02.in'
 EXPECTED_ANSWERS = (1588178, 3783758, )
-
-# INPUT_FILE = 'n.test.in'
-# EXPECTED_ANSWERS = (None, None, )
 
 
 def main():

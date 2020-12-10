@@ -4,10 +4,10 @@ from collections import defaultdict
 from utils import ingest
 
 
-INPUT_FILE = '6.in'
+INPUT_FILE = '06.in'
 EXPECTED_ANSWERS = ('xdkzukcf', 'cevsgyvd', )
 
-# INPUT_FILE = '6.test.in'
+# INPUT_FILE = '06.test.in'
 # EXPECTED_ANSWERS = ('easter', 'advent', )
 
 

@@ -7,11 +7,8 @@ from utils import (
 )
 
 
-INPUT_FILE = '7.in'
+INPUT_FILE = '07.in'
 EXPECTED_ANSWERS = (None, None, )
-
-# INPUT_FILE = 'n.test.in'
-# EXPECTED_ANSWERS = (None, None, )
 
 
 def main():

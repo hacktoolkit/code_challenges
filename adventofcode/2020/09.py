@@ -1,11 +1,11 @@
 from utils import ingest
 
 
-INPUT_FILE = '9.in'
+INPUT_FILE = '09.in'
 PREAMBLE_LENGTH = 25
 EXPECTED_ANSWERS = (26134589, 3535124, )
 
-# INPUT_FILE = '9.test.in'
+# INPUT_FILE = '09.test.in'
 # PREAMBLE_LENGTH = 5
 # EXPECTED_ANSWERS = (127, 62, )
 

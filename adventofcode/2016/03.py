@@ -4,7 +4,7 @@ from utils import (
 )
 
 
-INPUT_FILE = '3.in'
+INPUT_FILE = '03.in'
 EXPECTED_ANSWERS = (983, 1836, )
 
 

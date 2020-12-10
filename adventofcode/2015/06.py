@@ -1,12 +1,13 @@
+# Python Standard Library Imports
 import re
 
 from utils import ingest
 
 
-INPUT_FILE = '6.in'
+INPUT_FILE = '06.in'
 EXPECTED_ANSWERS = (543903, 14687245, )
 
-# INPUT_FILE = '6.test.in'
+# INPUT_FILE = '06.test.in'
 # EXPECTED_ANSWERS = (1000000 - (1000000 - 1000 - 4), 3001997, )
 
 

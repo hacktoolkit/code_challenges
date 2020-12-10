@@ -1,7 +1,7 @@
 from utils import ingest
 
 
-INPUT_FILE = '1.in'
+INPUT_FILE = '01.in'
 EXPECTED_ANSWERS = (1343, 1274, )
 
 

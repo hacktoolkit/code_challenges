@@ -8,10 +8,10 @@ from utils import (
 )
 
 
-INPUT_FILE = '4.in'
+INPUT_FILE = '04.in'
 EXPECTED_ANSWERS = (361724, 482, )
 
-# INPUT_FILE = '4.test.in'
+# INPUT_FILE = '04.test.in'
 # EXPECTED_ANSWERS = (1514, None, )
 
 

@@ -1,10 +1,11 @@
+# Python Standard Library Imports
 import copy
 import re
 
 from utils import ingest
 
 
-INPUT_FILE = '8.in'
+INPUT_FILE = '08.in'
 EXPECTED_ANSWERS = (2014, 2251, )
 
 

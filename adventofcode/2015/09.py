@@ -8,10 +8,10 @@ from utils import (
 )
 
 
-INPUT_FILE = '9.in'
+INPUT_FILE = '09.in'
 EXPECTED_ANSWERS = (117, 909, )
 
-# INPUT_FILE = '9.test.in'
+# INPUT_FILE = '09.test.in'
 # EXPECTED_ANSWERS = (605, 982, )
 
 

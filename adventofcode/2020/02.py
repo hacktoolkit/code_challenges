@@ -4,10 +4,10 @@ import re
 from utils import ingest
 
 
-INPUT_FILE = '2.in'
+INPUT_FILE = '02.in'
 EXPECTED_ANSWERS = (398, 562, )
 
-# INPUT_FILE = '2.test.in'
+# INPUT_FILE = '02.test.in'
 # EXPECTED_ANSWERS = (1, 1, )
 
 

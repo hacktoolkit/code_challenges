@@ -1,10 +1,10 @@
 from utils import ingest
 
 
-INPUT_FILE = '2.in'
+INPUT_FILE = '02.in'
 EXPECTED_ANSWERS = (36174, 244, )
 
-# INPUT_FILE = '2.test.in'
+# INPUT_FILE = '02.test.in'
 # EXPECTED_ANSWERS = (18, 9, )
 
 
