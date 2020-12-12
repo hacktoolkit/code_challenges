@@ -17,7 +17,8 @@ def main():
 
 class Solution:
     def __init__(self):
-        self.data = ingest(INPUT_FILE)
+        data = ingest(INPUT_FILE)
+        self.data = data
 
     def solve1(self):
         answer = None
