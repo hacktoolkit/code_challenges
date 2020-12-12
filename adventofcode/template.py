@@ -22,10 +22,14 @@ class Solution:
 
     def solve1(self):
         answer = None
+
+        self.answer1 = answer
         return answer
 
     def solve2(self):
         answer = None
+
+        self.answer2 = answer
         return answer
 
 
