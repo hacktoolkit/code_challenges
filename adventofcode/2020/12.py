@@ -8,10 +8,10 @@ from utils import (
 
 
 INPUT_FILE = '12.in'
-EXPECTED_ANSWERS = (None, None, )
+EXPECTED_ANSWERS = (364, 39518, )
 
 # INPUT_FILE = '12.test.in'
-# EXPECTED_ANSWERS = (25, None, )
+# EXPECTED_ANSWERS = (25, 286, )
 
 
 def main():
@@ -30,13 +30,18 @@ class Solution:
         ship = Ship()
         for instruction in self.instructions:
             ship.move(instruction)
-            print(ship.x, ship.y)
+            print(ship.coords)
 
         answer = ship.manhattan_distance
         return answer
 
     def solve2(self):
-        answer = None
+        ship = Ship()
+        for instruction in self.instructions:
+            ship.waypoint_move(instruction)
+            print(ship.coords, ship.waypoint)
+
+        answer = ship.manhattan_distance
         return answer
 
 
@@ -58,6 +63,27 @@ class Ship:
         self.x, self.y = (0, 0, )
         self.orientation = 'E'
 
+        self.waypoint_x, self.waypoint_y = (10, 1, )
+
+    @property
+    def coords(self):
+        return (self.x, self.y, )
+
+    @property
+    def waypoint(self):
+        return (self.waypoint_x, self.waypoint_y, )
+
+    @property
+    def direction(self):
+        return Ship.DIRECTION[self.orientation]
+
+    @property
+    def manhattan_distance(self):
+        return abs(self.x) + abs(self.y)
+
+    ##
+    # Step 1
+
     def move(self, instruction):
         if instruction.delta_x:
             self.x += instruction.delta_x
@@ -72,10 +98,6 @@ class Ship:
         else:
             pass
 
-    @property
-    def direction(self):
-        return Ship.DIRECTION[self.orientation]
-
     def turn(self, turns):
         turns = turns % 4
         for i in range(turns):
@@ -84,9 +106,32 @@ class Ship:
     def turn_right(self):
         self.orientation = Ship.RIGHT_TURN_MAP[self.orientation]
 
-    @property
-    def manhattan_distance(self):
-        return abs(self.x) + abs(self.y)
+    ##
+    # Step 2
+
+    def waypoint_move(self, instruction):
+        if instruction.delta_x:
+            self.waypoint_x += instruction.delta_x
+        elif instruction.delta_y:
+            self.waypoint_y += instruction.delta_y
+        elif instruction.turns:
+            self.rotate_waypoint(instruction.turns)
+        elif instruction.forward:
+            self.x += self.waypoint_x * instruction.forward
+            self.y += self.waypoint_y * instruction.forward
+        else:
+            pass
+
+    def rotate_waypoint(self, rotations):
+        rotations = rotations % 4
+        for i in range(rotations):
+            self.rotate_waypoint_right()
+
+    def rotate_waypoint_right(self):
+        self.waypoint_x, self.waypoint_y = (
+            self.waypoint_y,
+            self.waypoint_x * -1,
+        )
 
 
 class Instruction:
