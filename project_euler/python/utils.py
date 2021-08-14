@@ -1198,7 +1198,13 @@ def numeric_permutations(n):
     n_str = str(n)
     n_str_len = len(n_str)
 
-    permutations_of_n = sorted(set([int(permutation) for permutation in permutations(str(n))]))
+    permutations_of_n = sorted(set([
+        int(permutation)
+        for permutation
+        in permutations(n_str)
+        # filter out numbers with leading zeroes
+        if len(str(int(permutation))) == n_str_len
+    ]))
 
     # for p in permutations(n_str):
     #     p_int = int(p)
