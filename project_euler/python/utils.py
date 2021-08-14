@@ -1,6 +1,7 @@
 # coding=utf-8
 
 # Python Standard Library Imports
+import itertools
 import math
 import operator
 
@@ -1160,7 +1161,8 @@ def is_circular_prime(n):
     return circular_primeness
 
 
-def permutations(s):
+# DEPRECATED in favor of using itertools.permutations
+def permutations_deprecated(s):
     """Get all the permutations of a string, i.e. anagrams
 
     E.g.
@@ -1181,6 +1183,11 @@ def permutations(s):
     return list(set(all_permutations))
 
 
+def permutations(s):
+    for p in itertools.permutations(s):
+        yield ''.join(p)
+
+
 def numeric_permutations(n):
     """Find the permutations of a number n
 
@@ -1188,7 +1195,16 @@ def numeric_permutations(n):
     - 049
     - 062
     """
+    n_str = str(n)
+    n_str_len = len(n_str)
+
     permutations_of_n = sorted(set([int(permutation) for permutation in permutations(str(n))]))
+
+    # for p in permutations(n_str):
+    #     p_int = int(p)
+    #     if len(str(p_int)) == n_str_len:
+    #         yield int(p)
+
     return permutations_of_n
 
 
