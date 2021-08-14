@@ -4,6 +4,7 @@
 import math
 import operator
 
+# PE Solution Library Imports
 from constants import *
 
 
@@ -97,7 +98,7 @@ def phi_naive(n):
     """
     # 1 is always relatively prime to `n`
     num_relative_primes = 1
-    for k in xrange(2, n):
+    for k in range(2, n):
         if is_relatively_prime(n, k):
             num_relative_primes += 1
 
@@ -194,7 +195,7 @@ def lcm(num_list):
         divides = True
         while divides:
             divides = False
-            for i in xrange(len(num_list)):
+            for i in range(len(num_list)):
                 n = num_list[i]
                 if n % prime == 0:
                     n /= prime
@@ -243,7 +244,7 @@ def generate_cubes(n):
     """
     global CUBE_ROOTS
     global LARGEST_CUBE_GENERATED
-    for z in xrange(len(CUBE_ROOTS) + 1, n + 1):
+    for z in range(len(CUBE_ROOTS) + 1, n + 1):
         CUBE_ROOTS[z**3] = z
     LARGEST_CUBE_GENERATED = max(LARGEST_CUBE_GENERATED, (n + 1) ** 3)
     return CUBE_ROOTS
@@ -637,7 +638,7 @@ def get_divisors(n):
     - 179
     """
     divisors = []
-    for k in xrange(1, int(math.sqrt(n)) + 1):
+    for k in range(1, int(math.sqrt(n)) + 1):
         if n % k == 0:
             quotient = n / k
             divisors.append(k)
@@ -660,7 +661,7 @@ def get_prime_divisors(n):
     # use a for loop instead of list comprehension in order to break early
     p = None
     prime_divisors = []
-    for i in xrange(len(primes) + 1):
+    for i in range(len(primes) + 1):
         p = primes[i]
         if n % p == 0:
             prime_divisors.append(p)
@@ -693,7 +694,7 @@ def generate_primes_trial_division(n):
     """
     if len(PRIME_MEMO_TRIAL_DIVISION) and PRIME_MEMO_TRIAL_DIVISION[-1] > n:
         return
-    for x in xrange(2, n + 1):
+    for x in range(2, n + 1):
         if is_prime_trial_division(x):
             PRIME_MEMO_TRIAL_DIVISION.append(x)
         else:
@@ -729,7 +730,7 @@ def generate_primes(n):
 
     Optimizations:
     - after 2, all other primes must be odd
-    - use xrange instead of range to save on memory
+    - use range instead of range to save on memory
     - extend PRIME_MEMO by a constant factor, in batches
 
     Test cases:
@@ -748,14 +749,14 @@ def generate_primes(n):
     while lower <= upper <= n:
         # generate the next batch of numbers to sieve
         # always increment by 2, since primes cannot be even
-        num_range = xrange(lower, upper + 1, 2)
+        num_range = range(lower, upper + 1, 2)
         local_memo = dict(zip(num_range, [True] * len(num_range)))
 
         # mark off the composite numbers, sieve style
         for k in PRIMES:
             # k is a prime number
             # mark every kth number following k as composite
-            for x in xrange(k + k, upper + 1, k):
+            for x in range(k + k, upper + 1, k):
                 if x in local_memo:
                     # just delete instead of marking False to save memory
                     del local_memo[x]
@@ -764,7 +765,7 @@ def generate_primes(n):
         for k in sorted(local_memo.keys()):
             if k in local_memo:
                 # k is a prime
-                for x in xrange(k + k, upper + 1, k):
+                for x in range(k + k, upper + 1, k):
                     if x in local_memo:
                         del local_memo[x]
             else:
@@ -818,7 +819,7 @@ def primality(n):
         primeness = False
     else:
         primeness = True
-        for i in xrange(5, int(n ** 0.5) + 1, 6):
+        for i in range(5, int(n ** 0.5) + 1, 6):
             if not n % i or not n % (i + 2):
                 primeness = False
                 break
@@ -844,7 +845,7 @@ def get_truncations(s, dir='all'):
          'asdf' => ['asd', 'as', 'a'] (rtl)
     """
     truncations = []
-    for i in xrange(1, len(s)):
+    for i in range(1, len(s)):
         if dir in ('ltr', 'all',):
             truncations.append(s[i:])
         if dir in ('rtl', 'all',):
@@ -977,7 +978,7 @@ def is_lychrel_number(n, iterations=50):
 def range_sum(lower, upper):
     """Find the sum of a range of numbers
     """
-    # sum(xrange(lower, upper + 1))
+    # sum(range(lower, upper + 1))
     total = (upper + lower) * (upper - lower + 1) / 2
     return total
 
@@ -1138,7 +1139,7 @@ def rotations(s):
     'abc' => ['abc', 'bca', 'cba']
     """
     all_rotations = []
-    for i in xrange(len(s)):
+    for i in range(len(s)):
         rotation = s[i:] + s[:i]
         all_rotations.append(rotation)
     return all_rotations
@@ -1172,12 +1173,12 @@ def permutations(s):
     else:
         all_permutations = []
         string = ''.join(sorted([c for c in s]))
-        for i in xrange(len(string)):
+        for i in range(len(string)):
             c = string[i]
             substring = string[:i] + string[i + 1:]
             sub_permutations = [c + sub_permutation for sub_permutation in permutations(substring)]
             all_permutations += sub_permutations
-    return all_permutations
+    return list(set(all_permutations))
 
 
 def numeric_permutations(n):
@@ -1245,9 +1246,9 @@ def arithmetic_series_subset(num_list):
         subset = []
     else:
         subset = []
-        for i in xrange(len(num_list)):
+        for i in range(len(num_list)):
             # find the difference between every pair
-            for j in xrange(i + 1, len(num_list)):
+            for j in range(i + 1, len(num_list)):
                 n1 = num_list[i]
                 n2 = num_list[j]
                 difference = n2 - n1
