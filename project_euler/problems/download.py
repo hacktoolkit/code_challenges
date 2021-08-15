@@ -3,17 +3,20 @@
 Download all of the problems
 """
 
-import mechanize
+# Python Standard Library Imports
 import os
 import re
 import time
 
+# Third Party (PyPI) Imports
+import mechanize
 from bs4 import BeautifulSoup
+
 
 BASE_URL = 'https://projecteuler.net/problem=%s'
 PROBLEM_NUM_START = 1
-#PROBLEM_NUM_START = 627
-NUM_PROBLEMS = 626
+#PROBLEM_NUM_START = 752
+NUM_PROBLEMS = 751
 CRAWL_DELAY_SECONDS = 1
 
 def zero_pad(n, digits=3):
