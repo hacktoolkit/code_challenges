@@ -4,6 +4,7 @@
 import itertools
 import math
 import operator
+from functools import lru_cache
 
 # PE Solution Library Imports
 from constants import *
@@ -397,7 +398,7 @@ def is_hexagon_num(n):
 
 DIGISUM_MEMO = [None] * 200
 def digisum(a, b, carry):
-    """A method for quickly computing the some of two integers and a carry bit
+    """A method for quickly computing the sum of two integers and a carry bit
 
     Results are memoized for fast lookup
     """
@@ -1043,11 +1044,13 @@ def str_to_digits(s):
     return digits
 
 
+@lru_cache
 def sum_digits(n):
     """Find the sum of the digits of n
 
     Test cases:
     - 056
+    - 684
     """
     digits_n = digits(n)
     result = sum(digits_n)
