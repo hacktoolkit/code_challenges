@@ -29,8 +29,8 @@ class Solution(object):
     MODULUS = 4503599627370517
 
     def __init__(self):
-        self.EULERCOINS_COUNT = 0
-        self.EULERCOINS_TOTAL = 0
+        self.EULERCOINS = set()
+        self.EULERCOINS_SUM = 0
         self.SMALLEST_EULERCOIN = None
         self.PREV_RESULT = None
 
@@ -41,12 +41,15 @@ class Solution(object):
         did_repeat = False
         for n in range(1, self.MODULUS + 1):
             v = self.s(n)
-            # print(n, v)
+            if v in self.EULERCOINS:
+                # found a repeat
+                break
+
             was_updated = self.update_eulercoin(v)
             if was_updated:
-                print(n, v)
+                print(n, v, self.EULERCOINS_SUM)
 
-        answer = self.EULERCOINS_TOTAL
+        answer = self.EULERCOINS_SUM
 
         return answer
 
@@ -66,12 +69,12 @@ class Solution(object):
 
     def update_eulercoin(self, v):
         if self.SMALLEST_EULERCOIN is None or v < self.SMALLEST_EULERCOIN:
+            self.EULERCOINS = self.EULERCOINS.union({v})
             self.SMALLEST_EULERCOIN = min(
                 self.SMALLEST_EULERCOIN or v,
                 v
             )
-            self.EULERCOINS_COUNT += 1
-            self.EULERCOINS_TOTAL += v
+            self.EULERCOINS_SUM += v
 
             was_updated = True
         else:
