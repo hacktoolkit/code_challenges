@@ -1,32 +1,47 @@
-from utils import ingest
+# Third Party (PyPI) Imports
+from utils import (
+    BaseSolution,
+    InputConfig,
+    ingest,
+)
 
 
-INPUT_FILE = 'n.in'
 EXPECTED_ANSWERS = (None, None, )
-
-# INPUT_FILE = 'n.test.in'
-# EXPECTED_ANSWERS = (None, None, )
+TEST_EXPECTED_ANSWERS = (None, None, )
 
 
 def main():
-    solution = Solution()
-    answers = (solution.solve1(), solution.solve2(), )
-    print(answers)
-    assert(answers == EXPECTED_ANSWERS)
+    input_config = InputConfig(
+        as_integers=False,
+        as_json=False,
+        as_groups=False,
+        as_oneline=False,
+        as_table=False,
+        cell_func=None
+    )
+
+    #solution = Solution('0n.in', input_config, EXPECTED_ANSWERS)
+    solution = Solution('0n.test.in', input_config, TEST_EXPECTED_ANSWERS)
+
+    solution.solve()
+    solution.report()
 
 
-class Solution:
-    def __init__(self):
-        data = ingest(INPUT_FILE)
-        self.data = data
+class Solution(BaseSolution):
+    def process_data(self):
+        # data = self.data
+        pass
 
     def solve1(self):
-        answer = None
-
-        self.answer1 = answer
+        #
+        # TODO: FILL THIS IN
+        #
         return answer
 
     def solve2(self):
+        #
+        # TODO: FILL THIS IN
+        #
         answer = None
 
         self.answer2 = answer
