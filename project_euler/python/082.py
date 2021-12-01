@@ -19,9 +19,11 @@ Find the minimal path sum, in matrix.txt (right click and 'Save Link/Target As..
 Solution by jontsai <hello@jontsai.com>
 """
 
+# Python Standard Library Imports
 import copy
 from collections import namedtuple
 
+# PE Solution Library Imports
 from utils import *
 
 
@@ -152,7 +154,7 @@ class Solution(object):
         self.matrix = self.get_matrix()
 
         self.memo = []
-        for i in xrange(self.NUM_ROWS):
+        for i in range(self.NUM_ROWS):
             self.memo.append([None] * 80)
 
     def get_matrix(self):
@@ -169,7 +171,7 @@ class Solution(object):
 
     def solve(self):
         positions = []
- 
+
         for m in range(self.NUM_ROWS):
             n = 0
             position = Position(self.matrix, m, n)
@@ -179,7 +181,7 @@ class Solution(object):
 
         # DFS using a stack
         while len(positions) > 0:
-            print len(positions), best_result_so_far.cumulative_sum if best_result_so_far else 0
+            print(len(positions), best_result_so_far.cumulative_sum if best_result_so_far else 0)
             position = positions.pop()
 
             if position.is_finished:
@@ -205,7 +207,7 @@ def main():
     solution = Solution()
     answer = solution.solve()
 
-    print 'Expected: %s, Answer: %s' % (Solution.EXPECTED_ANSWER, answer)
+    print('Expected: %s, Answer: %s' % (Solution.EXPECTED_ANSWER, answer))
 
 
 if __name__ == '__main__':
