@@ -8,8 +8,8 @@ from utils import (
 
 PROBLEM_NUM = '00'
 
+TEST_MODE = False
 TEST_MODE = True
-# TEST_MODE = False
 
 EXPECTED_ANSWERS = (None, None, )
 TEST_EXPECTED_ANSWERS = (None, None, )
