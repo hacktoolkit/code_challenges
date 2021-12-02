@@ -1,4 +1,3 @@
-# Third Party (PyPI) Imports
 from utils import (
     BaseSolution,
     InputConfig,
