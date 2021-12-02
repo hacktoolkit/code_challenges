@@ -35,17 +35,16 @@ class Solution(BaseSolution):
             in self.data
         ]
 
-
     def solve1(self):
         position = Position()
-        position.do_moves1(self.moves)
+        position.do_moves(self.moves, mode=1)
 
         answer = position.x * position.y
         return answer
 
     def solve2(self):
         position = Position()
-        position.do_moves2(self.moves)
+        position.do_moves(self.moves, mode=2)
 
         answer = position.x * position.y
         return answer
@@ -75,30 +74,24 @@ class Position:
         self.y = 0
         self.aim = 0
 
-    def do_moves1(self, moves):
+    def do_moves(self, moves, mode):
         for move in moves:
-            self.do_move1(move)
+            self.do_move(move, mode)
 
-    def do_move1(self, move):
+    def do_move(self, move, mode):
         change = move.orientation * move.distance
-        if move.direction in ('forward',):
-            self.x += change
-        elif move.direction in ('up', 'down',):
-            self.y += change
-        else:
-            print(f'Invalid move: {move}')
 
-    def do_moves2(self, moves):
-        for move in moves:
-            self.do_move2(move)
-
-    def do_move2(self, move):
-        change = move.orientation * move.distance
         if move.direction in ('forward',):
-            self.x += change
-            self.y += self.aim * move.distance
+            if mode == 1:
+                self.x += change
+            elif mode == 2:
+                self.x += change
+                self.y += self.aim * move.distance
         elif move.direction in ('up', 'down',):
-            self.aim += change
+            if mode == 1:
+                self.y += change
+            elif mode == 2:
+                self.aim += change
         else:
             print(f'Invalid move: {move}')
 
