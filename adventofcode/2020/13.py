@@ -1,27 +1,48 @@
 # Python Standard Library Imports
 import math
 
-from utils import ingest
+from utils import (
+    BaseSolution,
+    InputConfig,
+    ingest,
+)
 
 
-INPUT_FILE = '13.in'
+PROBLEM_NUM = '13'
+
+TEST_MODE = False
+#TEST_MODE = True
+
 EXPECTED_ANSWERS = (8063, None, )
-
-# INPUT_FILE = '13.test.in'
-# EXPECTED_ANSWERS = (295, None, )
+TEST_EXPECTED_ANSWERS = (295, None, )
 
 
 def main():
-    solution = Solution()
-    answers = (solution.solve1(), solution.solve2(), )
-    print(answers)
-    assert(answers == EXPECTED_ANSWERS)
+    input_config = InputConfig(
+        as_integers=False,
+        as_json=False,
+        as_groups=False,
+        as_oneline=False,
+        as_table=False,
+        cell_func=None
+    )
+
+    if TEST_MODE:
+        input_filename = f'{PROBLEM_NUM}.test.in'
+        expected_answers = TEST_EXPECTED_ANSWERS
+    else:
+        input_filename = f'{PROBLEM_NUM}.in'
+        expected_answers = EXPECTED_ANSWERS
+
+    solution = Solution(input_filename, input_config, expected_answers)
+
+    solution.solve()
+    solution.report()
 
 
-class Solution:
-    def __init__(self):
-        data = ingest(INPUT_FILE)
-
+class Solution(BaseSolution):
+    def process_data(self):
+        data = self.data
         self.earliest_departure_time = int(data[0])
         bus_ids = [int(bid) for bid in data[1].split(',') if bid != 'x']
 
@@ -35,14 +56,13 @@ class Solution:
 
         minutes_waiting = departure_time - earliest_departure_time
         answer = bus_id * minutes_waiting
-
-        self.answer1 = answer
         return answer
 
     def solve2(self):
+        #
+        # TODO: FILL THIS IN
+        #
         answer = None
-
-        self.answer2 = answer
         return answer
 
 

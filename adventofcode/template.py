@@ -6,6 +6,11 @@ from utils import (
 )
 
 
+PROBLEM_NUM = '00'
+
+TEST_MODE = False
+#TEST_MODE = True
+
 EXPECTED_ANSWERS = (None, None, )
 TEST_EXPECTED_ANSWERS = (None, None, )
 
@@ -20,8 +25,14 @@ def main():
         cell_func=None
     )
 
-    #solution = Solution('0n.in', input_config, EXPECTED_ANSWERS)
-    solution = Solution('0n.test.in', input_config, TEST_EXPECTED_ANSWERS)
+    if TEST_MODE:
+        input_filename = f'{PROBLEM_NUM}.test.in'
+        expected_answers = TEST_EXPECTED_ANSWERS
+    else:
+        input_filename = f'{PROBLEM_NUM}.in'
+        expected_answers = EXPECTED_ANSWERS
+
+    solution = Solution(input_filename, input_config, expected_answers)
 
     solution.solve()
     solution.report()
