@@ -36,6 +36,7 @@ class Solution(BaseSolution):
         #
         # TODO: FILL THIS IN
         #
+        answer = None
         return answer
 
     def solve2(self):
@@ -43,8 +44,6 @@ class Solution(BaseSolution):
         # TODO: FILL THIS IN
         #
         answer = None
-
-        self.answer2 = answer
         return answer
 
 
