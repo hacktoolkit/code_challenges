@@ -40,8 +40,7 @@ def main():
 
 class Solution(BaseSolution):
     def process_data(self):
-        # data = self.data
-        pass
+        data = self.data
 
     def solve1(self):
         #
