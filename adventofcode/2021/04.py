@@ -72,7 +72,7 @@ class Bingo:
         for n in self.numbers:
             for board in self.boards:
                 board.play(n)
-                if board.has_won():
+                if board.has_won:
                     winner = board
                     break
             if winner is not None:
@@ -90,7 +90,7 @@ class Bingo:
                 board.play(n)
 
                 num_winners = sum([
-                    1 if board.has_won() else 0
+                    1 if board.has_won else 0
                     for board
                     in self.boards
                 ])
@@ -120,6 +120,7 @@ class BingoBoard:
         ]
 
         self.drawn_numbers = []
+        self.has_won = False
 
     def __str__(self):
         buf = []
@@ -139,11 +140,18 @@ class BingoBoard:
         return s
 
     def play(self, n):
-        self.drawn_numbers.append(n)
-        for i in range(5):
-            for j in range(5):
-                if self.board[i][j] == n:
-                    self.board[i][j] = None
+        if self.has_won:
+            pass
+        else:
+            self.drawn_numbers.append(n)
+            for i in range(5):
+                for j in range(5):
+                    if self.board[i][j] == n:
+                        self.board[i][j] = None
+                    else:
+                        pass
+
+            self._check_has_won()
 
     def row(self, i):
         numbers = [n for n in self.board[i]]
@@ -153,7 +161,7 @@ class BingoBoard:
         numbers = [self.board[i][j] for i in range(5)]
         return numbers
 
-    def has_won(self):
+    def _check_has_won(self):
         has_won = False
         # check for row wins
         for i in range(5):
@@ -169,7 +177,7 @@ class BingoBoard:
                 has_won = True
                 break
 
-        return has_won
+        self.has_won = has_won
 
     @property
     def sum_unmarked_numbers(self):
