@@ -10,7 +10,7 @@ PROBLEM_NUM = '04'
 TEST_MODE = False
 # TEST_MODE = True
 
-EXPECTED_ANSWERS = (None, None, )
+EXPECTED_ANSWERS = (44088, 23670, )
 TEST_EXPECTED_ANSWERS = (4512, 1924, )
 
 
@@ -108,6 +108,7 @@ class Bingo:
 class BingoBoard:
     def __init__(self, raw_board):
         self.raw_board = raw_board
+
         self.board = [
             [
                 int(j)
@@ -121,14 +122,19 @@ class BingoBoard:
         self.drawn_numbers = []
 
     def __str__(self):
-        s = ''
+        buf = []
         for i in range(5):
             for j in range(5):
-                s += str(self.board[i][j]) + ' '
-            s += '\n'
+                val = self.board[i][j]
+                str_val = str(val).zfill(2) if val else 'xx'
+                buf.append(str_val)
+                buf.append(' ')
+            buf.append('\n')
 
-        s += '\n'
-        s += str(self.drawn_numbers)
+        buf.append('\n')
+        buf.append(','.join([str(n) for n in self.drawn_numbers]))
+
+        s = ''.join(buf)
 
         return s
 
@@ -139,22 +145,26 @@ class BingoBoard:
                 if self.board[i][j] == n:
                     self.board[i][j] = None
 
+    def row(self, i):
+        numbers = [n for n in self.board[i]]
+        return numbers
+
+    def col(self, j):
+        numbers = [self.board[i][j] for i in range(5)]
+        return numbers
+
     def has_won(self):
         has_won = False
         # check for row wins
         for i in range(5):
-            numbers = [n for n in self.board[i] if n is not None]
+            numbers = [n for n in self.row(i) if n is not None]
             if len(numbers) == 0:
                 has_won = True
                 break
 
         # check for column wins
         for j in range(5):
-            numbers = [
-                self.board[i][j]
-                for i in range(5)
-                if self.board[i][j] is not None
-            ]
+            numbers = [n for n in self.col(j) if n is not None]
             if len(numbers) == 0:
                 has_won = True
                 break
