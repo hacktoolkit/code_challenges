@@ -1,7 +1,6 @@
 from utils import (
     BaseSolution,
     InputConfig,
-    ingest,
 )
 
 
