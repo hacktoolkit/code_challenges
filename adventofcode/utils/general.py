@@ -34,17 +34,20 @@ class BaseSolution:
 
     def solve(self):
         self.print_separator()
-        print('Solving Part 1...')
+        print('# Solving Part 1...')
         self.answer1 = self.solve1()
+        print(self.answer1)
 
         self.print_separator()
-        print('Solving Part 2...')
+        print('# Solving Part 2...')
         self.answer2 = self.solve2()
+        print(self.answer2)
 
     def report(self):
         answers = (self.answer1, self.answer2, )
 
         self.print_separator()
+        print('# Summary')
         print(f'Calculated: {answers}')
         print(f'Expected  : {self.expected_answers}')
         self.print_separator()
