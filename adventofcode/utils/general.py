@@ -4,7 +4,7 @@ from collections import namedtuple
 
 
 class InputConfig(
-    namedtuple('InputConfig', 'as_integers,as_json,as_groups,as_oneline,as_table,cell_func')
+    namedtuple('InputConfig', 'as_integers,as_comma_separated_integers,as_json,as_groups,as_oneline,as_table,cell_func')
 ):
     pass
 
@@ -18,6 +18,7 @@ class BaseSolution:
         data = ingest(
             input_file,
             as_integers=input_config.as_integers,
+            as_comma_separated_integers=input_config.as_comma_separated_integers,
             as_json=input_config.as_json,
             as_groups=input_config.as_groups,
             as_oneline=input_config.as_oneline,
@@ -75,6 +76,7 @@ class BaseSolution:
 def ingest(
     filename,
     as_integers=False,
+    as_comma_separated_integers=False,
     as_json=False,
     as_groups=False,
     as_oneline=False,
@@ -87,6 +89,8 @@ def ingest(
 
     if as_integers:
         data = [int(line) for line in lines]
+    elif as_comma_separated_integers:
+        data = [int(x) for x in lines[0].split(',')]
     elif as_json:
         data = json.loads(''.join(lines))
     elif as_groups:

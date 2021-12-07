@@ -1,3 +1,6 @@
+# Python Standard Library Imports
+from collections import defaultdict
+
 from utils import (
     BaseSolution,
     InputConfig,
@@ -16,6 +19,7 @@ TEST_EXPECTED_ANSWERS = (None, None, )
 def main():
     input_config = InputConfig(
         as_integers=False,
+        as_comma_separated_integers=False,
         as_json=False,
         as_groups=False,
         as_oneline=False,
