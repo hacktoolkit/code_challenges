@@ -78,3 +78,13 @@ def lcm(num_list):
                 factors.append(prime)
     result = list_product(factors)
     return result
+
+
+def gauss_sum(a, b):
+    """Sums a sequence of integers from `a` to `b`
+
+    - https://everything2.com/title/Gaussian+formula
+    - https://en.wikipedia.org/wiki/Gaussian_function
+    - https://en.wikipedia.org/wiki/Gauss_sum
+    """
+    return ((a + b) * (b - a + 1)) / 2
