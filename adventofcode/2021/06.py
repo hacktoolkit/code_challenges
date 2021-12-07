@@ -19,6 +19,7 @@ TEST_EXPECTED_ANSWERS = (5934, 26984457539, )
 def main():
     input_config = InputConfig(
         as_integers=False,
+        as_comma_separated_integers=True,
         as_json=False,
         as_groups=False,
         as_oneline=False,
@@ -42,8 +43,7 @@ def main():
 class Solution(BaseSolution):
     def process_data(self):
         data = self.data
-        raw_ages = data[0]
-        self.ages = [int(age) for age in raw_ages.split(',')]
+        self.ages = self.data
 
     def solve1(self):
         school = Ocean(self.ages)
