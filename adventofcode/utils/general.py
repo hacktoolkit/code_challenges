@@ -1,12 +1,22 @@
 # Python Standard Library Imports
 import json
-from collections import namedtuple
+from dataclasses import dataclass
+from typing import (
+    Callable,
+    Optional,
+)
 
 
-class InputConfig(
-    namedtuple('InputConfig', 'as_integers,as_comma_separated_integers,as_json,as_groups,as_oneline,as_table,cell_func')
-):
-    pass
+@dataclass
+class InputConfig:
+    as_integers: bool = False
+    as_comma_separated_integers: bool = False
+    as_json: bool = False
+    as_groups: bool = False
+    as_oneline: bool = False
+    # for tables
+    as_table: bool = False
+    cell_func: Optional[Callable] = None
 
 
 class BaseSolution:
