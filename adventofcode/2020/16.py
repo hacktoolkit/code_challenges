@@ -2,6 +2,7 @@
 import re
 
 from utils import (
+    InputConfig,
     Re,
     ingest,
 )
@@ -23,7 +24,7 @@ def main():
 
 class Solution:
     def __init__(self):
-        data = ingest(INPUT_FILE, as_groups=True)
+        data = ingest(INPUT_FILE, InputConfig(as_groups=True))
         self.ticket_scanner = TicketScanner(*data)
 
     def solve1(self):

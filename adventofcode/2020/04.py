@@ -1,7 +1,10 @@
 # Python Standard Library Imports
 import re
 
-from utils import ingest
+from utils import (
+    InputConfig,
+    ingest,
+)
 
 
 INPUT_FILE = '04.in'
@@ -21,15 +24,15 @@ def main():
 
 class Solution:
     def __init__(self):
-        self.data = ingest(INPUT_FILE, as_groups=True)
+        self.data = ingest(INPUT_FILE, InputConfig(as_groups=True))
         self.passports = [Passport(lines) for lines in self.data]
 
     def solve1(self):
-        answer = len(filter(lambda passport: passport.is_valid1, self.passports))
+        answer = len(list(filter(lambda passport: passport.is_valid1, self.passports)))
         return answer
 
     def solve2(self):
-        answer = len(filter(lambda passport: passport.is_valid2, self.passports))
+        answer = len(list(filter(lambda passport: passport.is_valid2, self.passports)))
         return answer
 
 

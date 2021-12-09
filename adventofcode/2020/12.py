@@ -157,7 +157,7 @@ class Instruction:
             elif action in ('R', 'L'):
                 turn_multiplier = 1 if action == 'R' else -1
                 if value % 90 == 0:
-                    self.turns = turn_multiplier * (value / 90)
+                    self.turns = turn_multiplier * (value // 90)
                 else:
                     raise Exception('Bad turn angle: %s%s' % (action, value))
             elif action == 'F':

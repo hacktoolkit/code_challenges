@@ -1,6 +1,7 @@
 # Python Standard Library Imports
 import time
 from collections import namedtuple
+from functools import reduce
 from operator import mul
 
 from utils import ingest

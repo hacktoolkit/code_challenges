@@ -1,4 +1,7 @@
-from utils import ingest
+from utils import (
+    InputConfig,
+    ingest,
+)
 
 
 INPUT_FILE = '06.in'
@@ -17,7 +20,7 @@ def main():
 
 class Solution:
     def __init__(self):
-        self.data = ingest(INPUT_FILE, as_groups=True)
+        self.data = ingest(INPUT_FILE, InputConfig(as_groups=True))
         self.groups = [Group(lines) for lines in self.data]
 
     def solve1(self):
