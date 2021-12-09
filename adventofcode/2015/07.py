@@ -8,7 +8,7 @@ from utils import (
 
 
 INPUT_FILE = '07.in'
-EXPECTED_ANSWERS = (None, None, )
+EXPECTED_ANSWERS = (46065, 14134, )
 
 
 def main():

@@ -9,7 +9,7 @@ from utils import (
 
 
 INPUT_FILE = '15.in'
-EXPECTED_ANSWERS = (None, None, )
+EXPECTED_ANSWERS = (222870, 117936,  )
 
 # INPUT_FILE = '15.test.in'
 # EXPECTED_ANSWERS = (62842880, 57600000, )

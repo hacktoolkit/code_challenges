@@ -1,7 +1,10 @@
 # Python Standard Library Imports
 import hashlib
 
-from utils import ingest
+from utils import (
+    InputConfig,
+    ingest,
+)
 
 
 INPUT_FILE = '04.in'
@@ -20,14 +23,14 @@ def main():
 
 class Solution:
     def __init__(self):
-        data = ingest(INPUT_FILE, as_oneline=True)
+        data = ingest(INPUT_FILE, InputConfig(as_oneline=True))
         self.key = data
 
     def solve1(self):
         n = 1
         while True:
             prehash = '{}{}'.format(self.key, n)
-            h = hashlib.md5(prehash).hexdigest()
+            h = hashlib.md5(prehash.encode()).hexdigest()
             if h[:5] == '00000':
                 answer = n
                 break
@@ -40,7 +43,7 @@ class Solution:
         n = 1
         while True:
             prehash = '{}{}'.format(self.key, n)
-            h = hashlib.md5(prehash).hexdigest()
+            h = hashlib.md5(prehash.encode()).hexdigest()
             if h[:6] == '000000':
                 answer = n
                 break

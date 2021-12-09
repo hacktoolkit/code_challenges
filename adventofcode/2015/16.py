@@ -8,7 +8,7 @@ from utils import (
 
 
 INPUT_FILE = '16.in'
-EXPECTED_ANSWERS = (103, None, )
+EXPECTED_ANSWERS = (103, 405, )
 
 MFCSAM = {
     'children': 3,

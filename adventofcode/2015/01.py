@@ -1,4 +1,7 @@
-from utils import ingest
+from utils import (
+    InputConfig,
+    ingest,
+)
 
 
 INPUT_FILE = '01.in'
@@ -14,7 +17,7 @@ def main():
 
 class Solution:
     def __init__(self):
-        data = ingest(INPUT_FILE, as_oneline=True)
+        data = ingest(INPUT_FILE, InputConfig(as_oneline=True))
         self.instructions = data
 
     def solve1(self):

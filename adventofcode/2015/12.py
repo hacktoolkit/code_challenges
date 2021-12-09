@@ -1,4 +1,7 @@
-from utils import ingest
+from utils import (
+    InputConfig,
+    ingest,
+)
 
 
 INPUT_FILE = '12.in'
@@ -17,7 +20,7 @@ def main():
 
 class Solution:
     def __init__(self):
-        self.data = ingest(INPUT_FILE, as_json=True)
+        self.data = ingest(INPUT_FILE, InputConfig(as_json=True))
 
     def solve1(self):
         answer = add_numbers_json(self.data)
