@@ -44,7 +44,7 @@ class PasswordCracker:
 
         while len(password_chars) < 8:
             prehash = '{}{}'.format(self.door_id, i)
-            hashed = hashlib.md5(prehash).hexdigest()
+            hashed = hashlib.md5(prehash.encode()).hexdigest()
 
             if hashed[:5] == '00000':
                 password_chars.append(hashed[5])
@@ -61,7 +61,7 @@ class PasswordCracker:
 
         while '_' in password_chars:
             prehash = '{}{}'.format(self.door_id, i)
-            hashed = hashlib.md5(prehash).hexdigest()
+            hashed = hashlib.md5(prehash.encode()).hexdigest()
 
             if hashed[:5] == '00000':
                 try:

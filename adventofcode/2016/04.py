@@ -64,7 +64,11 @@ class Room:
             counts[c] += 1
 
         pairs = list(counts.items())
-        sorted_pairs = sorted(pairs, key=lambda (letter, count): 1000 * count + (ord('z') - ord(letter)), reverse=True)
+        sorted_pairs = sorted(
+            pairs,
+            key=lambda letter_count: 1000 * letter_count[1] + (ord('z') - ord(letter_count[0])),
+            reverse=True
+        )
         checksum = ''.join([pair[0] for pair in sorted_pairs[:5]])
         return checksum
 

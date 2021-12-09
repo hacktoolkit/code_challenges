@@ -1,7 +1,10 @@
 # Python Standard Library Imports
 import re
 
-from utils import ingest
+from utils import (
+    InputConfig,
+    ingest,
+)
 
 
 INPUT_FILE = '01.in'
@@ -20,7 +23,7 @@ def main():
 
 class Solution:
     def __init__(self):
-        data = ingest(INPUT_FILE, as_oneline=True)
+        data = ingest(INPUT_FILE, InputConfig(as_oneline=True))
         self.directions = [Direction(direction.strip()) for direction in data.split(',')]
 
     def solve1(self):

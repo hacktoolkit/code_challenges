@@ -33,7 +33,11 @@ class Solution:
         message = []
         for i in range(len(counts)):
             pairs = list(counts[i].items())
-            sorted_pairs = sorted(pairs, key=lambda (letter, count): count, reverse=True)
+            sorted_pairs = sorted(
+                pairs,
+                key=lambda letter_count: letter_count[1],
+                reverse=True
+            )
             letter = sorted_pairs[0][0]
             message.append(letter)
 
@@ -51,7 +55,9 @@ class Solution:
         message = []
         for i in range(len(counts)):
             pairs = list(counts[i].items())
-            sorted_pairs = sorted(pairs, key=lambda (letter, count): count)
+            sorted_pairs = sorted(
+                pairs,
+                key=lambda letter_count: letter_count[1]            )
             letter = sorted_pairs[0][0]
             message.append(letter)
 
