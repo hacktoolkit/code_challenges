@@ -75,7 +75,10 @@ class BaseSolution:
         return answer
 
 
-def ingest(filename, input_config: InputConfig):
+def ingest(filename, input_config: InputConfig = None):
+    if input_config is None:
+        input_config = InputConfig()
+
     with open(filename, 'r') as f:
         lines = [line.strip() for line in f.readlines()]
 
