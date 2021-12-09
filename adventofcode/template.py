@@ -24,6 +24,7 @@ def main():
         as_groups=False,
         as_oneline=False,
         as_table=False,
+        row_func=None,
         cell_func=None
     )
 

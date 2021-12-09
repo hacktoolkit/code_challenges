@@ -16,6 +16,7 @@ class InputConfig:
     as_oneline: bool = False
     # for tables
     as_table: bool = False
+    row_func: Optional[Callable] = None
     cell_func: Optional[Callable] = None
 
 
@@ -25,16 +26,7 @@ class BaseSolution:
         self.input_config = input_config
         self.expected_answers = expected_answers
 
-        data = ingest(
-            input_file,
-            as_integers=input_config.as_integers,
-            as_comma_separated_integers=input_config.as_comma_separated_integers,
-            as_json=input_config.as_json,
-            as_groups=input_config.as_groups,
-            as_oneline=input_config.as_oneline,
-            as_table=input_config.as_table,
-            cell_func=input_config.cell_func
-        )
+        data = ingest(input_file, input_config)
         self.data = data
 
         self.process_data()
@@ -83,27 +75,17 @@ class BaseSolution:
         return answer
 
 
-def ingest(
-    filename,
-    as_integers=False,
-    as_comma_separated_integers=False,
-    as_json=False,
-    as_groups=False,
-    as_oneline=False,
-    # for tables
-    as_table=False,
-    cell_func=None
-):
+def ingest(filename, input_config: InputConfig):
     with open(filename, 'r') as f:
         lines = [line.strip() for line in f.readlines()]
 
-    if as_integers:
+    if input_config.as_integers:
         data = [int(line) for line in lines]
-    elif as_comma_separated_integers:
+    elif input_config.as_comma_separated_integers:
         data = [int(x) for x in lines[0].split(',')]
-    elif as_json:
+    elif input_config.as_json:
         data = json.loads(''.join(lines))
-    elif as_groups:
+    elif input_config.as_groups:
         data = []
 
         group = None
@@ -118,18 +100,17 @@ def ingest(
 
         if group:
             data.append(group)
-    elif as_oneline:
+    elif input_config.as_oneline:
         data = ''.join(lines)
-    elif as_table:
-        data = []
+    elif input_config.as_table:
+        row_func = input_config.row_func or (lambda _: _)
+        cell_func = input_config.cell_func or (lambda _: _)
 
-        for line in lines:
-            cells = list(filter(lambda x: x is not None, line.split()))
-
-            if cell_func:
-                cells = [cell_func(value) for value in cells]
-
-            data.append(cells)
+        data = [
+            row_func([cell_func(value) for value in line.split()])
+            for line
+            in lines
+        ]
     else:
         data = lines
 
