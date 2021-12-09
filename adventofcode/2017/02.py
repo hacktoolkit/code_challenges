@@ -1,4 +1,7 @@
-from utils import ingest
+from utils import (
+    InputConfig,
+    ingest,
+)
 
 
 INPUT_FILE = '02.in'
@@ -17,7 +20,7 @@ def main():
 
 class Solution:
     def __init__(self):
-        self.data = ingest(INPUT_FILE, as_table=True, cell_func=int)
+        self.data = ingest(INPUT_FILE, InputConfig(as_table=True, cell_func=int))
 
     def solve1(self):
         table = self.data

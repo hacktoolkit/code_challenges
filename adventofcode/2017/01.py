@@ -1,4 +1,7 @@
-from utils import ingest
+from utils import (
+    InputConfig,
+    ingest,
+)
 
 
 INPUT_FILE = '01.in'
@@ -14,7 +17,7 @@ def main():
 
 class Solution:
     def __init__(self):
-        self.data = ingest(INPUT_FILE, as_oneline=True)
+        self.data = ingest(INPUT_FILE, InputConfig(as_oneline=True))
 
     def solve1(self):
         digits = self.data
@@ -36,7 +39,7 @@ class Solution:
         total = 0
         for i, c in enumerate(digits):
             digit = int(c)
-            j = (i + (len(digits) / 2)) % len(digits)
+            j = (i + (len(digits) // 2)) % len(digits)
             next_digit = int(digits[j])
             if digit == next_digit:
                 total += digit
