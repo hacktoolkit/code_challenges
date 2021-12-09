@@ -6,6 +6,9 @@ from typing import (
     Optional,
 )
 
+# Third Party (PyPI) Imports
+import pyperclip
+
 
 @dataclass
 class InputConfig:
@@ -39,12 +42,16 @@ class BaseSolution:
         self.print_separator()
         print('# Solving Part 1...')
         self.answer1 = self.solve1()
-        print(self.answer1)
+        if self.answer1 is not None:
+            print(self.answer1)
+            pyperclip.copy(self.answer1)
 
         self.print_separator()
         print('# Solving Part 2...')
         self.answer2 = self.solve2()
-        print(self.answer2)
+        if self.answer2 is not None:
+            print(self.answer2)
+            pyperclip.copy(self.answer2)
 
     def report(self):
         answers = (self.answer1, self.answer2, )
