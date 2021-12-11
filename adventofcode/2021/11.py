@@ -1,6 +1,3 @@
-# Python Standard Library Imports
-from collections import defaultdict
-
 from utils import (
     BaseSolution,
     InputConfig,
@@ -91,7 +88,7 @@ class Octopi:
         table = self.table
 
         # reset flashed map each tick
-        self.flashed = defaultdict()
+        self.flashed = set()
 
         for x in range(self.num_rows):
             for y in range(self.num_cols):
@@ -119,7 +116,7 @@ class Octopi:
         if coord in self.flashed:
             pass
         else:
-            self.flashed[coord] = True
+            self.flashed.add(coord)
             neighbors = self.get_neighbors(x, y)
             for a, b in neighbors:
                 table[a][b] += 1
