@@ -150,7 +150,5 @@ class Octopi:
         return cells
 
 
-
-
 if __name__ == '__main__':
     main()
