@@ -6,8 +6,24 @@ from typing import (
     Optional,
 )
 
-# Third Party (PyPI) Imports
-import pyperclip
+
+# isort: off
+
+
+def copy_to_system_clipboard(x):
+    try:
+        import pyperclip
+        installed = True
+    except Exception:
+        installed = False
+
+    if installed:
+        try:
+            pyperclip.copy(x)
+        except Exception as e:
+            print(e)
+    else:
+        print('Pyperclip is not installed')
 
 
 @dataclass
@@ -44,14 +60,14 @@ class BaseSolution:
         self.answer1 = self.solve1()
         if self.answer1 is not None:
             print(self.answer1)
-            pyperclip.copy(self.answer1)
+            copy_to_system_clipboard(self.answer1)
 
         self.print_separator()
         print('# Solving Part 2...')
         self.answer2 = self.solve2()
         if self.answer2 is not None:
             print(self.answer2)
-            pyperclip.copy(self.answer2)
+            copy_to_system_clipboard(self.answer2)
 
     def report(self):
         answers = (self.answer1, self.answer2, )
