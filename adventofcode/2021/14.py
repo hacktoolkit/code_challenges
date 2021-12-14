@@ -1,28 +1,24 @@
 # Python Standard Library Imports
-import itertools
-from collections import defaultdict
+import time
+from collections import (
+    Counter,
+    defaultdict,
+)
 
 from utils import (
     BaseSolution,
     InputConfig,
+    pairwise,
 )
 
 
 PROBLEM_NUM = '14'
 
 TEST_MODE = False
-TEST_MODE = True
+# TEST_MODE = True
 
-EXPECTED_ANSWERS = (3213, None, )
+EXPECTED_ANSWERS = (3213, 3711743744429, )
 TEST_EXPECTED_ANSWERS = (1588, 2188189693529, )
-
-
-
-def pairwise(iterable):
-    # pairwise('ABCDEFG') --> AB BC CD DE EF FG
-    a, b = itertools.tee(iterable)
-    next(b, None)
-    return zip(a, b)
 
 
 def main():
@@ -55,35 +51,31 @@ class Solution(BaseSolution):
         data = self.data
         raw_polymer, raw_rules = data
 
-        self.polymer = raw_polymer[0]
+        self.original_polymer = raw_polymer[0]
+        self.polymer = self.original_polymer
         self.rules = dict([
             raw_rule.split(' -> ')
             for raw_rule
             in raw_rules
         ])
 
+    def reset(self):
         self.step_n = 0
+        self.polymer = self.original_polymer
 
     def solve1(self):
+        self.reset()
         for _ in range(10):
             self.step()
 
-        counts = defaultdict(int)
-        for c in self.polymer:
-            counts[c] += 1
-
-        answer = max(list(counts.values())) - min(list(counts.values()))
+        counts = Counter(self.polymer)
+        values = counts.values()
+        answer = max(values) - min(values)
         return answer
 
     def solve2(self):
-        for _ in range(30):
-            self.step()
-
-        counts = defaultdict(int)
-        for c in self.polymer:
-            counts[c] += 1
-
-        answer = max(list(counts.values())) - min(list(counts.values()))
+        self.reset()
+        answer = self.fast_step(40)
         return answer
 
     def step(self):
@@ -104,7 +96,6 @@ class Solution(BaseSolution):
         self.step_n += 1
 
     def merge_pairs(self, pairs):
-        l = len(pairs)
         buf = []
         for i, pair in enumerate(pairs):
             if i == 0:
@@ -113,6 +104,42 @@ class Solution(BaseSolution):
                 buf.append(pair[1:])
         new_polymer = ''.join(buf)
         return new_polymer
+
+    def iter_pairs(self, s):
+        for pair in pairwise(s):
+            yield ''.join(pair)
+
+    def fast_step(self, n):
+        polymer = self.polymer
+        rules = self.rules
+
+        pairs_count = Counter(self.iter_pairs(polymer))
+
+        for _ in range(n):
+            next_pairs_count = defaultdict(int)
+            for pair, count in pairs_count.items():
+                if pair not in rules:
+                    next_pairs_count[pair] = count
+                else:
+                    a, b = pair[0], pair[1]
+                    c = rules[pair]
+                    next_pairs_count[a + c] += count
+                    next_pairs_count[c + b] += count
+
+            pairs_count = next_pairs_count
+
+        counts = defaultdict(int)
+        for pair, count in pairs_count.items():
+            # sufficient to just track the first letter of each pair
+            # to prevent double-counting of the middle characters
+            counts[pair[0]] += count
+
+        # adds on the last character
+        counts[self.polymer[-1]] += 1
+
+        values = counts.values()
+        result = max(values) - min(values)
+        return result
 
 
 if __name__ == '__main__':
