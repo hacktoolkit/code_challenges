@@ -201,26 +201,21 @@ class Solution(BaseSolution):
         tests_run = 0
         for a, b, expected in test_cases:
             s = SnailfishNumber(a).add(SnailfishNumber(b))
-            assert(s.sfn == expected), f'\nExpected:\n{expected}\nActual:\n{s.sfn}'
+            assert(s.pair == expected), f'\nExpected:\n{expected}\nActual:\n{s.pair}'
             tests_run += 1
 
         assert(tests_run > 0)
 
     def solve1(self):
-        pairs = copy.deepcopy(self.pairs)
-        snailfish_nums = [SnailfishNumber(pair) for pair in pairs]
+        snailfish_nums = [SnailfishNumber(pair) for pair in self.pairs]
 
         snailfish_num = reduce(lambda a, b: a.add(b), snailfish_nums)
         answer = snailfish_num.magnitude
         return answer
 
     def solve2(self):
-        pairs = copy.deepcopy(self.pairs)
-
         max_magnitude = 0
-        for a, b in itertools.permutations(pairs, 2):
-            a = copy.deepcopy(a)
-            b = copy.deepcopy(b)
+        for a, b in itertools.permutations(self.pairs, 2):
             m = SnailfishNumber(a).add(SnailfishNumber(b)).magnitude
             if m > max_magnitude:
                 max_magnitude = m
@@ -230,16 +225,16 @@ class Solution(BaseSolution):
 
 
 class SnailfishNumber:
-    def __init__(self, sfn):
-        self.sfn = sfn
+    def __init__(self, pair):
+        self.pair = copy.deepcopy(pair)
         self.reduce()
 
     def __str__(self):
-        return str(self.sfn)
+        return str(self.pair)
 
     @property
     def magnitude(self):
-        value = self.magnitude_of(self.sfn)
+        value = self.magnitude_of(self.pair)
         return value
 
     def magnitude_of(self, elt):
@@ -252,7 +247,7 @@ class SnailfishNumber:
         return value
 
     def add(self, other):
-        return SnailfishNumber([copy.copy(self.sfn), copy.copy(other.sfn)])
+        return SnailfishNumber([copy.copy(self.pair), copy.copy(other.pair)])
 
     def reduce(self):
         """To reduce a snailfish number, you must repeatedly do the first action in this list that applies to the snailfish number:
@@ -267,7 +262,7 @@ class SnailfishNumber:
     def explode_if_nested_4(self):
         did_reduce = False
 
-        left, right = self.sfn
+        left, right = self.pair
         stack = []
         stack.append((right, [1]))  # FILO
         stack.append((left, [0]))  # LIFO: traverse left first
@@ -295,7 +290,7 @@ class SnailfishNumber:
     def split_if_ge_10(self):
         did_reduce = False
 
-        left, right = self.sfn
+        left, right = self.pair
         stack = []
         stack.append((right, [1]))  # FILO
         stack.append((left, [0]))  # LIFO: traverse left first
@@ -322,21 +317,21 @@ class SnailfishNumber:
         return did_reduce
 
     def update_node(self, item, indices):
-        node = self.sfn
+        node = self.pair
         for index in indices[:-1]:
             node = node[index]
 
         node[indices[-1]] = item
 
     def add_to(self, num, indices):
-        node = self.sfn
+        node = self.pair
         for index in indices[:-1]:
             node = node[index]
 
         node[indices[-1]] += num
 
     def is_num(self, indices):
-        node = self.sfn
+        node = self.pair
         for index in indices:
             node = node[index]
 
