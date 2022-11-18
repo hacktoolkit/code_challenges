@@ -29,7 +29,7 @@ def main():
         as_comma_separated_integers=False,
         as_json=False,
         as_groups=False,
-        as_oneline=True,
+        as_oneline=False,
         as_table=False,
         row_func=None,
         cell_func=None,
