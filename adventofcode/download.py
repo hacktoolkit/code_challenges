@@ -22,7 +22,8 @@ def main():
 
 
 def download_input(day):
-    url = f'https://adventofcode.com/2021/day/{day}/input'
+    year = os.path.dirname(__file__).rsplit('/', 1)[-1]
+    url = f'https://adventofcode.com/{year}/day/{day}/input'
 
     cookies = {
         'session': SESSION,
