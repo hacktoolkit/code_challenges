@@ -1,4 +1,7 @@
 # Python Standard Library Imports
+import copy
+import math
+import re
 from collections import defaultdict
 
 from utils import (
@@ -12,8 +15,14 @@ PROBLEM_NUM = '00'
 TEST_MODE = False
 TEST_MODE = True
 
-EXPECTED_ANSWERS = (None, None, )
-TEST_EXPECTED_ANSWERS = (None, None, )
+EXPECTED_ANSWERS = (
+    None,
+    None,
+)
+TEST_EXPECTED_ANSWERS = (
+    None,
+    None,
+)
 
 
 def main():
@@ -25,7 +34,7 @@ def main():
         as_oneline=False,
         as_table=False,
         row_func=None,
-        cell_func=None
+        cell_func=None,
     )
 
     if TEST_MODE:
