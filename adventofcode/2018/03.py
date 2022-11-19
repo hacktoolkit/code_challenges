@@ -91,11 +91,8 @@ class Claim:
         regex = Re()
         if regex.match(cls.REGEX, line):
             m = regex.last_match
-            field_names = [field.name for field in fields(cls)]
-
             kwargs = {
-                field_name: int(m.group(field_name))
-                for field_name in field_names
+                field.name: int(m.group(field.name)) for field in fields(cls)
             }
             obj = cls(**kwargs)
         else:
