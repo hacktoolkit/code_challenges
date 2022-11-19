@@ -3,7 +3,10 @@ import copy
 import math
 import re
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import (
+    dataclass,
+    fields,
+)
 
 from utils import (
     BaseSolution,
@@ -88,8 +91,9 @@ class Claim:
         regex = Re()
         if regex.match(cls.REGEX, line):
             m = regex.last_match
-            keys = ['num', 'left', 'top', 'width', 'height']
-            args = [int(m.group(key)) for key in keys]
+            field_names = [field.name for field in fields(cls)]
+
+            args = [int(m.group(field_name)) for field_name in field_names]
             claim = Claim(*args)
         else:
             claim = None
