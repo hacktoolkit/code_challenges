@@ -94,10 +94,10 @@ class Claim:
             field_names = [field.name for field in fields(cls)]
 
             args = [int(m.group(field_name)) for field_name in field_names]
-            claim = Claim(*args)
+            obj = cls(*args)
         else:
-            claim = None
-        return claim
+            obj = None
+        return obj
 
 
 class Fabric:
