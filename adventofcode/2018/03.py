@@ -93,8 +93,11 @@ class Claim:
             m = regex.last_match
             field_names = [field.name for field in fields(cls)]
 
-            args = [int(m.group(field_name)) for field_name in field_names]
-            obj = cls(*args)
+            kwargs = {
+                field_name: int(m.group(field_name))
+                for field_name in field_names
+            }
+            obj = cls(**kwargs)
         else:
             obj = None
         return obj
