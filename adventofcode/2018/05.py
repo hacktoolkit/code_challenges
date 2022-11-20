@@ -18,15 +18,15 @@ TEST_MODE = False
 
 EXPECTED_ANSWERS = (
     11194,
-    None,
+    4178,
 )
 TEST_EXPECTED_ANSWERS = (
     10,
-    None,
+    4,
 )
 
 DEBUGGING = False
-# DEBUGGING = True
+DEBUGGING = True
 
 
 def debug(s):
@@ -70,15 +70,36 @@ class Solution(BaseSolution):
         # polymer = PolymerLab.react_naive(self.polymer)
         polymer = PolymerLab.react(self.polymer)
 
-        print(polymer)
+        debug(polymer)
         answer = len(polymer)
         return answer
 
     def solve2(self):
-        #
-        # TODO: FILL THIS IN
-        #
-        answer = None
+        variants = set()
+
+        shortest_polymer = None
+        shortest_length = None
+
+        alphabet = 'abcdefghijklmnopqrstuvwxyz'
+        for letter in alphabet:
+            print(f'Variant: {letter}/{letter.upper()} removed')
+            variant = re.sub(rf'[{letter}{letter.upper()}]', '', self.polymer)
+            if variant in variants:
+                # already seen, skip
+                pass
+            else:
+                variants.add(variant)
+
+                polymer = PolymerLab.react(variant)
+                l = len(polymer)
+                print(f'Length: {l}')
+                if shortest_polymer is None or l < shortest_length:
+                    shortest_polymer = polymer
+                    shortest_length = l
+                    debug('Found shorter result')
+
+        debug(shortest_polymer)
+        answer = shortest_length
         return answer
 
 
