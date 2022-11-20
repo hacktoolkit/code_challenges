@@ -16,14 +16,9 @@ PROBLEM_NUM = '00'
 TEST_MODE = False
 TEST_MODE = True
 
-EXPECTED_ANSWERS = (
-    None,
-    None,
-)
-TEST_EXPECTED_ANSWERS = (
-    None,
-    None,
-)
+EXPECTED_ANSWERS = (None, None)
+TEST_EXPECTED_ANSWERS = (None, None)
+# TEST_EXPECTED_ANSWERS = (None, None)  # 00b.test.in
 
 DEBUGGING = False
 # DEBUGGING = True
@@ -43,8 +38,8 @@ def main():
         as_json=False,
         as_groups=False,
         as_oneline=False,
-        as_coordinates=True,
-        coordinate_delimeter=', ',
+        as_coordinates=False,
+        coordinate_delimeter=None,
         as_table=False,
         row_func=None,
         cell_func=None,
@@ -52,6 +47,7 @@ def main():
 
     if TEST_MODE:
         input_filename = f'{PROBLEM_NUM}.test.in'
+        # input_filename = f'{PROBLEM_NUM}b.test.in'
         expected_answers = TEST_EXPECTED_ANSWERS
     else:
         input_filename = f'{PROBLEM_NUM}.in'
