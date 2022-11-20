@@ -11,10 +11,14 @@ from utils import (
 PROBLEM_NUM = '19'
 
 TEST_MODE = False
-# TEST_MODE = True
+TEST_MODE = True
 
 EXPECTED_ANSWERS = (518, None)
-TEST_EXPECTED_ANSWERS = (4, 3)
+TEST_VARIANT = 'b'
+TEST_EXPECTED_ANSWERS = {
+    '': (4, 3),
+    'b': (7, 6),
+}
 
 
 def main():
@@ -30,8 +34,8 @@ def main():
     )
 
     if TEST_MODE:
-        input_filename = f'{PROBLEM_NUM}.test.in'
-        expected_answers = TEST_EXPECTED_ANSWERS
+        input_filename = f'{PROBLEM_NUM}{TEST_VARIANT}.test.in'
+        expected_answers = TEST_EXPECTED_ANSWERS[TEST_VARIANT]
     else:
         input_filename = f'{PROBLEM_NUM}.in'
         expected_answers = EXPECTED_ANSWERS
@@ -53,33 +57,15 @@ class Solution(BaseSolution):
         self.lab = ReindeerOrganicChemistryLab(formulas)
 
     def solve1(self):
-        medicine_molecule = self.medicine_molecule
         lab = self.lab
+        molecules = lab.generate_distinct_molecules(self.medicine_molecule)
 
-        molecules = lab.generate_distinct_molecules(medicine_molecule)
         answer = len(molecules)
         return answer
 
     def solve2(self):
-        medicine_molecule = self.medicine_molecule
         lab = self.lab
-
-        avail_molecules = {'e'}
-        steps = 0
-
-        generated_medicine = False
-        while not generated_medicine:
-            all_new_molecules = set()
-            for molecule in avail_molecules:
-                new_molecules = lab.generate_distinct_molecules(molecule)
-                if medicine_molecule in new_molecules:
-                    generated_medicine = True
-                    break
-
-                all_new_molecules |= new_molecules
-
-            avail_molecules = all_new_molecules
-            steps += 1
+        steps = lab.fabricate_molecule_naive(self.medicine_molecule)
 
         answer = steps
         return answer
@@ -89,26 +75,30 @@ class ReindeerOrganicChemistryLab:
     def __init__(self, formulas):
         self.formulas = formulas
 
-        replacements = defaultdict(list)
+        expansions = defaultdict(list)
         pairs = [formula.split(' => ') for formula in self.formulas]
-        for molecule, replacement in pairs:
-            replacements[molecule].append(replacement)
+        for atom, molecule in pairs:
+            expansions[atom].append(molecule)
 
-        self.replacements = replacements
+        self.expansions = expansions
+
+        self.reductions = {
+            molecule: atom
+            for atom, molecules in self.expansions.items()
+            for molecule in molecules
+        }
 
     def generate_distinct_molecules(self, molecule):
         atoms = self.get_atoms(molecule)
 
         molecules = set()
-        for i, a in enumerate(atoms):
-            # replace one atom in each position
-            a_replacements = self.replacements[a]
-
+        for i, atom in enumerate(atoms):
             prefix = ''.join(atoms[0:i])
             suffix = ''.join(atoms[i + 1 :])
 
-            for replacement in a_replacements:
-                new_molecule = f'{prefix}{replacement}{suffix}'
+            # replace one atom in each position
+            for molecule in self.expansions[atom]:
+                new_molecule = f'{prefix}{molecule}{suffix}'
                 molecules.add(new_molecule)
 
         return molecules
@@ -133,6 +123,29 @@ class ReindeerOrganicChemistryLab:
             i += 1
 
         return atoms
+
+    def fabricate_molecule_naive(self, medicine_molecule):
+        """Returns the number of steps it takes to fabricate `medicine_molecule`
+        starting from just a single electron `e`
+        """
+        avail_molecules = {'e'}
+        steps = 0
+
+        generated_medicine = False
+        while not generated_medicine:
+            all_new_molecules = set()
+            for molecule in avail_molecules:
+                new_molecules = self.generate_distinct_molecules(molecule)
+                if medicine_molecule in new_molecules:
+                    generated_medicine = True
+                    break
+
+                all_new_molecules |= new_molecules
+
+            avail_molecules = all_new_molecules
+            steps += 1
+
+        return steps
 
 
 if __name__ == '__main__':
