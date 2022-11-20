@@ -1,10 +1,7 @@
 # Python Standard Library Imports
 import json
+import typing as T
 from dataclasses import dataclass
-from typing import (
-    Callable,
-    Optional,
-)
 
 
 # isort: off
@@ -13,6 +10,7 @@ from typing import (
 def copy_to_system_clipboard(x):
     try:
         import pyperclip
+
         installed = True
     except Exception:
         installed = False
@@ -33,10 +31,13 @@ class InputConfig:
     as_json: bool = False
     as_groups: bool = False
     as_oneline: bool = False
+    # coordinates
+    as_coordinates: bool = False
+    coordinate_delimeter: T.Optional[str] = None
     # for tables
     as_table: bool = False
-    row_func: Optional[Callable] = None
-    cell_func: Optional[Callable] = None
+    row_func: T.Optional[T.Callable] = None
+    cell_func: T.Optional[T.Callable] = None
 
 
 class BaseSolution:
@@ -70,7 +71,10 @@ class BaseSolution:
             copy_to_system_clipboard(self.answer2)
 
     def report(self):
-        answers = (self.answer1, self.answer2, )
+        answers = (
+            self.answer1,
+            self.answer2,
+        )
 
         self.print_separator()
         print('# Summary')
@@ -78,7 +82,7 @@ class BaseSolution:
         print(f'Expected  : {self.expected_answers}')
         self.print_separator()
 
-        assert(answers == self.expected_answers), "Sad panda"
+        assert answers == self.expected_answers, "Sad panda"
 
     def print_separator(self, separator_length=40):
         print('-' * separator_length)
@@ -128,14 +132,28 @@ def ingest(filename, input_config: InputConfig = None):
             data.append(group)
     elif input_config.as_oneline:
         data = ''.join(lines)
+    elif input_config.as_coordinates:
+        if input_config.coordinate_delimeter is None:
+            raise Exception(
+                '`as_coordinates` parser missing `coordinate_delimeter`'
+            )
+
+        data = [
+            tuple(
+                (
+                    int(_)
+                    for _ in raw_coord.split(input_config.coordinate_delimeter)
+                )
+            )
+            for raw_coord in lines
+        ]
     elif input_config.as_table:
         row_func = input_config.row_func or (lambda _: _)
         cell_func = input_config.cell_func or (lambda _: _)
 
         data = [
             row_func([cell_func(value) for value in line.split()])
-            for line
-            in lines
+            for line in lines
         ]
     else:
         data = lines
