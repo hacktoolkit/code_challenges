@@ -9,6 +9,37 @@ class DataStructure(Enum):
     DEQUE = 'deque'
 
 
+class TriColor(Enum):
+    """Tricolor algorithm
+
+    Source: https://www.cs.cornell.edu/courses/cs2112/2012sp/lectures/lec24/lec24-12sp.html
+
+    Abstractly, graph traversal can be expressed in terms of the tricolor algorithm due to Dijkstra and others. In this algorithm, graph nodes are assigned one of three colors that can change over time:
+
+    White nodes are undiscovered nodes that have not been seen yet in the current traversal and may even be unreachable.
+    Black nodes are nodes that are reachable and that the algorithm is done with.
+    Gray nodes are nodes that have been discovered but that the algorithm is not done with yet. These nodes are on a frontier between white and black.
+    The progress of the algorithm is depicted by the following figure. Initially there are no black nodes and the roots are gray. As the algorithm progresses, white nodes turn into gray nodes and gray nodes turn into black nodes. Eventually there are no gray nodes left and the algorithm is done.
+
+
+    The algorithm maintains a key invariant at all times: there are no edges from white nodes to black nodes. This is clearly true initially, and because it is true at the end, we know that any remaining white nodes cannot be reached from the black nodes.
+
+    The algorithm pseudo-code is as follows:
+
+    Color all nodes white, except for the root nodes, which are colored gray.
+    While some gray node n exists:
+    color some white successors of n gray.
+    if n has no white successors, optionally color n black.
+    This algorithm is abstract enough to describe many different graph traversals. It allows the particular implementation to choose the node n from among the gray nodes; it allows choosing which and how many white successors to color gray, and it allows delaying the coloring of gray nodes black. We says that such an algorithm is nondeterministic because its behavior is not fully defined. However, as long as it does some work on each gray node that it picks, any implementation that can be described in terms of this algorithm will finish. Further, because the black-white invariant is maintained, it must reach all reachable nodes in the graph.
+
+    One value of defining graph search in terms of the tricolor algorithm is that the tricolor algorithm works even when gray nodes are worked on concurrently, as long as the black-white invariant is maintained. Thinking about this invariant therefore helps us ensure that whatever graph traversal we choose will work when parallelized, which is increasingly important.
+    """
+
+    WHITE = 'white'
+    GRAY = 'gray'
+    BLACK = 'black'
+
+
 class Graph:
     def __init__(self):
         self.vertices = set()
@@ -76,14 +107,15 @@ class Graph:
 
         edges = set(self.edges)
 
-        while len(S):
+        while len(S) > 0:
             if strategy == DataStructure.HEAP:
                 n = heapq.heappop(S)
             elif strategy == DataStructure.DEQUE:
                 n = S.popleft()
 
             L.append(n)
-            for e in sorted(n.out_edges, key=lambda edge: edge.sink.label):
+
+            for e in sorted(n.out_edges, key=lambda edge: edge.sink):
                 m = e.sink
                 edges.remove(e)
                 m.remove_incoming_edge(e)
@@ -102,17 +134,25 @@ class Graph:
 class Vertex:
     _cache = {}
 
-    def __init__(self, label):
+    def __init__(self, label, weight=None):
         self.label = label
+        self.weight = weight
+
+        self.color = TriColor.WHITE
+
         self.out_edges = set()
         self.in_edges = set()
 
     @classmethod
-    def get_or_create(cls, label):
+    def reset(cls):
+        cls._cache = {}
+
+    @classmethod
+    def get_or_create(cls, label, weight=None):
         if label in cls._cache:
             vertex = cls._cache[label]
         else:
-            vertex = Vertex(label)
+            vertex = Vertex(label, weight=weight)
             cls._cache[label] = vertex
 
         return vertex
@@ -121,7 +161,15 @@ class Vertex:
         return self.label
 
     def __lt__(self, other):
-        return self.label < other.label
+        if (
+            self.weight is not None
+            and other.weight is not None
+            and self.weight != other.weight
+        ):
+            result = self.weight < other.weight
+        else:
+            result = self.label < other.label
+        return result
 
     def __le__(self, other):
         raise Exception('Illegal operation <=')
@@ -133,7 +181,15 @@ class Vertex:
         return id(self) != id(other)
 
     def __gt__(self, other):
-        return self.label > other.label
+        if (
+            self.weight is not None
+            and other.weight is not None
+            and self.weight != other.weight
+        ):
+            result = self.weight > other.weight
+        else:
+            result = self.label > other.label
+        return result
 
     def __ge__(self, other):
         raise Exception('Illegal operation >=')
