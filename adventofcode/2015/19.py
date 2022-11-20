@@ -13,8 +13,8 @@ PROBLEM_NUM = '19'
 TEST_MODE = False
 # TEST_MODE = True
 
-EXPECTED_ANSWERS = (518, None, )
-TEST_EXPECTED_ANSWERS = (4, 3, )
+EXPECTED_ANSWERS = (518, None)
+TEST_EXPECTED_ANSWERS = (4, 3)
 
 
 def main():
@@ -26,7 +26,7 @@ def main():
         as_oneline=False,
         as_table=False,
         row_func=None,
-        cell_func=None
+        cell_func=None,
     )
 
     if TEST_MODE:
@@ -46,26 +46,23 @@ class Solution(BaseSolution):
     def process_data(self):
         data = self.data
 
-        self.medicine_molecule = data[1][0]
+        formulas = data[0]
+        medicine_molecule = data[1][0]
 
-        pairs = [formula.split(' => ') for formula in data[0]]
-        replacements = defaultdict(list)
-        for molecule, replacement in pairs:
-            replacements[molecule].append(replacement)
-
-        self.lab = ReindeerOrganicChemistryLab(replacements)
+        self.medicine_molecule = medicine_molecule
+        self.lab = ReindeerOrganicChemistryLab(formulas)
 
     def solve1(self):
-        lab = self.lab
         medicine_molecule = self.medicine_molecule
+        lab = self.lab
 
         molecules = lab.generate_distinct_molecules(medicine_molecule)
         answer = len(molecules)
         return answer
 
     def solve2(self):
-        lab = self.lab
         medicine_molecule = self.medicine_molecule
+        lab = self.lab
 
         avail_molecules = {'e'}
         steps = 0
@@ -88,21 +85,27 @@ class Solution(BaseSolution):
         return answer
 
 
-@dataclass
 class ReindeerOrganicChemistryLab:
-    replacements: dict
+    def __init__(self, formulas):
+        self.formulas = formulas
+
+        replacements = defaultdict(list)
+        pairs = [formula.split(' => ') for formula in self.formulas]
+        for molecule, replacement in pairs:
+            replacements[molecule].append(replacement)
+
+        self.replacements = replacements
 
     def generate_distinct_molecules(self, molecule):
         atoms = self.get_atoms(molecule)
 
         molecules = set()
-        for i in range(len(atoms)):
+        for i, a in enumerate(atoms):
             # replace one atom in each position
-            a = atoms[i]
             a_replacements = self.replacements[a]
 
             prefix = ''.join(atoms[0:i])
-            suffix = ''.join(atoms[i+1:])
+            suffix = ''.join(atoms[i + 1 :])
 
             for replacement in a_replacements:
                 new_molecule = f'{prefix}{replacement}{suffix}'
@@ -130,6 +133,7 @@ class ReindeerOrganicChemistryLab:
             i += 1
 
         return atoms
+
 
 if __name__ == '__main__':
     main()
