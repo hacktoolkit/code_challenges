@@ -25,6 +25,16 @@ TEST_EXPECTED_ANSWERS = (
     None,
 )
 
+DEBUGGING = False
+# DEBUGGING = True
+
+
+def debug(s):
+    if DEBUGGING:
+        print(s)
+    else:
+        pass
+
 
 def main():
     input_config = InputConfig(
