@@ -1,4 +1,5 @@
 # Python Standard Library Imports
+import re
 from collections import defaultdict
 from dataclasses import dataclass
 
@@ -11,14 +12,25 @@ from utils import (
 PROBLEM_NUM = '19'
 
 TEST_MODE = False
-TEST_MODE = True
+# TEST_MODE = True
 
-EXPECTED_ANSWERS = (518, None)
+EXPECTED_ANSWERS = (518, 200)
 TEST_VARIANT = 'b'
 TEST_EXPECTED_ANSWERS = {
     '': (4, 3),
     'b': (7, 6),
 }
+
+
+DEBUGGING = False
+# DEBUGGING = True
+
+
+def debug(s):
+    if DEBUGGING:
+        print(s)
+    else:
+        pass
 
 
 def main():
@@ -65,7 +77,8 @@ class Solution(BaseSolution):
 
     def solve2(self):
         lab = self.lab
-        steps = lab.fabricate_molecule_naive(self.medicine_molecule)
+        # steps = lab.fabricate_molecule_naive(self.medicine_molecule)
+        steps = lab.fabricate_molecule_by_reduction(self.medicine_molecule)
 
         answer = steps
         return answer
@@ -144,6 +157,65 @@ class ReindeerOrganicChemistryLab:
 
             avail_molecules = all_new_molecules
             steps += 1
+
+        return steps
+
+    def fabricate_molecule_by_reduction(self, medicine_molecule):
+        """Start with the medicine molecule and work backwards to reduce to 'e'
+
+        Returns the number of steps
+        """
+        steps = 0
+        molecule = medicine_molecule
+
+        rn_ar_molecules = [
+            molecule
+            for molecule in self.reductions.keys()
+            if molecule.endswith('Ar')
+        ]
+
+        regular_molecules = [
+            molecule
+            for molecule in self.reductions.keys()
+            if not molecule.endswith('Ar')
+        ]
+
+        # by joining all patterns, `re.sub()` below will be greedy
+        rn_ar_pattern = '|'.join(rn_ar_molecules)
+        regular_pattern = '|'.join(regular_molecules)
+
+        def repl(match):
+            molecule = match.group()
+            atom = self.reductions[molecule]
+            return atom
+
+        debug(f'Starting molecule: {molecule}')
+
+        did_reduce = True
+        while molecule != 'e' and did_reduce:
+
+            # prioritize replacing Rn...Ar molecules first
+            if rn_ar_pattern:
+                molecule, num_subs = re.subn(
+                    rn_ar_pattern, repl, molecule, count=1
+                )
+            else:
+                num_subs = 0
+
+            if num_subs == 0:
+                # no Rn...Ar molecule to replace, perform regular sub
+                molecule, num_subs = re.subn(
+                    regular_pattern, repl, molecule, count=1
+                )
+            else:
+                pass
+
+            did_reduce = num_subs > 0
+            if did_reduce:
+                steps += 1
+                debug(f'Reduced to: {molecule}')
+            else:
+                debug(f'No further reductions of {molecule}')
 
         return steps
 
