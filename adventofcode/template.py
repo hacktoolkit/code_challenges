@@ -17,8 +17,12 @@ TEST_MODE = False
 TEST_MODE = True
 
 EXPECTED_ANSWERS = (None, None)
-TEST_EXPECTED_ANSWERS = (None, None)
-# TEST_EXPECTED_ANSWERS = (None, None)  # 00b.test.in
+TEST_VARIANT = ''  # '', 'b', 'c', 'd', ...
+TEST_EXPECTED_ANSWERS = {
+    '': (None, None),
+    'b': (None, None),
+    'c': (None, None),
+}
 
 DEBUGGING = False
 # DEBUGGING = True
@@ -46,9 +50,8 @@ def main():
     )
 
     if TEST_MODE:
-        input_filename = f'{PROBLEM_NUM}.test.in'
-        # input_filename = f'{PROBLEM_NUM}b.test.in'
-        expected_answers = TEST_EXPECTED_ANSWERS
+        input_filename = f'{PROBLEM_NUM}{TEST_VARIANT}.test.in'
+        expected_answers = TEST_EXPECTED_ANSWERS[TEST_VARIANT]
     else:
         input_filename = f'{PROBLEM_NUM}.in'
         expected_answers = EXPECTED_ANSWERS
