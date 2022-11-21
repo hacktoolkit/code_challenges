@@ -1,4 +1,5 @@
 # Python Standard Library Imports
+import math
 from functools import (
     lru_cache,
     reduce,
@@ -24,12 +25,11 @@ def gcd(a, b):
     return a
 
 
-PRIMES = [2, 3,]
+PRIMES = [2, 3]
 
 
 def generate_primes(n):
-    """Generates a list of prime numbers up to `n`
-    """
+    """Generates a list of prime numbers up to `n`"""
     global PRIMES
 
     k = PRIMES[-1] + 2
@@ -48,6 +48,43 @@ def generate_primes(n):
         k += 2
 
     return PRIMES
+
+
+FACTORS_MEMO = {}
+
+
+def factors_of(n):
+    """Return of the factors of `n`
+
+    Returns a list of numbers evenly dividing `n`, including 1 and itself
+    """
+    global FACTORS_MEMO
+
+    if n in FACTORS_MEMO:
+        factors = FACTORS_MEMO[n]
+    else:
+        factors = {1, n}
+        for k in range(2, n // 2 + 1):
+            if k in factors:
+                # already a known number, does not need to be re-tested
+                pass
+            elif n % k == 0:
+                if k in FACTORS_MEMO:
+                    # a number we've already factored previously
+                    # add those factors to speed things up
+                    factors |= factors_of(k)
+                else:
+                    factors.add(k)
+                    # when discovering a factor, also add factors of the quotient, to speed things up
+                    quotient = n // k
+                    factors |= factors_of(quotient)
+            else:
+                # not a factor, continue
+                pass
+
+        FACTORS_MEMO[n] = factors
+
+    return factors
 
 
 def lcm(num_list):
