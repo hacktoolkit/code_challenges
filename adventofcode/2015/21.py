@@ -14,7 +14,7 @@ from utils import (
 PROBLEM_NUM = '21'
 
 TEST_MODE = False
-# TEST_MODE = True
+TEST_MODE = True
 
 EXPECTED_ANSWERS = (None, None)
 TEST_VARIANT = ''  # '', 'b', 'c', 'd', ...
@@ -82,7 +82,7 @@ class Solution(BaseSolution):
         winner = rpg.combat()
         debug(f'The {winner.name} wins!')
 
-        answer = None
+        answer = RPGSolver.find_cheapest_winning_equipment(rpg)
         return answer
 
     def solve2(self):
@@ -100,6 +100,11 @@ class RPG:
         hit_points: int
         damage: int
         armor: int
+        total_damage_received: int = 0
+        equip_weapon: 'Item' = None
+        equip_armor: 'Item' = None
+        equip_ring1: 'Item' = None
+        equip_ring2: 'Item' = None
 
         @classmethod
         def from_data(cls, name, data):
@@ -107,23 +112,64 @@ class RPG:
                 'name': name,
             }
             for line in data:
-                raw_stat, amount = line.split(':')
+                raw_stat, raw_amount = line.split(':')
+
                 stat = raw_stat.lower().replace(' ', '_')
-                kwargs[stat] = int(amount)
+                amount = int(raw_amount)
+
+                kwargs[stat] = amount
 
             char = cls(**kwargs)
 
             return char
 
+        @property
+        def effective_hit_points(self):
+            hit_points = self.hit_points - self.total_damage_received
+            return hit_points
+
+        @property
+        def effective_damage(self):
+            equipped_damage = [
+                self.equip_weapon.damage if self.equip_weapon else 0,
+                self.equip_armor.damage if self.equip_armor else 0,
+                self.equip_ring1.damage if self.equip_ring1 else 0,
+                self.equip_ring2.damage if self.equip_ring2 else 0,
+            ]
+            effective_damage = self.damage + sum(equipped_damage)
+            return effective_damage
+
+        @property
+        def effective_armor(self):
+            equipped_armor = [
+                self.equip_weapon.armor if self.equip_weapon else 0,
+                self.equip_armor.armor if self.equip_armor else 0,
+                self.equip_ring1.armor if self.equip_ring1 else 0,
+                self.equip_ring2.armor if self.equip_ring2 else 0,
+            ]
+            effective_armor = self.armor + sum(equipped_armor)
+            return effective_armor
+
+        @property
+        def equipped_cost(self):
+            costs = [
+                self.equip_weapon.cost if self.equip_weapon else 0,
+                self.equip_armor.cost if self.equip_armor else 0,
+                self.equip_ring1.cost if self.equip_ring1 else 0,
+                self.equip_ring2.cost if self.equip_ring2 else 0,
+            ]
+            cost = sum(costs)
+            return
+
         def attack(self, other_char):
-            damage_dealt = other_char.defend(self.damage)
+            damage_dealt = other_char.defend(self.effective_damage)
             debug(
-                f'The {self.name} deals {self.damage}-{other_char.armor} = {damage_dealt} damage; the {other_char.name} goes down to {other_char.hit_points} hit points.'
+                f'The {self.name} deals {self.effective_damage}-{other_char.effective_armor} = {damage_dealt} damage; the {other_char.name} goes down to {other_char.effective_hit_points} hit points.'
             )
 
         def defend(self, damage):
-            damage_received = max(1, damage - self.armor)
-            self.hit_points -= damage_received
+            damage_received = max(1, damage - self.effective_armor)
+            self.total_damage_received += damage_received
             return damage_received
 
     @dataclass
@@ -180,13 +226,25 @@ class RPG:
             debug(shop)
 
     def combat(self):
-        while self.player.hit_points > 0 and self.boss.hit_points > 0:
+        while (
+            self.player.effective_hit_points > 0
+            and self.boss.effective_hit_points > 0
+        ):
             self.player.attack(self.boss)
-            if self.boss.hit_points > 0:
+            if self.boss.effective_hit_points > 0:
                 self.boss.attack(self.player)
 
-        winner = self.player if self.player.hit_points > 0 else self.boss
+        winner = (
+            self.player if self.player.effective_hit_points > 0 else self.boss
+        )
         return winner
+
+
+class RPGSolver:
+    @classmethod
+    def find_cheapest_winning_equipment(cls, rpg):
+        cost = 0
+        return cost
 
 
 if __name__ == '__main__':
