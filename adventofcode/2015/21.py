@@ -4,6 +4,7 @@ import math
 import re
 from collections import defaultdict
 from dataclasses import dataclass
+from itertools import combinations
 
 from utils import (
     BaseSolution,
@@ -14,12 +15,12 @@ from utils import (
 PROBLEM_NUM = '21'
 
 TEST_MODE = False
-TEST_MODE = True
+# TEST_MODE = True
 
-EXPECTED_ANSWERS = (None, None)
+EXPECTED_ANSWERS = (78, 148)
 TEST_VARIANT = ''  # '', 'b', 'c', 'd', ...
 TEST_EXPECTED_ANSWERS = {
-    '': (None, None),
+    '': (8, None),
     'b': (None, None),
     'c': (None, None),
 }
@@ -79,17 +80,20 @@ class Solution(BaseSolution):
 
     def solve1(self):
         rpg = self.rpg
-        winner = rpg.combat()
-        debug(f'The {winner.name} wins!')
-
-        answer = RPGSolver.find_cheapest_winning_equipment(rpg)
+        equipment_set, cost = RPGSolver.find_cheapest_winning_equipment(rpg)
+        debug(f'Cheapest winning equipment set (cost: {cost}): {equipment_set}')
+        answer = cost
         return answer
 
     def solve2(self):
-        #
-        # TODO: FILL THIS IN
-        #
-        answer = None
+        rpg = self.rpg
+        equipment_set, cost = RPGSolver.find_most_expensive_losing_equipment(
+            rpg
+        )
+        debug(
+            f'Most expensive losing equipment set (cost: {cost}): {equipment_set}'
+        )
+        answer = cost
         return answer
 
 
@@ -101,10 +105,10 @@ class RPG:
         damage: int
         armor: int
         total_damage_received: int = 0
-        equip_weapon: 'Item' = None
-        equip_armor: 'Item' = None
-        equip_ring1: 'Item' = None
-        equip_ring2: 'Item' = None
+        equipped_weapon: 'RPG.Shop.Item' = None
+        equipped_armor: 'RPG.Shop.Item' = None
+        equipped_ring1: 'RPG.Shop.Item' = None
+        equipped_ring2: 'RPG.Shop.Item' = None
 
         @classmethod
         def from_data(cls, name, data):
@@ -131,10 +135,10 @@ class RPG:
         @property
         def effective_damage(self):
             equipped_damage = [
-                self.equip_weapon.damage if self.equip_weapon else 0,
-                self.equip_armor.damage if self.equip_armor else 0,
-                self.equip_ring1.damage if self.equip_ring1 else 0,
-                self.equip_ring2.damage if self.equip_ring2 else 0,
+                self.equipped_weapon.damage if self.equipped_weapon else 0,
+                self.equipped_armor.damage if self.equipped_armor else 0,
+                self.equipped_ring1.damage if self.equipped_ring1 else 0,
+                self.equipped_ring2.damage if self.equipped_ring2 else 0,
             ]
             effective_damage = self.damage + sum(equipped_damage)
             return effective_damage
@@ -142,10 +146,10 @@ class RPG:
         @property
         def effective_armor(self):
             equipped_armor = [
-                self.equip_weapon.armor if self.equip_weapon else 0,
-                self.equip_armor.armor if self.equip_armor else 0,
-                self.equip_ring1.armor if self.equip_ring1 else 0,
-                self.equip_ring2.armor if self.equip_ring2 else 0,
+                self.equipped_weapon.armor if self.equipped_weapon else 0,
+                self.equipped_armor.armor if self.equipped_armor else 0,
+                self.equipped_ring1.armor if self.equipped_ring1 else 0,
+                self.equipped_ring2.armor if self.equipped_ring2 else 0,
             ]
             effective_armor = self.armor + sum(equipped_armor)
             return effective_armor
@@ -153,13 +157,27 @@ class RPG:
         @property
         def equipped_cost(self):
             costs = [
-                self.equip_weapon.cost if self.equip_weapon else 0,
-                self.equip_armor.cost if self.equip_armor else 0,
-                self.equip_ring1.cost if self.equip_ring1 else 0,
-                self.equip_ring2.cost if self.equip_ring2 else 0,
+                self.equipped_weapon.cost if self.equipped_weapon else 0,
+                self.equipped_armor.cost if self.equipped_armor else 0,
+                self.equipped_ring1.cost if self.equipped_ring1 else 0,
+                self.equipped_ring2.cost if self.equipped_ring2 else 0,
             ]
             cost = sum(costs)
-            return
+            return cost
+
+        def reset(self):
+            """Resets equipped items and damage received
+
+            Called in preparation to test another combat scenario
+            """
+            self.equip()
+            self.total_damage_received = 0
+
+        def equip(self, weapon=None, armor=None, ring1=None, ring2=None):
+            self.equipped_weapon = weapon
+            self.equipped_armor = armor
+            self.equipped_ring1 = ring1
+            self.equipped_ring2 = ring2
 
         def attack(self, other_char):
             damage_dealt = other_char.defend(self.effective_damage)
@@ -175,7 +193,7 @@ class RPG:
     @dataclass
     class Shop:
         name: str
-        items: list['Item']
+        items: list['RPG.Shop.Item']
 
         @dataclass
         class Item:
@@ -237,14 +255,106 @@ class RPG:
         winner = (
             self.player if self.player.effective_hit_points > 0 else self.boss
         )
+
+        debug(f'The {winner.name} wins!')
         return winner
+
+    def reset(self):
+        """Resets player and boss state to do another battle/combat sequence
+
+        Resets:
+        - Damage received
+        - Equipped items
+        """
+        self.player.reset()
+        self.boss.reset()
 
 
 class RPGSolver:
     @classmethod
+    def yield_equipment_combos(cls, rpg):
+        # must buy exactly one weapon; no dual-wielding
+        weapons_choices = rpg.weapons_shop.items
+        # armor is optional
+        armor_choices = [None] + rpg.armor_shop.items
+        # can buy 0-2 rings
+        rings_choices = (
+            [(None, None)]
+            + list(
+                zip(rpg.rings_shop.items, [None] * len(rpg.rings_shop.items))
+            )
+            + list(combinations(rpg.rings_shop.items, 2))
+        )
+
+        cheapest_winning_equipment_set = None
+        cheapest_winning_cost = None
+
+        for weapon in weapons_choices:
+            for armor in armor_choices:
+                for ring1, ring2 in rings_choices:
+                    equipment_set = {
+                        'weapon': weapon,
+                        'armor': armor,
+                        'ring1': ring1,
+                        'ring2': ring2,
+                    }
+                    yield equipment_set
+
+    @classmethod
     def find_cheapest_winning_equipment(cls, rpg):
-        cost = 0
-        return cost
+        cheapest_winning_equipment_set = None
+        cheapest_winning_cost = None
+
+        for equipment_set in cls.yield_equipment_combos(rpg):
+            rpg.player.equip(**equipment_set)
+
+            if (
+                cheapest_winning_equipment_set is None
+                or rpg.player.equipped_cost < cheapest_winning_cost
+            ):
+                winner = rpg.combat()
+                if winner == rpg.player:
+                    cheapest_winning_equipment_set = equipment_set
+                    cheapest_winning_cost = rpg.player.equipped_cost
+                else:
+                    # not a winner, not a winning set
+                    pass
+            else:
+                # cannot be the solution, already found a cheaper set, skip combat
+                pass
+
+            # reset RPG state before next iteration
+            rpg.reset()
+
+        return cheapest_winning_equipment_set, cheapest_winning_cost
+
+    @classmethod
+    def find_most_expensive_losing_equipment(cls, rpg):
+        most_expensive_losing_equipment_set = None
+        most_expensive_losing_cost = None
+
+        for equipment_set in cls.yield_equipment_combos(rpg):
+            rpg.player.equip(**equipment_set)
+
+            if (
+                most_expensive_losing_equipment_set is None
+                or rpg.player.equipped_cost > most_expensive_losing_cost
+            ):
+                winner = rpg.combat()
+                if winner == rpg.boss:
+                    most_expensive_losing_equipment_set = equipment_set
+                    most_expensive_losing_cost = rpg.player.equipped_cost
+                else:
+                    # not a loser, not a losing set
+                    pass
+            else:
+                # cannot be the solution, already found a more expensive set, skip combat
+                pass
+
+            # reset RPG state before next iteration
+            rpg.reset()
+
+        return most_expensive_losing_equipment_set, most_expensive_losing_cost
 
 
 if __name__ == '__main__':
