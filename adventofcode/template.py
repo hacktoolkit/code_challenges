@@ -2,6 +2,7 @@
 import copy
 import math
 import re
+import typing as T
 from collections import defaultdict
 from dataclasses import dataclass
 
@@ -25,7 +26,7 @@ TEST_EXPECTED_ANSWERS = {
 }
 
 DEBUGGING = False
-# DEBUGGING = True
+DEBUGGING = True
 
 
 def debug(s):
