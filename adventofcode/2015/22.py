@@ -23,7 +23,7 @@ from utils import (
 PROBLEM_NUM = '22'
 
 TEST_MODE = False
-TEST_MODE = True
+# TEST_MODE = True
 
 EXPECTED_ANSWERS = (None, None)
 TEST_VARIANT = 'b'  # '', 'b', 'c', 'd', ...
@@ -90,14 +90,18 @@ class Solution(BaseSolution):
         (
             most_economical_sequence,
             mana_cost,
-        ) = RPGSolver.find_most_economical_spell_sequence(self.rpg)
+        ) = RPGSolverBFS.find_most_economical_spell_sequence(self.rpg)
 
         if most_economical_sequence:
             debug(most_economical_sequence)
             global DEBUGGING
             DEBUGGING = True
             self.rpg.reset()
-            self.rpg.combat(most_economical_sequence, mana_limit=None)
+            self.rpg.combat(
+                most_economical_sequence,
+                mana_limit=None,
+                use_restore=False,
+            )
             DEBUGGING = False
             print(', '.join([spell.name for spell in most_economical_sequence]))
         else:
@@ -185,6 +189,23 @@ class RPG:
             effective_armor = self.armor + sum(spell_armor_contributions)
             return effective_armor
 
+        def __copy__(self):
+            kwargs = asdict(self)
+            kwargs['spells_cast'] = copy.copy(self.spells_cast)
+            kwargs['spell_affects'] = copy.copy(self.spell_affects)
+            char_copy = self.__class__(**kwargs)
+
+            return char_copy
+
+        def __deepcopy__(self, memo):
+            kwargs = asdict(self)
+            kwargs['spells_cast'] = copy.deepcopy(self.spells_cast)
+            kwargs['spell_affects'] = copy.deepcopy(self.spell_affects)
+            char_copy = self.__class__(**kwargs)
+
+            memo[id(self)] = char_copy
+            return char_copy
+
         def reset(self):
             """Resets mana and damage received
 
@@ -202,7 +223,28 @@ class RPG:
             )
 
         def cast_spell(self, spell, other_char):
+            """Attempts to cast a spell
+
+            Rules
+
+            - On each of your turns, you must select one of your spells to cast.
+            - If you cannot afford to cast any spell, you lose.
+            - You cannot cast a spell that would start an effect which is already active
+            - Effects can be started on the same turn they end
+            """
+
             if self.effective_mana < spell.cost:
+                debug(
+                    f'{self.name} has insufficient mana to cast {spell.name}.'
+                )
+                successful_cast = False
+            elif spell.has_defensive_effect and self.has_active_affect(spell):
+                debug(f'{self.name} is already affected by {spell.name}.')
+                successful_cast = False
+            elif spell.has_offensive_effect and other_char.has_active_affect(
+                spell
+            ):
+                debug(f'{other_char.name} is already affected by {spell.name}.')
                 successful_cast = False
             else:
                 self.spells_cast.append(spell)
@@ -237,6 +279,14 @@ class RPG:
         def apply_spell_effect(self, spell):
             spell_copy = copy.copy(spell)
             self.spell_affects.append(spell_copy)
+
+        def has_active_affect(self, spell):
+            has_affect = False
+            for spell_affect in self.spell_affects:
+                if spell_affect.name == spell.name and spell_affect.turns > 0:
+                    has_affect = True
+
+            return has_affect
 
         def perform_turn_effects(self):
             for spell in self.spell_affects:
@@ -300,6 +350,10 @@ class RPG:
                 spell_copy = self.__class__(**kwargs)
                 return spell_copy
 
+            def __deepcopy__(self, memo):
+                # a copy is already a deep copy, since all attributes are primitives
+                return self.__copy__()
+
             @property
             def has_defensive_effect(self):
                 has_defensive_effect = self.turns > 0 and self.dot == 0
@@ -342,12 +396,15 @@ class RPG:
         self.spells = spells
         debug(spells)
 
-    def combat(self, spell_sequence, mana_limit=None):
-        turn = 0
+    def combat(self, spell_sequence, mana_limit=None, use_restore=True):
+        self.turn = 0
 
-        def _apply_turn_effects(whose_turn, turn):
-            prefix = '\n' if turn > 0 else ''
-            debug(f'{prefix}-- {whose_turn.name} --')
+        if use_restore:
+            self.restore_progress(spell_sequence[:-1])
+
+        def _apply_turn_effects(whose_turn):
+            prefix = '\n' if self.turn > 0 else ''
+            debug(f'{prefix}-- Turn {self.turn + 1}: {whose_turn.name} --')
             debug(
                 f'{self.player.name} has {self.player.effective_hit_points} hit points, {self.player.effective_armor} armor, {self.player.effective_mana} mana'
             )
@@ -365,8 +422,6 @@ class RPG:
             )
         ):
             # player's turn
-            _apply_turn_effects(self.player, turn)
-
             spell_index = len(self.player.spells_cast)
             if spell_index < len(spell_sequence):
                 spell = spell_sequence[spell_index]
@@ -374,28 +429,34 @@ class RPG:
                 debug('Spell sequence exhausted.')
                 break
 
-            if spell is None:
+            _apply_turn_effects(self.player)
+
+            if spell is None:  # TODO: delete this case
                 # Player performs no-op on turn (to simulate out-of-mana situation and waiting on effects to win)
                 successful_cast = True
             else:
                 successful_cast = self.player.cast_spell(spell, self.boss)
 
             if not successful_cast:
-                debug(
-                    f'{self.player.name} has insufficient mana to cast {spell.name}.'
-                )
+                # no spell cast due to either OOM or spell effect already applied
                 break
+            else:
+                pass
 
-            turn += 1
+            self.turn += 1
 
             if self.boss.effective_hit_points > 0:
                 # boss's turn
-                _apply_turn_effects(self.boss, turn)
+                _apply_turn_effects(self.boss)
 
                 if self.boss.effective_hit_points > 0:
                     self.boss.attack(self.player)
-
-                turn += 1
+                    self.turn += 1
+                else:
+                    # boss died to DOT effect before attacking
+                    pass
+            else:
+                pass
 
         winner = (
             self.player
@@ -407,10 +468,31 @@ class RPG:
 
         if winner:
             debug(f'{winner.name} wins!')
+            # debug(f'Player spent {self.player.total_mana_spent} mana.')
+
         elif mana_limit and self.player.total_mana_spent > mana_limit:
             debug('Mana cost exceeds best so far, pruning')
+            winner = self.boss
+        elif len(spell_sequence) == len(self.player.spells_cast):
+            debug('Exhausted sequence, no winner determined yet')
+            self.store_progress()
+        elif not successful_cast:
+            # OOM or spell target already has spell affect
+            # set boss as winner to prune this branch
+            winner = self.boss
+
+            if (
+                spell_sequence[len(self.player.spells_cast)].cost
+                > self.player.effective_mana
+            ):
+                debug('Insufficient mana')
+            else:
+                # already has effect
+                pass
         else:
-            debug('Impossible sequence, no winner')
+            raise Exception(
+                f'Impossible case: {turn} turns, spells: {spell_sequence}'
+            )
 
         return winner
 
@@ -421,11 +503,36 @@ class RPG:
         - Damage received
         - Equipped items
         """
+        self.turn = 0
         self.player.reset()
         self.boss.reset()
 
+    def store_progress(self):
+        if not hasattr(self, 'saved_progress'):
+            self.saved_progress = {}
 
-class RPGSolver:
+        self.saved_progress[self.player.spells_cast_names] = (
+            self.turn,
+            copy.deepcopy(self.player),
+            copy.deepcopy(self.boss),
+        )
+
+    def restore_progress(self, spell_sequence):
+        if not hasattr(self, 'saved_progress'):
+            self.saved_progress = {}
+
+        key = tuple([spell.name for spell in spell_sequence])
+        if key in self.saved_progress:
+            self.turn, self.player, self.boss = self.saved_progress[key]
+            debug(
+                f'Restored progress:\n- Completed Turns: {self.turn}\n- Player: {self.player}\n- Boss: {self.boss}'
+            )
+        else:
+            # do nothing
+            pass
+
+
+class RPGSolverBFS:
     @classmethod
     def yield_spell_sequence_combos(cls, rpg):
         # TODO: determine if a no-op spell is needed or not?
@@ -443,6 +550,7 @@ class RPGSolver:
         for sequence_length in range(1, max_sequence_length + 1):
             # BFS traversal
             # iteratively increase spell sequence length until a winner is found
+            print(f'BFS traversal depth: {sequence_length}')
             for spell_combos in combinations_with_replacement(
                 spell_choices, sequence_length
             ):
@@ -450,29 +558,30 @@ class RPGSolver:
                     yield sequence
 
     @classmethod
+    def terminating_sequence_visited(cls, spell_sequence):
+        matches = False
+
+        for terminating_sequence in cls.MEMO.keys():
+            matches = True
+            for i, spell_name in enumerate(terminating_sequence):
+                if spell_sequence[i].name != spell_name:
+                    matches = False
+                    break
+
+            if matches:
+                break
+
+        return matches
+
+    @classmethod
     def find_most_economical_spell_sequence(cls, rpg):
         most_economical_sequence = None
         most_economical_sequence_mana_cost = None
 
-        memo = {}
-
-        def _terminating_sequence_visited(spell_sequence):
-            matches = False
-
-            for terminating_sequence in memo.keys():
-                matches = True
-                for i, spell_name in enumerate(terminating_sequence):
-                    if spell_sequence[i].name != spell_name:
-                        matches = False
-                        break
-
-                if matches:
-                    break
-
-            return matches
+        cls.MEMO = {}
 
         for spell_sequence in cls.yield_spell_sequence_combos(rpg):
-            if _terminating_sequence_visited(spell_sequence):
+            if cls.terminating_sequence_visited(spell_sequence):
                 # already done same sequence, skip
                 continue
             elif most_economical_sequence is not None and (
@@ -491,13 +600,16 @@ class RPGSolver:
                 spent_mana = rpg.player.total_mana_spent
 
                 if winner is not None:
-                    memo[spell_names] = (winner, spent_mana)
+                    cls.MEMO[spell_names] = (winner, spent_mana)
 
                 if winner == rpg.player:
                     if (
                         most_economical_sequence is None
                         or spent_mana < most_economical_sequence_mana_cost
                     ):
+                        print(
+                            f'Found a candidate: {most_economical_sequence} ({most_economical_sequence_mana_cost} mana).'
+                        )
                         most_economical_sequence = spells_cast
                         most_economical_sequence_mana_cost = spent_mana
                     else:
