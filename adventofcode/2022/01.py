@@ -71,7 +71,7 @@ class Solution(BaseSolution):
     def solve1(self):
         max_calories = None
         for elf in self.data:
-            calories = sum([int(x) for x in elf])
+            calories = sum(map(int, elf))
             if max_calories is None or calories > max_calories:
                 max_calories = calories
 
@@ -81,7 +81,7 @@ class Solution(BaseSolution):
     def solve2(self):
         podium = []
         for elf in self.data:
-            calories = sum([int(x) for x in elf])
+            calories = sum(map(int, elf))
             heapq.heappush(podium, calories)
             podium = heapq.nlargest(3, podium)
 
