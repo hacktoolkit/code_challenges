@@ -79,12 +79,13 @@ class Solution(BaseSolution):
         return answer
 
     def solve2(self):
-        elf_calories = []
+        podium = []
         for elf in self.data:
             calories = sum([int(x) for x in elf])
-            heapq.heappush(elf_calories, calories)
+            heapq.heappush(podium, calories)
+            podium = heapq.nlargest(3, podium)
 
-        answer = sum(heapq.nlargest(3, elf_calories))
+        answer = sum(podium)
         return answer
 
 
