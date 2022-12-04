@@ -1,10 +1,5 @@
 # Python Standard Library Imports
-import copy
-import math
 import re
-import typing as T
-from collections import defaultdict
-from dataclasses import dataclass
 
 from utils import (
     BaseSolution,
@@ -69,7 +64,7 @@ class Solution(BaseSolution):
     def process_data(self):
         data = self.data
 
-    def solve1(self):
+    def solve1(self) -> int:
         total = 0
         for line in self.data:
             m = self.REGEX.match(line)
@@ -85,7 +80,7 @@ class Solution(BaseSolution):
         answer = total
         return answer
 
-    def solve2(self):
+    def solve2(self) -> int:
         total = 0
         for line in self.data:
             m = self.REGEX.match(line)
