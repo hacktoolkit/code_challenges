@@ -1,3 +1,3 @@
 #!/bin/bash
 
-~/venv/bin/python download.py $1
+~/venv/bin/python aoc_client.py --day $1 --type input --save

@@ -5,7 +5,7 @@ usage() {
     echo '    ./setup.sh YYYY'
 }
 
-SYMLINKS="download.py download.sh template.py utils/"
+SYMLINKS="aoc_client.py download.sh puzzle.sh template.py utils/"
 
 
 if [ $# == 1 ]
@@ -26,4 +26,3 @@ then
 else
     usage
 fi
-
