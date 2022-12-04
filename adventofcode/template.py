@@ -6,6 +6,10 @@ import typing as T
 from collections import defaultdict
 from dataclasses import dataclass
 
+# Third Party (PyPI) Imports
+import click
+
+from aoc_client import AOCClient
 from utils import (
     BaseSolution,
     InputConfig,
@@ -14,7 +18,6 @@ from utils import (
 
 PROBLEM_NUM = '00'
 
-TEST_MODE = False
 TEST_MODE = True
 
 EXPECTED_ANSWERS = (None, None)
@@ -26,7 +29,6 @@ TEST_EXPECTED_ANSWERS = {
 }
 
 DEBUGGING = False
-DEBUGGING = True
 
 
 def debug(*args):
@@ -36,7 +38,16 @@ def debug(*args):
         pass
 
 
-def main():
+@click.command()
+@click.option('--is_real', '--real', is_flag=True, default=False)
+@click.option('--submit', is_flag=True, default=False)
+@click.option('--is_debug', '--debug', is_flag=True, default=False)
+def main(is_real, submit, is_debug):
+    global TEST_MODE
+    global DEBUGGING
+    TEST_MODE = not is_real
+    DEBUGGING = is_debug
+
     input_config = InputConfig(
         as_integers=False,
         as_comma_separated_integers=False,
@@ -61,6 +72,22 @@ def main():
 
     solution.solve()
     solution.report()
+
+    cli = AOCClient(day=PROBLEM_NUM)
+    if submit:
+        if TEST_MODE:
+            print('Not submitting for test mode.')
+        else:
+            if solution.answer2 is not None:
+                print('Submitting answer for part 2...')
+                cli.submit_answer(2, solution.answer2)
+            elif solution.answer1 is not None:
+                print('Submitting answer for part 1...')
+                cli.submit_answer(2, solution.answer1)
+            else:
+                print('No answers determined yet. Not submitting.')
+    else:
+        pass
 
 
 class Solution(BaseSolution):

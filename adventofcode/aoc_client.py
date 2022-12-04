@@ -34,11 +34,11 @@ DEFAULT_DAY = datetime.datetime.now().day
 @click.option('-p', '--part', type=click.IntRange(1, 2))
 @click.option('-a', '--answer', is_flag=False, default=None)
 def main(year, day, type, save, part, answer):
-    cli = AOCClient(year, day, save=save)
+    cli = AOCClient(year, day)
     if type == 'puzzle':
-        cli.download_puzzle()
+        cli.download_puzzle(save=save)
     elif type == 'input':
-        cli.download_input()
+        cli.download_input(save=save)
     elif type == 'answer':
         if part is None:
             raise Exception(
@@ -53,7 +53,13 @@ def main(year, day, type, save, part, answer):
 
 
 class AOCClient:
-    def __init__(self, year, day, save=False):
+    def __init__(self, year=None, day=None, save=False):
+        if year is None:
+            year = DEFAULT_YEAR
+
+        if day is None:
+            day = DEFAULT_DAY
+
         self.year = year
         self.day = day
         self.save = save
@@ -96,22 +102,22 @@ class AOCClient:
     def input_filename(self):
         return self.make_filename('in')
 
-    def download_puzzle(self):
+    def download_puzzle(self, save=False):
         response = self.get(self.puzzle_url)
         soup = BeautifulSoup(response.content, 'html.parser')
         content = markdownify.markdownify(str(soup.main))
 
-        if self.save:
+        if save:
             with open(self.puzzle_filename, 'w') as f:
                 f.write(content)
         else:
             print(content)
 
-    def download_input(self):
+    def download_input(self, save=False):
         response = self.get(self.input_url)
         content = response.content.decode()
 
-        if self.save:
+        if save:
             with open(self.input_filename, 'w') as f:
                 f.write(content)
         else:
