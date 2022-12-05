@@ -597,7 +597,15 @@ class RPGSolverBFS:
     @classmethod
     def terminating_sequence_visited(cls, spell_sequence):
         spell_names = tuple([spell.name for spell in spell_sequence])
-        return spell_names in cls.MEMO
+
+        visited = False
+
+        for i in range(len(spell_names)):
+            if spell_names[:-i] in cls.MEMO:
+                visited = True
+                break
+
+        return visited
 
     @classmethod
     def find_most_economical_spell_sequence(cls, rpg):
