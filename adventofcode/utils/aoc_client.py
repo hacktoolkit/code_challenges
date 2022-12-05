@@ -17,13 +17,13 @@ load_dotenv()
 SESSION = os.environ.get('SESSION')
 
 
-DEFAULT_YEAR = os.path.dirname(__file__).rsplit('/', 1)[-1]
+DEFAULT_YEAR = datetime.datetime.now().year
 DEFAULT_DAY = datetime.datetime.now().day
 
 
 @click.command()
-@click.option('-y', '--year', default=DEFAULT_YEAR)
-@click.option('-d', '--day', default=DEFAULT_DAY)
+@click.option('-y', '--year', type=int, default=DEFAULT_YEAR)
+@click.option('-d', '--day', type=int, default=DEFAULT_DAY)
 @click.option(
     '-t',
     '--type',

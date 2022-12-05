@@ -1,6 +1,7 @@
 # Python Standard Library Imports
 import copy
 import math
+import pathlib
 import re
 import typing as T
 from collections import defaultdict
@@ -9,14 +10,15 @@ from dataclasses import dataclass
 # Third Party (PyPI) Imports
 import click
 
-from aoc_client import AOCClient
 from utils import (
     BaseSolution,
     InputConfig,
 )
 
 
-PROBLEM_NUM = '00'
+YEAR = int(pathlib.Path.cwd().parts[-1])
+DAY = int(pathlib.Path(__file__).stem)
+PROBLEM_NUM = str(DAY).zfill(2)
 
 TEST_MODE = True
 
@@ -68,26 +70,18 @@ def main(is_real, submit, is_debug):
         input_filename = f'{PROBLEM_NUM}.in'
         expected_answers = EXPECTED_ANSWERS
 
-    solution = Solution(input_filename, input_config, expected_answers)
+    solution = Solution(
+        input_filename,
+        input_config,
+        expected_answers,
+        year=YEAR,
+        day=DAY,
+    )
 
     solution.solve()
-    solution.report()
-
-    cli = AOCClient(day=PROBLEM_NUM)
     if submit:
-        if TEST_MODE:
-            print('Not submitting for test mode.')
-        else:
-            if solution.answer2 is not None:
-                print('Submitting answer for part 2...')
-                cli.submit_answer(2, solution.answer2)
-            elif solution.answer1 is not None:
-                print('Submitting answer for part 1...')
-                cli.submit_answer(2, solution.answer1)
-            else:
-                print('No answers determined yet. Not submitting.')
-    else:
-        pass
+        solution.submit(is_test=TEST_MODE)
+    solution.report()
 
 
 class Solution(BaseSolution):

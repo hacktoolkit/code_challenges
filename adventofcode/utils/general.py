@@ -3,6 +3,9 @@ import json
 import typing as T
 from dataclasses import dataclass
 
+# Local Imports
+from .aoc_client import AOCClient
+
 
 # isort: off
 
@@ -41,7 +44,12 @@ class InputConfig:
 
 
 class BaseSolution:
-    def __init__(self, input_file, input_config, expected_answers):
+    def __init__(
+        self, input_file, input_config, expected_answers, year=None, day=None
+    ):
+        self.year = year
+        self.day = day
+
         self.input_file = input_file
         self.input_config = input_config
         self.expected_answers = expected_answers
@@ -69,6 +77,20 @@ class BaseSolution:
         if self.answer2 is not None:
             print(self.answer2)
             copy_to_system_clipboard(self.answer2)
+
+    def submit(self, is_test=True):
+        if is_test:
+            print('Not submitting for test mode.')
+        else:
+            cli = AOCClient(year=self.year, day=self.day)
+            if self.answer2 is not None:
+                print('Submitting answer for part 2...')
+                cli.submit_answer(2, self.answer2)
+            elif self.answer1 is not None:
+                print('Submitting answer for part 1...')
+                cli.submit_answer(1, self.answer1)
+            else:
+                print('No answers determined yet. Not submitting.')
 
     def report(self):
         answers = (
