@@ -33,6 +33,7 @@ class InputConfig:
     as_comma_separated_integers: bool = False
     as_json: bool = False
     as_groups: bool = False
+    strip_lines: bool = True
     as_oneline: bool = False
     # coordinates
     as_coordinates: bool = False
@@ -128,8 +129,11 @@ def ingest(filename, input_config: InputConfig = None):
     if input_config is None:
         input_config = InputConfig()
 
+    def _process_line(line):
+        return line.strip() if input_config.strip_lines else line
+
     with open(filename, 'r') as f:
-        lines = [line.strip() for line in f.readlines()]
+        lines = [_process_line(line) for line in f.readlines()]
 
     if input_config.as_integers:
         data = [int(line) for line in lines]
@@ -144,7 +148,9 @@ def ingest(filename, input_config: InputConfig = None):
         for line in lines:
             if group is None:
                 group = []
-            if line:
+            if (input_config.strip_lines and line) or (
+                not input_config.strip_lines and line.strip() != ''
+            ):
                 group.append(line)
             else:
                 data.append(group)
