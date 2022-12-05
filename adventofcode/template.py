@@ -16,12 +16,6 @@ from utils import (
 )
 
 
-YEAR = int(pathlib.Path.cwd().parts[-1])
-DAY = int(pathlib.Path(__file__).stem)
-PROBLEM_NUM = str(DAY).zfill(2)
-
-TEST_MODE = True
-
 EXPECTED_ANSWERS = (None, None)
 TEST_VARIANT = ''  # '', 'b', 'c', 'd', ...
 TEST_EXPECTED_ANSWERS = {
@@ -30,6 +24,12 @@ TEST_EXPECTED_ANSWERS = {
     'c': (None, None),
 }
 
+
+YEAR = int(pathlib.Path.cwd().parts[-1])
+DAY = int(pathlib.Path(__file__).stem)
+PROBLEM_NUM = str(DAY).zfill(2)
+
+TEST_MODE = True
 DEBUGGING = False
 
 
@@ -55,6 +55,7 @@ def main(is_real, submit, is_debug):
         as_comma_separated_integers=False,
         as_json=False,
         as_groups=False,
+        strip_lines=True,
         as_oneline=False,
         as_coordinates=False,
         coordinate_delimeter=None,
