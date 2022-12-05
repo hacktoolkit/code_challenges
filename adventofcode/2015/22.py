@@ -108,10 +108,15 @@ class Solution(BaseSolution):
         self.rpg = rpg
 
     def solve1(self):
+        # (
+        #     most_economical_sequence,
+        #     mana_cost,
+        # ) = RPGSolverBFS.find_most_economical_spell_sequence(self.rpg)
+
         (
             most_economical_sequence,
             mana_cost,
-        ) = RPGSolverBFS.find_most_economical_spell_sequence(self.rpg)
+        ) = RPGSolverDFS.find_most_economical_spell_sequence(self.rpg)
 
         if most_economical_sequence:
             debug(most_economical_sequence)
@@ -565,6 +570,61 @@ class RPG:
         else:
             # do nothing
             pass
+
+
+class RPGSolverDFS:
+    most_economical_sequence = None
+    most_economical_sequence_mana_cost = None
+
+    @classmethod
+    def find_most_economical_spell_sequence(cls, rpg):
+        def dfs(spell_sequence=None):
+            if spell_sequence is None:
+                spell_sequence = []
+
+            spell_sequence_cost = sum([spell.cost for spell in spell_sequence])
+            if (
+                cls.most_economical_sequence_mana_cost
+                and spell_sequence_cost > cls.most_economical_sequence_mana_cost
+            ):
+                # cannot be a winner, too expensive
+                pass
+            else:
+                rpg.reset()
+                winner = rpg.combat(
+                    spell_sequence,
+                    mana_limit=cls.most_economical_sequence_mana_cost,
+                )
+
+                if winner == rpg.player:
+                    spells_cast = rpg.player.spells_cast
+                    spent_mana = rpg.player.total_mana_spent
+
+                    if (
+                        cls.most_economical_sequence is None
+                        or spent_mana < cls.most_economical_sequence_mana_cost
+                    ):
+                        cls.most_economical_sequence = spell_sequence
+                        cls.most_economical_sequence_mana_cost = spent_mana
+                    else:
+                        # not a better candidate
+                        pass
+                elif winner == rpg.boss:
+                    # losing condition, terminate DFS
+                    pass
+                else:
+                    # not finished, continue DFS
+                    for spell in rpg.spells.catalog:
+                        next_spell_sequence = copy.copy(spell_sequence)
+                        next_spell_sequence.append(spell)
+                        dfs(next_spell_sequence)
+
+        dfs()
+
+        return (
+            cls.most_economical_sequence,
+            cls.most_economical_sequence_mana_cost,
+        )
 
 
 class RPGSolverBFS:
