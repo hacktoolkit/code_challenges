@@ -31,10 +31,10 @@ PROBLEM_NUM = str(DAY).zfill(2)
 TEST_MODE = True
 
 EXPECTED_ANSWERS = (None, None)
-TEST_VARIANT = ''  # '', 'b', 'c', 'd', ...
+TEST_VARIANT = 'b'  # '', 'b', 'c', 'd', ...
 TEST_EXPECTED_ANSWERS = {
-    '': (None, None),
-    'b': (None, None),
+    '': (226, None),
+    'b': (641, None),
     'c': (None, None),
 }
 
@@ -152,6 +152,9 @@ class RPG:
         spells_cast: list['RPG.Spells.Spell'] = field(
             default_factory=lambda: []
         )
+        failed_spells: list['RPG.Spells.Spell'] = field(
+            default_factory=lambda: []
+        )
         spell_affects: list['RPG.Spells.Spell'] = field(
             default_factory=lambda: []
         )
@@ -213,6 +216,7 @@ class RPG:
         def __copy__(self):
             kwargs = asdict(self)
             kwargs['spells_cast'] = copy.copy(self.spells_cast)
+            kwargs['failed_spells'] = copy.copy(self.failed_spells)
             kwargs['spell_affects'] = copy.copy(self.spell_affects)
             char_copy = self.__class__(**kwargs)
 
@@ -221,6 +225,7 @@ class RPG:
         def __deepcopy__(self, memo):
             kwargs = asdict(self)
             kwargs['spells_cast'] = copy.deepcopy(self.spells_cast)
+            kwargs['failed_spells'] = copy.deepcopy(self.failed_spells)
             kwargs['spell_affects'] = copy.deepcopy(self.spell_affects)
             char_copy = self.__class__(**kwargs)
 
@@ -235,6 +240,7 @@ class RPG:
             self.total_damage_received = 0
             self.total_mana_recharged = 0
             self.spells_cast = []
+            self.failed_spells = []
             self.spell_affects = []
 
         def attack(self, other_char):
@@ -258,14 +264,17 @@ class RPG:
                 debug(
                     f'{self.name} has insufficient mana to cast {spell.name}.'
                 )
+                self.failed_spells.append(spell)
                 successful_cast = False
             elif spell.has_defensive_effect and self.has_active_affect(spell):
                 debug(f'{self.name} is already affected by {spell.name}.')
+                self.failed_spells.append(spell)
                 successful_cast = False
             elif spell.has_offensive_effect and other_char.has_active_affect(
                 spell
             ):
                 debug(f'{other_char.name} is already affected by {spell.name}.')
+                self.failed_spells.append(spell)
                 successful_cast = False
             else:
                 self.spells_cast.append(spell)
@@ -452,19 +461,23 @@ class RPG:
 
             _apply_turn_effects(self.player)
 
-            if spell is None:  # TODO: delete this case
-                # Player performs no-op on turn (to simulate out-of-mana situation and waiting on effects to win)
-                successful_cast = True
-            else:
-                successful_cast = self.player.cast_spell(spell, self.boss)
+            if self.boss.effective_hit_points > 0:
+                if spell is None:  # TODO: delete this case
+                    # Player performs no-op on turn (to simulate out-of-mana situation and waiting on effects to win)
+                    successful_cast = True
+                else:
+                    successful_cast = self.player.cast_spell(spell, self.boss)
 
-            if not successful_cast:
-                # no spell cast due to either OOM or spell effect already applied
-                break
+                    if not successful_cast:
+                        # no spell cast due to either OOM or spell effect already applied
+                        break
+                    else:
+                        pass
+
+                    self.turn += 1
             else:
+                # boss was killed by DOT effect at start of player turn
                 pass
-
-            self.turn += 1
 
             if self.boss.effective_hit_points > 0:
                 # boss's turn
@@ -474,9 +487,10 @@ class RPG:
                     self.boss.attack(self.player)
                     self.turn += 1
                 else:
-                    # boss died to DOT effect before attacking
+                    # boss was killed by DOT effect at start of boss turn
                     pass
             else:
+                # boss was killed by player spell
                 pass
 
         winner = (
@@ -566,7 +580,6 @@ class RPGSolverBFS:
         max_sequence_length = (
             rpg.boss.hit_points // rpg.spells.catalog[0].damage
         ) * 5
-        max_sequence_length = 10
 
         for sequence_length in range(1, max_sequence_length + 1):
             # BFS traversal
@@ -576,23 +589,15 @@ class RPGSolverBFS:
                 spell_choices, sequence_length
             ):
                 for sequence in permutations(spell_combos):
-                    yield sequence
+                    if cls.terminating_sequence_visited(sequence):
+                        pass
+                    else:
+                        yield sequence
 
     @classmethod
     def terminating_sequence_visited(cls, spell_sequence):
-        matches = False
-
-        for terminating_sequence in cls.MEMO.keys():
-            matches = True
-            for i, spell_name in enumerate(terminating_sequence):
-                if spell_sequence[i].name != spell_name:
-                    matches = False
-                    break
-
-            if matches:
-                break
-
-        return matches
+        spell_names = tuple([spell.name for spell in spell_sequence])
+        return spell_names in cls.MEMO
 
     @classmethod
     def find_most_economical_spell_sequence(cls, rpg):
@@ -617,10 +622,18 @@ class RPGSolverBFS:
                     mana_limit=most_economical_sequence_mana_cost,
                 )
                 spells_cast = rpg.player.spells_cast
-                spell_names = rpg.player.spells_cast_names
                 spent_mana = rpg.player.total_mana_spent
 
                 if winner is not None:
+                    spell_names = tuple(
+                        [
+                            spell.name
+                            for spell in (
+                                rpg.player.spells_cast
+                                + rpg.player.failed_spells
+                            )
+                        ]
+                    )
                     cls.MEMO[spell_names] = (winner, spent_mana)
 
                 if winner == rpg.player:
@@ -629,7 +642,7 @@ class RPGSolverBFS:
                         or spent_mana < most_economical_sequence_mana_cost
                     ):
                         print(
-                            f'Found a candidate: {most_economical_sequence} ({most_economical_sequence_mana_cost} mana).'
+                            f'Found a candidate: {spells_cast} ({spent_mana} mana).'
                         )
                         most_economical_sequence = spells_cast
                         most_economical_sequence_mana_cost = spent_mana
