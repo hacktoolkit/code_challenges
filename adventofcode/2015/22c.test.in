@@ -1,0 +1,16 @@
+Hit Points: 12
+Mana: 250
+Armor: 0
+Damage: 0
+
+Hit Points: 13
+Mana: 0
+Armor: 0
+Damage: 8
+
+Spells:        Cost  Damage  Healing  Armor  Recharge  DoT  Turns
+MagicMissile     53       4        0      0         0    0      0
+Drain            73       2        2      0         0    0      0
+Shield          113       0        0      7         0    0      6
+Poison          173       0        0      0         0    3      6
+Recharge        229       0        0      0       101    0      5

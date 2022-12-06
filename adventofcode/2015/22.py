@@ -30,12 +30,15 @@ PROBLEM_NUM = str(DAY).zfill(2)
 
 TEST_MODE = True
 
-EXPECTED_ANSWERS = (None, None)
-TEST_VARIANT = 'b'  # '', 'b', 'c', 'd', ...
+EXPECTED_ANSWERS = (1824, 1937)
+# Part 1: Poison, Recharge, Shield, Poison, Recharge, Shield, Poison, Recharge, Shield, MagicMissile, Poison, MagicMissile
+
+TEST_VARIANT = 'd'  # '', 'b', 'c', 'd', ...
 TEST_EXPECTED_ANSWERS = {
     '': (226, None),
     'b': (641, None),
-    'c': (None, None),
+    'c': (226, 226),
+    'd': (246, 588),
 }
 
 DEBUGGING = False
@@ -107,7 +110,12 @@ class Solution(BaseSolution):
 
         self.rpg = rpg
 
-    def solve1(self):
+    def solve1(self, is_part2=False):
+        if is_part2:
+            self.rpg.enable_part2()
+        else:
+            return None
+
         # (
         #     most_economical_sequence,
         #     mana_cost,
@@ -121,6 +129,7 @@ class Solution(BaseSolution):
         if most_economical_sequence:
             debug(most_economical_sequence)
             global DEBUGGING
+            DEBUGGING_SNAPSHOT = DEBUGGING
             DEBUGGING = True
             self.rpg.reset()
             self.rpg.combat(
@@ -128,7 +137,7 @@ class Solution(BaseSolution):
                 mana_limit=None,
                 use_restore=False,
             )
-            DEBUGGING = False
+            DEBUGGING = DEBUGGING_SNAPSHOT
             print(', '.join([spell.name for spell in most_economical_sequence]))
         else:
             pass
@@ -137,10 +146,7 @@ class Solution(BaseSolution):
         return answer
 
     def solve2(self):
-        #
-        # TODO: FILL THIS IN
-        #
-        answer = None
+        answer = self.solve1(is_part2=True)
         return answer
 
 
@@ -323,7 +329,16 @@ class RPG:
 
             return has_affect
 
-        def perform_turn_effects(self):
+        def perform_turn_effects(self, whose_turn, is_part2=False):
+            if is_part2 and self.name == 'Player' and whose_turn == self:
+                self.total_damage_received += 1
+                debug(
+                    'Player receives 1 damage at start of turn (Difficulty: Hard)'
+                )
+                if self.effective_hit_points <= 0:
+                    debug('Player has died')
+                    return
+
             for spell in self.spell_affects:
                 if spell.turns > 0:
                     spell.turns -= 1
@@ -414,6 +429,12 @@ class RPG:
             spells = cls(name=name, catalog=catalog)
             return spells
 
+    def __init__(self):
+        self.is_part2 = False
+
+    def enable_part2(self):
+        self.is_part2 = True
+
     def load_player(self, data):
         player = self.Character.from_data('Player', data)
         self.player = player
@@ -446,8 +467,13 @@ class RPG:
             debug(
                 f'{self.boss.name} has {self.boss.effective_hit_points} hit points'
             )
-            self.player.perform_turn_effects()
-            self.boss.perform_turn_effects()
+
+            self.player.perform_turn_effects(whose_turn, is_part2=self.is_part2)
+            if self.player.effective_hit_points > 0:
+                self.boss.perform_turn_effects(whose_turn)
+            else:
+                # player died to turn effect
+                pass
 
         while (
             self.player.effective_hit_points > 0
@@ -466,20 +492,20 @@ class RPG:
 
             _apply_turn_effects(self.player)
 
+            if self.player.effective_hit_points <= 0:
+                # player was killed by a turn effect
+                break
+
             if self.boss.effective_hit_points > 0:
-                if spell is None:  # TODO: delete this case
-                    # Player performs no-op on turn (to simulate out-of-mana situation and waiting on effects to win)
-                    successful_cast = True
+                successful_cast = self.player.cast_spell(spell, self.boss)
+
+                if not successful_cast:
+                    # no spell cast due to either OOM or spell effect already applied
+                    break
                 else:
-                    successful_cast = self.player.cast_spell(spell, self.boss)
+                    pass
 
-                    if not successful_cast:
-                        # no spell cast due to either OOM or spell effect already applied
-                        break
-                    else:
-                        pass
-
-                    self.turn += 1
+                self.turn += 1
             else:
                 # boss was killed by DOT effect at start of player turn
                 pass
@@ -578,6 +604,9 @@ class RPGSolverDFS:
 
     @classmethod
     def find_most_economical_spell_sequence(cls, rpg):
+        cls.most_economical_sequence = None
+        cls.most_economical_sequence_mana_cost = None
+
         def dfs(spell_sequence=None):
             if spell_sequence is None:
                 spell_sequence = []
@@ -710,7 +739,7 @@ class RPGSolverBFS:
                         or spent_mana < most_economical_sequence_mana_cost
                     ):
                         print(
-                            f'Found a candidate: {spells_cast} ({spent_mana} mana).'
+                            f'Found a candidate for {winner.name} win: {spells_cast} ({spent_mana} mana).'
                         )
                         most_economical_sequence = spells_cast
                         most_economical_sequence_mana_cost = spent_mana
