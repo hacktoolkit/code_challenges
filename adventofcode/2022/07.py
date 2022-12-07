@@ -100,19 +100,18 @@ class Solution(BaseSolution):
 
         self.term = term
 
-    def solve1(self):
+    def solve1(self) -> int:
         term = self.term
-        dirs = term.dirs_under_size()
-        t = sum([_[1] for _ in dirs])
 
-        answer = t
+        dirs = term.dirs_under_size()
+
+        answer = sum([_[1] for _ in dirs])
         return answer
 
-    def solve2(self):
+    def solve2(self) -> int:
         term = self.term
 
-        t = term.smallest_dir_to_free()
-        answer = t
+        answer = term.smallest_dir_to_free()
         return answer
 
 
@@ -124,60 +123,46 @@ class Terminal:
     def __init__(self, output):
         self.output = output
 
-        self.dirs = []
-
+        self.cwd = None
         self.dir_files = defaultdict(lambda: [])
         self.subdirs = defaultdict(lambda: [])
         self.dir_sizes = defaultdict(int)
-
-    @property
-    def cwd(self):
-        return Path('/') / Path('/'.join(self.dirs))
 
     def process(self):
         regex = Re()
 
         for line in self.output:
-            m = self.COMMAND_REGEX.match(line)
-            if m:
+            if regex.match(self.COMMAND_REGEX, line):
+                m = regex.last_match
                 command, arg = m.group('command'), m.group('arg')
                 if command == 'cd':
                     if arg == '/':
-                        self.dirs = []
+                        self.cwd = Path('/')
                     elif arg == '..':
-                        self.dirs.pop()
+                        self.cwd = self.cwd.parent
                     else:
-                        self.dirs.append(arg)
+                        self.cwd /= arg
                 elif command == 'ls':
                     # do nothing
                     pass
-            else:
-                if self.cwd == '':
-                    raise Exception('Unknown cwd')
+            elif regex.match(self.DIR_REGEX, line):
+                m = regex.last_match
+                dirname = m.group('dirname')
+                self.subdirs[self.cwd].append(dirname)
+            elif regex.match(self.FILE_REGEX, line):
+                m = regex.last_match
+                filesize = int(m.group('filesize'))
+                filename = m.group('filename')
+                file_path = self.cwd / filename
 
-                if regex.match(self.DIR_REGEX, line):
-                    m = regex.last_match
-                    dirname = m.group('dirname')
-                    self.subdirs[self.cwd].append(dirname)
-                elif regex.match(self.FILE_REGEX, line):
-                    m = regex.last_match
-                    filesize = int(m.group('filesize'))
-                    filename = m.group('filename')
+                self.dir_files[self.cwd].append((filename, filesize))
+                self.update_sizes(file_path, filesize)
 
-                    full_path = self.cwd / filename
-                    debug(full_path, filesize)
-                    self.dir_files[self.cwd].append((filename, filesize))
+    def update_sizes(self, file_path, filesize):
+        debug(f'update_sizes({file_path}, {filesize})')
 
-                    self.update_sizes(self.cwd, filesize)
-
-    def update_sizes(self, d, filesize):
-        debug(f'update_sizes: {d}')
-
-        while d != Path('/'):
+        for d in file_path.parents:
             self.dir_sizes[d] += filesize
-            d = d.parent
-
-        self.dir_sizes[d] += filesize
 
         debug(self.dir_sizes)
 
