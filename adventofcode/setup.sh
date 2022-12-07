@@ -5,7 +5,7 @@ usage() {
     echo '    ./setup.sh YYYY'
 }
 
-SYMLINKS="aoc_client.py download.sh puzzle.sh template.py utils/"
+SYMLINKS="download.sh puzzle.sh template.py utils/"
 
 
 if [ $# == 1 ]
@@ -19,7 +19,13 @@ then
     echo "Creating symlinks..."
     for symlink in ${SYMLINKS}
     do
-        ln -fs ../${symlink} .
+        if [ ${symlink} == 'template.py' ]
+        then
+            SYMLINK_DEST='00.py'
+        else
+            SYMLINK_DEST='.'
+        fi
+        ln -fs ../${symlink} ${SYMLINK_DEST}
     done
 
     echo "Ready to start hacking away for ${YEAR}!"
