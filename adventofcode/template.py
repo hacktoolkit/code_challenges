@@ -1,11 +1,11 @@
 # Python Standard Library Imports
 import copy
 import math
-import pathlib
 import re
 import typing as T
 from collections import defaultdict
 from dataclasses import dataclass
+from pathlib import Path
 
 # Third Party (PyPI) Imports
 import click
@@ -24,8 +24,8 @@ TEST_CASES = {
 }
 
 
-YEAR = int(pathlib.Path.cwd().parts[-1])
-DAY = int(pathlib.Path(__file__).stem)
+YEAR = int(Path.cwd().parts[-1])
+DAY = int(Path(__file__).stem)
 PROBLEM_NUM = str(DAY).zfill(2)
 
 TEST_MODE = True
