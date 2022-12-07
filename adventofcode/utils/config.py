@@ -6,6 +6,17 @@ from dataclasses import dataclass
 TEST_MODE = True
 DEBUGGING = False
 
+EXPECTED_ANSWERS = (None, None)
+TEST_CASES = {
+    '': (None, None),
+    # 'b': (None, None),
+    # 'c': (None, None),
+}
+
+YEAR = None
+DAY = None
+PROBLEM_NUM = None
+
 
 @dataclass
 class InputConfig:
@@ -25,3 +36,4 @@ class InputConfig:
 
 
 INPUT_CONFIG = InputConfig()
+SOLUTION = None
