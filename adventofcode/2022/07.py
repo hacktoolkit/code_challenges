@@ -74,7 +74,7 @@ def main(is_real, submit, is_debug):
 
         solution.solve()
         if submit:
-            solution.submit(is_test=TEST_MODE)
+            solution.submit(is_test=config.TEST_MODE)
         solution.report()
 
 
