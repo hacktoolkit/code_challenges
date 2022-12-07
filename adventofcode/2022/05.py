@@ -13,31 +13,32 @@ import click
 from utils import (
     BaseSolution,
     InputConfig,
+    config,
+    debug,
 )
 
 
 EXPECTED_ANSWERS = ('LJSVLTWQM', 'BRQWDBBJM')
-TEST_VARIANT = ''  # '', 'b', 'c', 'd', ...
-TEST_EXPECTED_ANSWERS = {
+TEST_CASES = {
     '': ('CMZ', 'MCD'),
-    'b': (None, None),
-    'c': (None, None),
 }
+
+config.INPUT_CONFIG.as_integers = False
+config.INPUT_CONFIG.as_comma_separated_integers = False
+config.INPUT_CONFIG.as_json = False
+config.INPUT_CONFIG.as_groups = True
+config.INPUT_CONFIG.strip_lines = False
+config.INPUT_CONFIG.as_oneline = False
+config.INPUT_CONFIG.as_coordinates = False
+config.INPUT_CONFIG.coordinate_delimeter = None
+config.INPUT_CONFIG.as_table = False
+config.INPUT_CONFIG.row_func = None
+config.INPUT_CONFIG.cell_func = None
 
 
 YEAR = int(pathlib.Path.cwd().parts[-1])
 DAY = int(pathlib.Path(__file__).stem)
 PROBLEM_NUM = str(DAY).zfill(2)
-
-TEST_MODE = True
-DEBUGGING = False
-
-
-def debug(*args):
-    if DEBUGGING:
-        print(*args)
-    else:
-        pass
 
 
 @click.command()
@@ -45,44 +46,36 @@ def debug(*args):
 @click.option('--submit', is_flag=True, default=False)
 @click.option('--is_debug', '--debug', is_flag=True, default=False)
 def main(is_real, submit, is_debug):
-    global TEST_MODE
-    global DEBUGGING
-    TEST_MODE = not is_real
-    DEBUGGING = is_debug
+    config.TEST_MODE = not is_real
+    config.DEBUGGING = is_debug
 
-    input_config = InputConfig(
-        as_integers=False,
-        as_comma_separated_integers=False,
-        as_json=False,
-        as_groups=True,
-        strip_lines=False,
-        as_oneline=False,
-        as_coordinates=False,
-        coordinate_delimeter=None,
-        as_table=False,
-        row_func=None,
-        cell_func=None,
-    )
+    inputs = []
 
-    if TEST_MODE:
-        input_filename = f'{PROBLEM_NUM}{TEST_VARIANT}.test.in'
-        expected_answers = TEST_EXPECTED_ANSWERS[TEST_VARIANT]
+    if config.TEST_MODE:
+        for test_variant, expected_answers in TEST_CASES.items():
+
+            input_filename = f'{PROBLEM_NUM}{test_variant}.test.in'
+            inputs.append((input_filename, expected_answers))
     else:
         input_filename = f'{PROBLEM_NUM}.in'
         expected_answers = EXPECTED_ANSWERS
+        inputs.append((input_filename, expected_answers))
 
-    solution = Solution(
-        input_filename,
-        input_config,
-        expected_answers,
-        year=YEAR,
-        day=DAY,
-    )
+    for input_filename, expected_answers in inputs:
+        print(f'Running with input file: {input_filename}')
 
-    solution.solve()
-    if submit:
-        solution.submit(is_test=TEST_MODE)
-    solution.report()
+        solution = Solution(
+            input_filename,
+            config.INPUT_CONFIG,
+            expected_answers,
+            year=YEAR,
+            day=DAY,
+        )
+
+        solution.solve()
+        if submit:
+            solution.submit(is_test=config.TEST_MODE)
+        solution.report()
 
 
 class Solution(BaseSolution):

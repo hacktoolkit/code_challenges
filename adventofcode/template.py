@@ -26,6 +26,18 @@ TEST_CASES = {
     # 'c': (None, None),
 }
 
+config.INPUT_CONFIG.as_integers = False
+config.INPUT_CONFIG.as_comma_separated_integers = False
+config.INPUT_CONFIG.as_json = False
+config.INPUT_CONFIG.as_groups = False
+config.INPUT_CONFIG.strip_lines = True
+config.INPUT_CONFIG.as_oneline = False
+config.INPUT_CONFIG.as_coordinates = False
+config.INPUT_CONFIG.coordinate_delimeter = None
+config.INPUT_CONFIG.as_table = False
+config.INPUT_CONFIG.row_func = None
+config.INPUT_CONFIG.cell_func = None
+
 
 YEAR = int(Path.cwd().parts[-1])
 DAY = int(Path(__file__).stem)
@@ -39,20 +51,6 @@ PROBLEM_NUM = str(DAY).zfill(2)
 def main(is_real, submit, is_debug):
     config.TEST_MODE = not is_real
     config.DEBUGGING = is_debug
-
-    input_config = InputConfig(
-        as_integers=False,
-        as_comma_separated_integers=False,
-        as_json=False,
-        as_groups=False,
-        strip_lines=True,
-        as_oneline=False,
-        as_coordinates=False,
-        coordinate_delimeter=None,
-        as_table=False,
-        row_func=None,
-        cell_func=None,
-    )
 
     inputs = []
 
@@ -71,7 +69,7 @@ def main(is_real, submit, is_debug):
 
         solution = Solution(
             input_filename,
-            input_config,
+            config.INPUT_CONFIG,
             expected_answers,
             year=YEAR,
             day=DAY,

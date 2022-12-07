@@ -1,11 +1,10 @@
 # Python Standard Library Imports
 import json
-import typing as T
-from dataclasses import dataclass
 
 # Local Imports
 from . import config
 from .aoc_client import AOCClient
+from .config import InputConfig
 
 
 # isort: off
@@ -33,23 +32,6 @@ def copy_to_system_clipboard(x):
             print(e)
     else:
         print('Pyperclip is not installed')
-
-
-@dataclass
-class InputConfig:
-    as_integers: bool = False
-    as_comma_separated_integers: bool = False
-    as_json: bool = False
-    as_groups: bool = False
-    strip_lines: bool = True
-    as_oneline: bool = False
-    # coordinates
-    as_coordinates: bool = False
-    coordinate_delimeter: T.Optional[str] = None
-    # for tables
-    as_table: bool = False
-    row_func: T.Optional[T.Callable] = None
-    cell_func: T.Optional[T.Callable] = None
 
 
 class BaseSolution:
