@@ -17,8 +17,7 @@ from utils import (
 
 
 EXPECTED_ANSWERS = (None, None)
-TEST_VARIANT = ''  # '', 'b', 'c', 'd', ...
-TEST_EXPECTED_ANSWERS = {
+TEST_CASES = {
     '': (None, None),
     'b': (None, None),
     'c': (None, None),
@@ -64,25 +63,33 @@ def main(is_real, submit, is_debug):
         cell_func=None,
     )
 
+    inputs = []
+
     if TEST_MODE:
-        input_filename = f'{PROBLEM_NUM}{TEST_VARIANT}.test.in'
-        expected_answers = TEST_EXPECTED_ANSWERS[TEST_VARIANT]
+        for test_variant, expected_answers in TEST_CASES.items():
+
+            input_filename = f'{PROBLEM_NUM}{test_variant}.test.in'
+            inputs.append((input_filename, expected_answers))
     else:
         input_filename = f'{PROBLEM_NUM}.in'
         expected_answers = EXPECTED_ANSWERS
+        inputs.append((input_filename, expected_answers))
 
-    solution = Solution(
-        input_filename,
-        input_config,
-        expected_answers,
-        year=YEAR,
-        day=DAY,
-    )
+    for input_filename, expected_answers in inputs:
+        print(f'Running with input file: {input_filename}')
 
-    solution.solve()
-    if submit:
-        solution.submit(is_test=TEST_MODE)
-    solution.report()
+        solution = Solution(
+            input_filename,
+            input_config,
+            expected_answers,
+            year=YEAR,
+            day=DAY,
+        )
+
+        solution.solve()
+        if submit:
+            solution.submit(is_test=TEST_MODE)
+        solution.report()
 
 
 class Solution(BaseSolution):
