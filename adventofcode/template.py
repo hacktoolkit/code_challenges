@@ -19,8 +19,8 @@ from utils import (
 EXPECTED_ANSWERS = (None, None)
 TEST_CASES = {
     '': (None, None),
-    'b': (None, None),
-    'c': (None, None),
+    # 'b': (None, None),
+    # 'c': (None, None),
 }
 
 

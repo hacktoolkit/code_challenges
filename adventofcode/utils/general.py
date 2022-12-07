@@ -4,10 +4,18 @@ import typing as T
 from dataclasses import dataclass
 
 # Local Imports
+from . import config
 from .aoc_client import AOCClient
 
 
 # isort: off
+
+
+def debug(*args):
+    if config.DEBUGGING:
+        print(*args)
+    else:
+        pass
 
 
 def copy_to_system_clipboard(x):

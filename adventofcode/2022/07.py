@@ -8,9 +8,11 @@ from pathlib import Path
 import click
 
 from utils import (
+    RE,
     BaseSolution,
     InputConfig,
-    Re,
+    config,
+    debug,
 )
 
 
@@ -24,26 +26,14 @@ YEAR = int(Path.cwd().parts[-1])
 DAY = int(Path(__file__).stem)
 PROBLEM_NUM = str(DAY).zfill(2)
 
-TEST_MODE = True
-DEBUGGING = False
-
-
-def debug(*args):
-    if DEBUGGING:
-        print(*args)
-    else:
-        pass
-
 
 @click.command()
 @click.option('--is_real', '--real', is_flag=True, default=False)
 @click.option('--submit', is_flag=True, default=False)
 @click.option('--is_debug', '--debug', is_flag=True, default=False)
 def main(is_real, submit, is_debug):
-    global TEST_MODE
-    global DEBUGGING
-    TEST_MODE = not is_real
-    DEBUGGING = is_debug
+    config.TEST_MODE = not is_real
+    config.DEBUGGING = is_debug
 
     input_config = InputConfig(
         as_integers=False,
@@ -61,7 +51,7 @@ def main(is_real, submit, is_debug):
 
     inputs = []
 
-    if TEST_MODE:
+    if config.TEST_MODE:
         for test_variant, expected_answers in TEST_CASES.items():
 
             input_filename = f'{PROBLEM_NUM}{test_variant}.test.in'
@@ -126,12 +116,9 @@ class Terminal:
         self.dir_sizes = defaultdict(int)
 
     def process(self):
-        regex = Re()
-
         for line in self.output:
-            if regex.match(self.COMMAND_REGEX, line):
-                m = regex.last_match
-                command, arg = m.group('command'), m.group('arg')
+            if RE.match(self.COMMAND_REGEX, line):
+                command, arg = RE.m.group('command'), RE.m.group('arg')
                 if command == 'cd':
                     if arg == '/':
                         self.cwd = Path('/')
@@ -142,14 +129,12 @@ class Terminal:
                 elif command == 'ls':
                     # do nothing
                     pass
-            elif regex.match(self.DIR_REGEX, line):
-                m = regex.last_match
-                dirname = m.group('dirname')
+            elif RE.match(self.DIR_REGEX, line):
+                dirname = RE.m.group('dirname')
                 self.subdirs[self.cwd].append(dirname)
-            elif regex.match(self.FILE_REGEX, line):
-                m = regex.last_match
-                filesize = int(m.group('filesize'))
-                filename = m.group('filename')
+            elif RE.match(self.FILE_REGEX, line):
+                filesize = int(RE.m.group('filesize'))
+                filename = RE.m.group('filename')
                 file_path = self.cwd / filename
 
                 self.dir_files[self.cwd].append((filename, filesize))
