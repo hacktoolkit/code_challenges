@@ -1,14 +1,6 @@
 # Python Standard Library Imports
-import copy
-import heapq
 import math
-import re
-import typing as T
 from collections import defaultdict
-from dataclasses import dataclass
-
-# Third Party (PyPI) Imports
-import click
 
 from utils import (
     RE,
@@ -25,18 +17,6 @@ config.EXPECTED_ANSWERS = (1792, 334880)
 config.TEST_CASES = {
     '': (21, 8),
 }
-
-config.INPUT_CONFIG.as_integers = False
-config.INPUT_CONFIG.as_comma_separated_integers = False
-config.INPUT_CONFIG.as_json = False
-config.INPUT_CONFIG.as_groups = False
-config.INPUT_CONFIG.strip_lines = True
-config.INPUT_CONFIG.as_oneline = False
-config.INPUT_CONFIG.as_coordinates = False
-config.INPUT_CONFIG.coordinate_delimeter = None
-config.INPUT_CONFIG.as_table = False
-config.INPUT_CONFIG.row_func = None
-config.INPUT_CONFIG.cell_func = None
 
 
 @solution
