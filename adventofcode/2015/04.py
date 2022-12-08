@@ -2,29 +2,23 @@
 import hashlib
 
 from utils import (
-    InputConfig,
-    ingest,
+    BaseSolution,
+    config,
+    main,
+    solution,
 )
 
 
-INPUT_FILE = '04.in'
-EXPECTED_ANSWERS = (254575, 1038736, )
+config.EXPECTED_ANSWERS = (254575, 1038736)
+config.TEST_CASES = {'': (609043, 6742839)}
 
-# INPUT_FILE = '4.test.in'
-# EXPECTED_ANSWERS = (609043, 6742839, )
-
-
-def main():
-    solution = Solution()
-    answers = (solution.solve1(), solution.solve2(), )
-    print(answers)
-    assert(answers == EXPECTED_ANSWERS)
+config.INPUT_CONFIG.as_oneline = True
 
 
-class Solution:
-    def __init__(self):
-        data = ingest(INPUT_FILE, InputConfig(as_oneline=True))
-        self.key = data
+@solution
+class Solution(BaseSolution):
+    def process_data(self):
+        self.key = self.data
 
     def solve1(self):
         n = 1

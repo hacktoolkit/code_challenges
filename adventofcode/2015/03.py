@@ -2,26 +2,22 @@
 from collections import defaultdict
 
 from utils import (
-    InputConfig,
-    ingest,
+    BaseSolution,
+    config,
+    main,
+    solution,
 )
 
 
-INPUT_FILE = '03.in'
-EXPECTED_ANSWERS = (2565, 2639, )
+config.EXPECTED_ANSWERS = (2565, 2639)
+
+config.INPUT_CONFIG.as_oneline = True
 
 
-def main():
-    solution = Solution()
-    answers = (solution.solve1(), solution.solve2(), )
-    print(answers)
-    assert(answers == EXPECTED_ANSWERS)
-
-
-class Solution:
-    def __init__(self):
-        data = ingest(INPUT_FILE, InputConfig(as_oneline=True))
-        self.directions = data
+@solution
+class Solution(BaseSolution):
+    def process_data(self):
+        self.directions = self.data
         self.delivery_map = DeliveryMap(self.directions)
 
     def solve1(self):

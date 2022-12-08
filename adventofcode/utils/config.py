@@ -10,7 +10,7 @@ DEBUGGING = False
 
 EXPECTED_ANSWERS = (None, None)
 TEST_CASES = {
-    '': (None, None),
+    # '': (None, None),
     # 'b': (None, None),
     # 'c': (None, None),
 }
@@ -30,8 +30,6 @@ solution_filepath = Path(solution_filename)
 PROBLEM_NUM = solution_filepath.stem
 DAY = int(PROBLEM_NUM)
 YEAR = int(solution_filepath.parent.name)
-
-print(PROBLEM_NUM, DAY, YEAR)
 
 # end Automatic inference of PROBLEM_NUM | DAY | YEAR
 ##################################################

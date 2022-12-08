@@ -1,23 +1,18 @@
-from utils import ingest
+from utils import (
+    BaseSolution,
+    config,
+    main,
+    solution,
+)
 
 
-INPUT_FILE = '08.in'
-EXPECTED_ANSWERS = (1350, 2085, )
-
-# INPUT_FILE = '08.test.in'
-# EXPECTED_ANSWERS = (12, 19, )
+config.EXPECTED_ANSWERS = (1350, 2085)
+config.TEST_CASES = {'': (12, 19)}
 
 
-def main():
-    solution = Solution()
-    answers = (solution.solve1(), solution.solve2(), )
-    print(answers)
-    assert(answers == EXPECTED_ANSWERS)
-
-
-class Solution:
-    def __init__(self):
-        self.data = ingest(INPUT_FILE)
+@solution
+class Solution(BaseSolution):
+    def process_data(self):
         self.strings = [S(s) for s in self.data]
 
     def solve1(self):

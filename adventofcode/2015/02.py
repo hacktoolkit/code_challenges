@@ -1,20 +1,17 @@
-from utils import ingest
+from utils import (
+    BaseSolution,
+    config,
+    main,
+    solution,
+)
 
 
-INPUT_FILE = '02.in'
-EXPECTED_ANSWERS = (1588178, 3783758, )
+config.EXPECTED_ANSWERS = (1588178, 3783758)
 
 
-def main():
-    solution = Solution()
-    answers = (solution.solve1(), solution.solve2(), )
-    print(answers)
-    assert(answers == EXPECTED_ANSWERS)
-
-
-class Solution:
-    def __init__(self):
-        self.data = ingest(INPUT_FILE)
+@solution
+class Solution(BaseSolution):
+    def process_data(self):
         self.presents = [Present(dimensions) for dimensions in self.data]
 
     def solve1(self):
@@ -33,7 +30,7 @@ class Present:
     @property
     def surface_area(self):
         l, w, h = self.l, self.w, self.h
-        area = 2*l*w + 2*w*h + 2*h*l
+        area = 2 * l * w + 2 * w * h + 2 * h * l
         return area
 
     @property
@@ -50,11 +47,13 @@ class Present:
 
     @property
     def smallest_side_area(self):
-        return min([
-            self.lw_area,
-            self.wh_area,
-            self.lh_area,
-        ])
+        return min(
+            [
+                self.lw_area,
+                self.wh_area,
+                self.lh_area,
+            ]
+        )
 
     @property
     def wrapping_paper_area(self):
@@ -63,7 +62,7 @@ class Present:
     @property
     def smallest_perimeter(self):
         a, b, c = sorted([self.l, self.w, self.h])
-        return 2*a + 2*b
+        return 2 * a + 2 * b
 
     @property
     def volume(self):

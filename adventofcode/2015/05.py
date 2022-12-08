@@ -1,23 +1,20 @@
-from utils import ingest
+from utils import (
+    BaseSolution,
+    config,
+    main,
+    solution,
+)
 
 
-INPUT_FILE = '05.in'
-EXPECTED_ANSWERS = (255, 55, )
-
-# INPUT_FILE = '05.test.in'
-# EXPECTED_ANSWERS = (2, 2, )
-
-
-def main():
-    solution = Solution()
-    answers = (solution.solve1(), solution.solve2(), )
-    print(answers)
-    assert(answers == EXPECTED_ANSWERS)
+config.EXPECTED_ANSWERS = (255, 55)
+config.TEST_CASES = {
+    '': (2, 2),
+}
 
 
-class Solution:
-    def __init__(self):
-        self.data = ingest(INPUT_FILE)
+@solution
+class Solution(BaseSolution):
+    def process_data(self):
         self.strings = [NaughtyOrNice(s) for s in self.data]
 
     def solve1(self):
@@ -53,10 +50,7 @@ class NaughtyOrNice:
 
     @property
     def contains_3_vowels(self):
-        vowels = [
-            c for c in self.s
-            if c in self.VOWELS
-        ]
+        vowels = [c for c in self.s if c in self.VOWELS]
         has_3 = len(vowels) >= 3
         return has_3
 
@@ -88,9 +82,9 @@ class NaughtyOrNice:
         has_repeat = False
 
         for i in range(len(s) - 4 + 1):
-            pair = s[i:i + 2]
-            for j in range(i+2, len(s) - 2 + 1):
-                pair2 = s[j:j + 2]
+            pair = s[i : i + 2]
+            for j in range(i + 2, len(s) - 2 + 1):
+                pair2 = s[j : j + 2]
                 if pair == pair2:
                     has_repeat = True
                     break
@@ -115,10 +109,7 @@ class NaughtyOrNice:
 
     @property
     def is_nice2(self):
-        is_nice = (
-            self.has_distinct_repeating_pair
-            and self.has_3_palindrome
-        )
+        is_nice = self.has_distinct_repeating_pair and self.has_3_palindrome
 
         return is_nice
 

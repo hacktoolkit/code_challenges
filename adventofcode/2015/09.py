@@ -3,28 +3,23 @@ import re
 from itertools import permutations
 
 from utils import (
-    Re,
-    ingest,
+    RE,
+    BaseSolution,
+    config,
+    main,
+    solution,
 )
 
 
-INPUT_FILE = '09.in'
-EXPECTED_ANSWERS = (117, 909, )
-
-# INPUT_FILE = '09.test.in'
-# EXPECTED_ANSWERS = (605, 982, )
-
-
-def main():
-    solution = Solution()
-    answers = (solution.solve1(), solution.solve2(), )
-    print(answers)
-    assert(answers == EXPECTED_ANSWERS)
+config.EXPECTED_ANSWERS = (117, 909)
+config.TEST_CASES = {
+    '': (605, 982),
+}
 
 
-class Solution:
-    def __init__(self):
-        self.data = ingest(INPUT_FILE)
+@solution
+class Solution(BaseSolution):
+    def process_data(self):
         routes = self.data
         self.graph = Graph(routes)
 
@@ -40,19 +35,19 @@ class Solution:
 
 
 class Graph:
-    ROUTE_REGEXP = re.compile(r'^(?P<origin>[A-Za-z]+) to (?P<destination>[A-Za-z]+) = (?P<weight>\d+)$')
+    ROUTE_REGEXP = re.compile(
+        r'^(?P<origin>[A-Za-z]+) to (?P<destination>[A-Za-z]+) = (?P<weight>\d+)$'
+    )
 
     def __init__(self, routes):
         self.nodes = {}
 
-        regex = Re()
         for route in routes:
-            if regex.match(self.ROUTE_REGEXP, route):
-                m = regex.last_match
+            if RE.match(self.ROUTE_REGEXP, route):
                 origin_name, destination_name, weight = (
-                    m.group('origin'),
-                    m.group('destination'),
-                    int(m.group('weight')),
+                    RE.m.group('origin'),
+                    RE.m.group('destination'),
+                    int(RE.m.group('weight')),
                 )
                 origin = self.get_node(origin_name)
                 destination = self.get_node(destination_name)
@@ -90,7 +85,9 @@ class Graph:
 
         for itinerary in p:
             weight = self.tour(itinerary)
-            if weight is not None and (best_weight is None or weight < best_weight):
+            if weight is not None and (
+                best_weight is None or weight < best_weight
+            ):
                 best_itinerary = itinerary
                 best_weight = weight
 
@@ -104,15 +101,16 @@ class Graph:
 
         for itinerary in p:
             weight = self.tour(itinerary)
-            if weight is not None and (worst_weight is None or weight > worst_weight):
+            if weight is not None and (
+                worst_weight is None or weight > worst_weight
+            ):
                 worst_itinerary = itinerary
                 worst_weight = weight
 
         return worst_weight, worst_itinerary
 
     def tour(self, itinerary):
-        """Returns the total weight for visiting each node in order of `itinerary`
-        """
+        """Returns the total weight for visiting each node in order of `itinerary`"""
         cost = 0
 
         prev = None

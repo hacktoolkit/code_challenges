@@ -2,26 +2,23 @@
 import re
 
 from utils import (
-    Re,
-    ingest,
+    RE,
+    BaseSolution,
+    config,
+    main,
+    solution,
 )
 
 
-INPUT_FILE = '07.in'
-EXPECTED_ANSWERS = (46065, 14134, )
+config.EXPECTED_ANSWERS = (46065, 14134)
 
 
-def main():
-    solution = Solution()
-    answers = (solution.solve1(), solution.solve2(), )
-    print(answers)
-    assert(answers == EXPECTED_ANSWERS)
-
-
-class Solution:
-    def __init__(self):
-        self.data = ingest(INPUT_FILE)
-        self.instructions = [Instruction(instruction) for instruction in self.data]
+@solution
+class Solution(BaseSolution):
+    def process_data(self):
+        self.instructions = [
+            Instruction(instruction) for instruction in self.data
+        ]
 
     def solve1(self):
         logic_gates = LogicGates(self.instructions)
@@ -42,74 +39,68 @@ class Solution:
 
 class Instruction:
     SIGNAL_REGEXP = re.compile(r'^(?P<w>(\d+)|([a-z]+)) -> (?P<wire>[a-z]+)$')
-    AND_REGEXP = re.compile(r'^(?P<w1>(\d+)|([a-z]+)) AND (?P<w2>(\d+)|([a-z]+)) -> (?P<wire>[a-z]+)$')
-    OR_REGEXP = re.compile(r'^(?P<w1>(\d+)|([a-z]+)) OR (?P<w2>(\d+)|([a-z]+)) -> (?P<wire>[a-z]+)$')
-    LSHIFT_REGEXP = re.compile(r'^(?P<w>[a-z]+) LSHIFT (?P<value>\d+) -> (?P<wire>[a-z]+)$')
-    RSHIFT_REGEXP = re.compile(r'^(?P<w>[a-z]+) RSHIFT (?P<value>\d+) -> (?P<wire>[a-z]+)$')
+    AND_REGEXP = re.compile(
+        r'^(?P<w1>(\d+)|([a-z]+)) AND (?P<w2>(\d+)|([a-z]+)) -> (?P<wire>[a-z]+)$'
+    )
+    OR_REGEXP = re.compile(
+        r'^(?P<w1>(\d+)|([a-z]+)) OR (?P<w2>(\d+)|([a-z]+)) -> (?P<wire>[a-z]+)$'
+    )
+    LSHIFT_REGEXP = re.compile(
+        r'^(?P<w>[a-z]+) LSHIFT (?P<value>\d+) -> (?P<wire>[a-z]+)$'
+    )
+    RSHIFT_REGEXP = re.compile(
+        r'^(?P<w>[a-z]+) RSHIFT (?P<value>\d+) -> (?P<wire>[a-z]+)$'
+    )
     NOT_REGEXP = re.compile(r'^NOT (?P<w>[a-z]+) -> (?P<wire>[a-z]+)$')
 
     def __init__(self, instruction):
         self.instruction = instruction
 
-        regex = Re()
-
-        if regex.match(self.SIGNAL_REGEXP, instruction):
-            m = regex.last_match
-
+        if RE.match(self.SIGNAL_REGEXP, instruction):
             self.instruction_type = 'SIGNAL'
 
             self.w, self.wire = (
-                m.group('w'),
-                m.group('wire'),
+                RE.m.group('w'),
+                RE.m.group('wire'),
             )
-        elif regex.match(self.AND_REGEXP, instruction):
-            m = regex.last_match
-
+        elif RE.match(self.AND_REGEXP, instruction):
             self.instruction_type = 'AND'
 
             self.w1, self.w2, self.wire = (
-                m.group('w1'),
-                m.group('w2'),
-                m.group('wire'),
+                RE.m.group('w1'),
+                RE.m.group('w2'),
+                RE.m.group('wire'),
             )
-        elif regex.match(self.OR_REGEXP, instruction):
-            m = regex.last_match
-
+        elif RE.match(self.OR_REGEXP, instruction):
             self.instruction_type = 'OR'
 
             self.w1, self.w2, self.wire = (
-                m.group('w1'),
-                m.group('w2'),
-                m.group('wire'),
+                RE.m.group('w1'),
+                RE.m.group('w2'),
+                RE.m.group('wire'),
             )
-        elif regex.match(self.LSHIFT_REGEXP, instruction):
-            m = regex.last_match
-
+        elif RE.match(self.LSHIFT_REGEXP, instruction):
             self.instruction_type = 'LSHIFT'
 
             self.w, self.value, self.wire = (
-                m.group('w'),
-                int(m.group('value')),
-                m.group('wire'),
+                RE.m.group('w'),
+                int(RE.m.group('value')),
+                RE.m.group('wire'),
             )
-        elif regex.match(self.RSHIFT_REGEXP, instruction):
-            m = regex.last_match
-
+        elif RE.match(self.RSHIFT_REGEXP, instruction):
             self.instruction_type = 'RSHIFT'
 
             self.w, self.value, self.wire = (
-                m.group('w'),
-                int(m.group('value')),
-                m.group('wire'),
+                RE.m.group('w'),
+                int(RE.m.group('value')),
+                RE.m.group('wire'),
             )
-        elif regex.match(self.NOT_REGEXP, instruction):
-            m = regex.last_match
-
+        elif RE.match(self.NOT_REGEXP, instruction):
             self.instruction_type = 'NOT'
 
             self.w, self.wire = (
-                m.group('w'),
-                m.group('wire'),
+                RE.m.group('w'),
+                RE.m.group('wire'),
             )
         else:
             raise Exception('Bad instruction: %s' % instruction)

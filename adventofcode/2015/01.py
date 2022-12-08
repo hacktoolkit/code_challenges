@@ -1,24 +1,20 @@
 from utils import (
-    InputConfig,
-    ingest,
+    BaseSolution,
+    config,
+    main,
+    solution,
 )
 
 
-INPUT_FILE = '01.in'
-EXPECTED_ANSWERS = (74, 1795, )
+config.EXPECTED_ANSWERS = (74, 1795)
+
+config.INPUT_CONFIG.as_oneline = True
 
 
-def main():
-    solution = Solution()
-    answers = (solution.solve1(), solution.solve2(), )
-    print(answers)
-    assert(answers == EXPECTED_ANSWERS)
-
-
-class Solution:
-    def __init__(self):
-        data = ingest(INPUT_FILE, InputConfig(as_oneline=True))
-        self.instructions = data
+@solution
+class Solution(BaseSolution):
+    def process_data(self):
+        self.instructions = self.data
 
     def solve1(self):
         floor = 0

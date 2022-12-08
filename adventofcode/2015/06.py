@@ -1,26 +1,24 @@
 # Python Standard Library Imports
 import re
 
-from utils import ingest
+from utils import (
+    BaseSolution,
+    config,
+    main,
+    solution,
+)
 
 
-INPUT_FILE = '06.in'
-EXPECTED_ANSWERS = (543903, 14687245, )
-
-# INPUT_FILE = '06.test.in'
-# EXPECTED_ANSWERS = (1000000 - (1000000 - 1000 - 4), 3001997, )
-
-
-def main():
-    solution = Solution()
-    answers = (solution.solve1(), solution.solve2(), )
-    print(answers)
-    assert(answers == EXPECTED_ANSWERS)
+config.EXPECTED_ANSWERS = (543903, 14687245)
+config.TEST_CASES = {
+    '': (1_000_000 - 1_000 - 4, 3001997),
+}
 
 
-class Solution:
-    def __init__(self):
-        data = ingest(INPUT_FILE)
+@solution
+class Solution(BaseSolution):
+    def process_data(self):
+        data = self.data
         self.instructions = [Instruction(instruction) for instruction in data]
         self.light_show = LightShow(self.instructions)
 
@@ -36,7 +34,9 @@ class Solution:
 
 
 class Instruction:
-    REGEXP = re.compile(r'^(?P<operation>(turn on)|(turn off)|(toggle)) (?P<x1>\d+),(?P<y1>\d+) through (?P<x2>\d+),(?P<y2>\d+)$')
+    REGEXP = re.compile(
+        r'^(?P<operation>(turn on)|(turn off)|(toggle)) (?P<x1>\d+),(?P<y1>\d+) through (?P<x2>\d+),(?P<y2>\d+)$'
+    )
 
     def __init__(self, instruction):
         self.instruction = instruction
@@ -57,15 +57,19 @@ class LightShow:
         self.instructions = instructions
 
         self.lights = [
-            [False, ] * 1000
-            for x
-            in range(1000)
+            [
+                False,
+            ]
+            * 1000
+            for x in range(1000)
         ]
 
         self.lights2 = [
-            [0, ] * 1000
-            for x
-            in range(1000)
+            [
+                0,
+            ]
+            * 1000
+            for x in range(1000)
         ]
 
     def run(self):
@@ -86,7 +90,7 @@ class LightShow:
                     elif operation == 'turn off':
                         lights[i][j] = False
                     elif operation == 'toggle':
-                        lights[i][j] = not(lights[i][j])
+                        lights[i][j] = not (lights[i][j])
                     else:
                         raise Exception('Illegal operation: %s' % operation)
 
