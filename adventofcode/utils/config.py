@@ -1,6 +1,8 @@
 # Python Standard Library Imports
+import traceback
 import typing as T
 from dataclasses import dataclass
+from pathlib import Path
 
 
 TEST_MODE = True
@@ -13,9 +15,26 @@ TEST_CASES = {
     # 'c': (None, None),
 }
 
-YEAR = None
-DAY = None
-PROBLEM_NUM = None
+##################################################
+# Automatic inference of PROBLEM_NUM | DAY | YEAR
+#
+# Accomplishes this by inferring file paths of call-stack
+#
+# Inspiration:
+# https://github.com/hacktoolkit/advent-of-code-data/blob/aa0688d7a09f6a5a1817d29a161df99ddc0b0122/aocd/get.py#L80-L177
+
+most_recent_frame = traceback.extract_stack()[0]
+solution_filename = most_recent_frame[0]
+solution_filepath = Path(solution_filename)
+
+PROBLEM_NUM = solution_filepath.stem
+DAY = int(PROBLEM_NUM)
+YEAR = int(solution_filepath.parent.name)
+
+print(PROBLEM_NUM, DAY, YEAR)
+
+# end Automatic inference of PROBLEM_NUM | DAY | YEAR
+##################################################
 
 
 @dataclass

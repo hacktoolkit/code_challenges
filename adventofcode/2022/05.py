@@ -1,7 +1,4 @@
 # Python Standard Library Imports
-import copy
-import math
-import pathlib
 import re
 import typing as T
 from collections import defaultdict
@@ -32,11 +29,6 @@ config.INPUT_CONFIG.coordinate_delimeter = None
 config.INPUT_CONFIG.as_table = False
 config.INPUT_CONFIG.row_func = None
 config.INPUT_CONFIG.cell_func = None
-
-
-config.YEAR = int(pathlib.Path.cwd().parts[-1])
-config.DAY = int(pathlib.Path(__file__).stem)
-config.PROBLEM_NUM = str(config.DAY).zfill(2)
 
 
 @solution

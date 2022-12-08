@@ -1,16 +1,11 @@
 # Python Standard Library Imports
 import re
-import typing as T
 from collections import defaultdict
 from pathlib import Path
-
-# Third Party (PyPI) Imports
-import click
 
 from utils import (
     RE,
     BaseSolution,
-    InputConfig,
     config,
     debug,
     main,
@@ -34,10 +29,6 @@ config.INPUT_CONFIG.coordinate_delimeter = None
 config.INPUT_CONFIG.as_table = False
 config.INPUT_CONFIG.row_func = None
 config.INPUT_CONFIG.cell_func = None
-
-config.YEAR = int(Path.cwd().parts[-1])
-config.DAY = int(Path(__file__).stem)
-config.PROBLEM_NUM = str(config.DAY).zfill(2)
 
 
 @solution
@@ -100,7 +91,7 @@ class Terminal:
                 filename = RE.m.group('filename')
                 file_path = self.cwd / filename
 
-                self.dir_files[self.cwd].append((filename, filesize))
+                # self.dir_files[self.cwd].append((filename, filesize))
                 self.update_sizes(file_path, filesize)
 
     def update_sizes(self, file_path, filesize):

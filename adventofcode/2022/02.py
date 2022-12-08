@@ -1,65 +1,21 @@
 # Python Standard Library Imports
-import typing as T
-from dataclasses import dataclass
 from enum import Enum
 
 from utils import (
     BaseSolution,
-    InputConfig,
+    config,
+    main,
+    solution,
 )
 
 
-PROBLEM_NUM = '02'
-
-TEST_MODE = False
-# TEST_MODE = True
-
-EXPECTED_ANSWERS = (10994, 12526)
-TEST_VARIANT = ''  # '', 'b', 'c', 'd', ...
-TEST_EXPECTED_ANSWERS = {
+config.EXPECTED_ANSWERS = (10994, 12526)
+config.TEST_CASES = {
     '': (15, 12),
-    'b': (None, None),
-    'c': (None, None),
 }
 
-DEBUGGING = False
-DEBUGGING = True
 
-
-def debug(s):
-    if DEBUGGING:
-        print(s)
-    else:
-        pass
-
-
-def main():
-    input_config = InputConfig(
-        as_integers=False,
-        as_comma_separated_integers=False,
-        as_json=False,
-        as_groups=False,
-        as_oneline=False,
-        as_coordinates=False,
-        coordinate_delimeter=None,
-        as_table=False,
-        row_func=None,
-        cell_func=None,
-    )
-
-    if TEST_MODE:
-        input_filename = f'{PROBLEM_NUM}{TEST_VARIANT}.test.in'
-        expected_answers = TEST_EXPECTED_ANSWERS[TEST_VARIANT]
-    else:
-        input_filename = f'{PROBLEM_NUM}.in'
-        expected_answers = EXPECTED_ANSWERS
-
-    solution = Solution(input_filename, input_config, expected_answers)
-
-    solution.solve()
-    solution.report()
-
-
+@solution
 class Solution(BaseSolution):
     def process_data(self):
         data = self.data

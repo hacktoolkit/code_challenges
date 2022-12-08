@@ -1,11 +1,11 @@
 # Python Standard Library Imports
 import copy
+import heapq
 import math
 import re
 import typing as T
 from collections import defaultdict
 from dataclasses import dataclass
-from pathlib import Path
 
 # Third Party (PyPI) Imports
 import click
@@ -39,11 +39,6 @@ config.INPUT_CONFIG.coordinate_delimeter = None
 config.INPUT_CONFIG.as_table = False
 config.INPUT_CONFIG.row_func = None
 config.INPUT_CONFIG.cell_func = None
-
-
-config.YEAR = int(Path.cwd().parts[-1])
-config.DAY = int(Path(__file__).stem)
-config.PROBLEM_NUM = str(config.DAY).zfill(2)
 
 
 @solution

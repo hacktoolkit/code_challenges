@@ -1,69 +1,34 @@
 # Python Standard Library Imports
 import copy
 import heapq
-import math
-import re
-import typing as T
-from collections import defaultdict
-from dataclasses import dataclass
 
 from utils import (
     BaseSolution,
-    InputConfig,
+    config,
+    main,
+    solution,
 )
 
 
-PROBLEM_NUM = '01'
-
-TEST_MODE = False
-# TEST_MODE = True
-
-EXPECTED_ANSWERS = (69912, 208180)
-TEST_VARIANT = ''  # '', 'b', 'c', 'd', ...
-TEST_EXPECTED_ANSWERS = {
+config.EXPECTED_ANSWERS = (69912, 208180)
+config.TEST_CASES = {
     '': (24000, 45000),
-    'b': (None, None),
-    'c': (None, None),
 }
 
-DEBUGGING = False
-DEBUGGING = True
+config.INPUT_CONFIG.as_integers = False
+config.INPUT_CONFIG.as_comma_separated_integers = False
+config.INPUT_CONFIG.as_json = False
+config.INPUT_CONFIG.as_groups = True
+config.INPUT_CONFIG.strip_lines = True
+config.INPUT_CONFIG.as_oneline = False
+config.INPUT_CONFIG.as_coordinates = False
+config.INPUT_CONFIG.coordinate_delimeter = None
+config.INPUT_CONFIG.as_table = False
+config.INPUT_CONFIG.row_func = None
+config.INPUT_CONFIG.cell_func = None
 
 
-def debug(s):
-    if DEBUGGING:
-        print(s)
-    else:
-        pass
-
-
-def main():
-    input_config = InputConfig(
-        as_integers=False,
-        as_comma_separated_integers=False,
-        as_json=False,
-        as_groups=True,
-        as_oneline=False,
-        as_coordinates=False,
-        coordinate_delimeter=None,
-        as_table=False,
-        row_func=None,
-        cell_func=None,
-    )
-
-    if TEST_MODE:
-        input_filename = f'{PROBLEM_NUM}{TEST_VARIANT}.test.in'
-        expected_answers = TEST_EXPECTED_ANSWERS[TEST_VARIANT]
-    else:
-        input_filename = f'{PROBLEM_NUM}.in'
-        expected_answers = EXPECTED_ANSWERS
-
-    solution = Solution(input_filename, input_config, expected_answers)
-
-    solution.solve()
-    solution.report()
-
-
+@solution
 class Solution(BaseSolution):
     def process_data(self):
         data = self.data

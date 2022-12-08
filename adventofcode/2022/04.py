@@ -3,61 +3,20 @@ import re
 
 from utils import (
     BaseSolution,
-    InputConfig,
+    config,
+    debug,
+    main,
+    solution,
 )
 
 
-PROBLEM_NUM = '04'
-
-TEST_MODE = False
-# TEST_MODE = True
-
-EXPECTED_ANSWERS = (483, 874)
-TEST_VARIANT = ''  # '', 'b', 'c', 'd', ...
-TEST_EXPECTED_ANSWERS = {
+config.EXPECTED_ANSWERS = (483, 874)
+config.TEST_CASES = {
     '': (2, 4),
-    'b': (None, None),
-    'c': (None, None),
 }
 
-DEBUGGING = False
-# DEBUGGING = True
 
-
-def debug(*args):
-    if DEBUGGING:
-        print(*args)
-    else:
-        pass
-
-
-def main():
-    input_config = InputConfig(
-        as_integers=False,
-        as_comma_separated_integers=False,
-        as_json=False,
-        as_groups=False,
-        as_oneline=False,
-        as_coordinates=False,
-        coordinate_delimeter=None,
-        as_table=False,
-        row_func=None,
-        cell_func=None,
-    )
-
-    if TEST_MODE:
-        input_filename = f'{PROBLEM_NUM}{TEST_VARIANT}.test.in'
-        expected_answers = TEST_EXPECTED_ANSWERS[TEST_VARIANT]
-    else:
-        input_filename = f'{PROBLEM_NUM}.in'
-        expected_answers = EXPECTED_ANSWERS
-
-    solution = Solution(input_filename, input_config, expected_answers)
-
-    solution.solve()
-    solution.report()
-
-
+@solution
 class Solution(BaseSolution):
     REGEX = re.compile(r'^(?P<a>\d+)-(?P<b>\d+),(?P<c>\d+)-(?P<d>\d+)$')
 
