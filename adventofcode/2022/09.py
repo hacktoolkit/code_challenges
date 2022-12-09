@@ -1,14 +1,8 @@
 # Python Standard Library Imports
-import copy
-import heapq
-import math
-import re
 import typing as T
-from collections import defaultdict
 from dataclasses import dataclass
 
 from utils import (
-    RE,
     BaseSolution,
     InputConfig,
     config,
@@ -21,21 +15,8 @@ from utils import (
 config.EXPECTED_ANSWERS = (6642, 2765)
 config.TEST_CASES = {
     '': (13, 1),
-    # 'b': (None, None),
-    # 'c': (None, None),
+    'b': (88, 36),
 }
-
-config.INPUT_CONFIG.as_integers = False
-config.INPUT_CONFIG.as_comma_separated_integers = False
-config.INPUT_CONFIG.as_json = False
-config.INPUT_CONFIG.as_groups = False
-config.INPUT_CONFIG.strip_lines = True
-config.INPUT_CONFIG.as_oneline = False
-config.INPUT_CONFIG.as_coordinates = False
-config.INPUT_CONFIG.coordinate_delimeter = None
-config.INPUT_CONFIG.as_table = False
-config.INPUT_CONFIG.row_func = None
-config.INPUT_CONFIG.cell_func = None
 
 
 @solution
@@ -44,14 +25,14 @@ class Solution(BaseSolution):
         data = self.data
         self.moves = [Move.from_raw(raw_move) for raw_move in data]
 
-    def solve1(self):
+    def solve1(self) -> int:
         rope = Rope(self.moves, knots=2)
         rope.run()
 
         answer = len(rope.T_visited)
         return answer
 
-    def solve2(self):
+    def solve2(self) -> int:
         rope = Rope(self.moves, knots=10)
         rope.run()
 
