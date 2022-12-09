@@ -1,11 +1,15 @@
 # Python Standard Library Imports
 import math
+import typing as T
 from collections import defaultdict
+from enum import (
+    Enum,
+    auto,
+)
 
 from utils import (
     RE,
     BaseSolution,
-    InputConfig,
     config,
     debug,
     main,
@@ -29,7 +33,7 @@ class Solution(BaseSolution):
 
         self.trees_visible = defaultdict(int)
 
-    def solve1(self):
+    def solve1(self) -> int:
         num_visible = 0
         for i in range(self.M):
             for j in range(self.N):
@@ -39,15 +43,13 @@ class Solution(BaseSolution):
         answer = num_visible
         return answer
 
-    def solve2(self):
+    def solve2(self) -> int:
         best_scenic_score = None
         for i in range(self.M):
             for j in range(self.N):
                 visible_trees = [
-                    self.trees_visible[(i, j, 'U')],
-                    self.trees_visible[(i, j, 'L')],
-                    self.trees_visible[(i, j, 'D')],
-                    self.trees_visible[(i, j, 'R')],
+                    self.trees_visible[(i, j, direction)]
+                    for direction in Direction
                 ]
                 debug(f'visible_trees({i}, {j}): {visible_trees}')
 
@@ -61,64 +63,47 @@ class Solution(BaseSolution):
         answer = best_scenic_score
         return answer
 
-    def is_visible(self, i, j):
+    def is_visible(self, i: int, j: int) -> bool:
         is_visible = any(
             [
-                self.is_visible_from_top(i, j),
-                self.is_visible_from_left(i, j),
-                self.is_visible_from_bottom(i, j),
-                self.is_visible_from_right(i, j),
+                self.is_visible_from_direction(i, j, direction)
+                for direction in Direction
             ]
         )
         return is_visible
 
-    def is_visible_from_top(self, i, j):
+    def is_visible_from_direction(
+        self,
+        i: int,
+        j: int,
+        direction: 'Direction',
+    ) -> bool:
         h = self.trees[i][j]
         is_visible = True
-        for m in range(i - 1, -1, -1):
-            h2 = self.trees[m][j]
-            self.trees_visible[(i, j, 'U')] += 1
+        for m, n in direction.coords(i, j, self.M, self.N)():
+            h2 = self.trees[m][n]
+            self.trees_visible[(i, j, direction)] += 1
             if h2 >= h:
                 is_visible = False
                 break
 
         return is_visible
 
-    def is_visible_from_left(self, i, j):
-        h = self.trees[i][j]
-        is_visible = True
-        for n in range(j - 1, -1, -1):
-            h2 = self.trees[i][n]
-            self.trees_visible[(i, j, 'L')] += 1
-            if h2 >= h:
-                is_visible = False
-                break
 
-        return is_visible
+class Direction(Enum):
+    UP = auto()
+    DOWN = auto()
+    LEFT = auto()
+    RIGHT = auto()
 
-    def is_visible_from_bottom(self, i, j):
-        h = self.trees[i][j]
-        is_visible = True
-        for m in range(i + 1, self.M):
-            h2 = self.trees[m][j]
-            self.trees_visible[(i, j, 'D')] += 1
-            if h2 >= h:
-                is_visible = False
-                break
-
-        return is_visible
-
-    def is_visible_from_right(self, i, j):
-        h = self.trees[i][j]
-        is_visible = True
-        for n in range(j + 1, self.N):
-            h2 = self.trees[i][n]
-            self.trees_visible[(i, j, 'R')] += 1
-            if h2 >= h:
-                is_visible = False
-                break
-
-        return is_visible
+    def coords(self, i: int, j: int, M: int, N: int):
+        mapping = {
+            Direction.UP: lambda: ((m, j) for m in range(i - 1, -1, -1)),
+            Direction.DOWN: lambda: ((m, j) for m in range(i + 1, M)),
+            Direction.LEFT: lambda: ((i, n) for n in range(j - 1, -1, -1)),
+            Direction.RIGHT: lambda: ((i, n) for n in range(j + 1, N)),
+        }
+        return mapping[self]
 
 
 if __name__ == '__main__':
