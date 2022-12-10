@@ -1,43 +1,32 @@
 from utils import (
+    CRT,
     BaseSolution,
-    InputConfig,
+    config,
+    debug,
+    main,
+    solution,
 )
 
 
-PROBLEM_NUM = '13'
+config.EXPECTED_ANSWERS = (638, 'CJCKBAPB')
+config.TEST_CASES = {
+    '': (17, '--------'),
+}
 
-TEST_MODE = False
-# TEST_MODE = True
-
-EXPECTED_ANSWERS = (638, 97, )
-TEST_EXPECTED_ANSWERS = (17, 16, )
-
-
-def main():
-    input_config = InputConfig(
-        as_integers=False,
-        as_comma_separated_integers=False,
-        as_json=False,
-        as_groups=True,
-        as_oneline=False,
-        as_table=False,
-        row_func=None,
-        cell_func=None
-    )
-
-    if TEST_MODE:
-        input_filename = f'{PROBLEM_NUM}.test.in'
-        expected_answers = TEST_EXPECTED_ANSWERS
-    else:
-        input_filename = f'{PROBLEM_NUM}.in'
-        expected_answers = EXPECTED_ANSWERS
-
-    solution = Solution(input_filename, input_config, expected_answers)
-
-    solution.solve()
-    solution.report()
+config.INPUT_CONFIG.as_integers = False
+config.INPUT_CONFIG.as_comma_separated_integers = False
+config.INPUT_CONFIG.as_json = False
+config.INPUT_CONFIG.as_groups = True
+config.INPUT_CONFIG.strip_lines = True
+config.INPUT_CONFIG.as_oneline = False
+config.INPUT_CONFIG.as_coordinates = False
+config.INPUT_CONFIG.coordinate_delimeter = None
+config.INPUT_CONFIG.as_table = False
+config.INPUT_CONFIG.row_func = None
+config.INPUT_CONFIG.cell_func = None
 
 
+@solution
 class Solution(BaseSolution):
     def process_data(self):
         data = self.data
@@ -57,19 +46,22 @@ class Solution(BaseSolution):
 
         print(paper)
 
-        with open(f'{PROBLEM_NUM}.out', 'w') as f:
+        with open(f'{config.PROBLEM_NUM}.out', 'w') as f:
             f.write(str(paper))
 
-        answer = paper.num_visible
+        debug(paper.num_visible)
+
+        crt = CRT()
+        crt.load_rendered(str(paper))
+
+        answer = crt.read_characters()
         return answer
 
 
 class Paper:
     def __init__(self, raw_coords, raw_folds):
         self.coords = [
-            [int(c) for c in raw_coord.split(',')]
-            for raw_coord
-            in raw_coords
+            [int(c) for c in raw_coord.split(',')] for raw_coord in raw_coords
         ]
 
         self.grid = set()
@@ -80,14 +72,9 @@ class Paper:
 
         folds = [
             raw_fold.removeprefix('fold along ').split('=')
-            for raw_fold
-            in raw_folds
+            for raw_fold in raw_folds
         ]
-        self.folds = [
-            [fold[0], int(fold[1])]
-            for fold
-            in folds
-        ]
+        self.folds = [[fold[0], int(fold[1])] for fold in folds]
 
         self.fold_n = 0
 
@@ -95,7 +82,7 @@ class Paper:
         buf = []
         for y in range(self.max_y + 1):
             for x in range(self.max_x + 1):
-                is_visible = (x,y) in self.grid
+                is_visible = (x, y) in self.grid
                 c = '#' if is_visible else '.'
                 buf.append(c)
             buf.append('\n')
@@ -115,11 +102,13 @@ class Paper:
         for x in range(self.max_x + 1):
             for y in range(self.max_y + 1):
                 dim = x if fold_dimension == 'x' else y
-                if (x,y) in self.grid and dim > fold_position:
+                if (x, y) in self.grid and dim > fold_position:
                     d = dim - fold_position
                     new_dim = fold_position - d
-                    self.grid.remove((x,y))
-                    new_coord = (new_dim, y) if fold_dimension == 'x' else (x, new_dim)
+                    self.grid.remove((x, y))
+                    new_coord = (
+                        (new_dim, y) if fold_dimension == 'x' else (x, new_dim)
+                    )
                     self.grid.add(new_coord)
 
         self.reset_bounds()
