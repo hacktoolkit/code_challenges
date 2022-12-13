@@ -1,7 +1,12 @@
 # Python Standard Library Imports
 import heapq
+import typing as T
 from collections import deque
 from enum import Enum
+
+# Local Imports
+from . import debug
+from .q import PriorityQueue
 
 
 class DataStructure(Enum):
@@ -41,17 +46,47 @@ class TriColor(Enum):
 
 
 class Graph:
-    def __init__(self):
+    def __init__(self, INFINITY=10**9):
+        """Initialized `Graph` object
+
+        Parameters:
+        `INFINITY` - Used for calculating shortest paths in Dijkstra's algorithm.
+          Defaults to 1B, but can be any number higher than the rest of the expected shortest paths.
+        """
+        self.INFINITY = INFINITY
+
+        self.vertices_by_label = {}
         self.vertices = set()
         self.edges = set()
 
-    def add_vertex(self, vertex):
+    ##
+    #  Accessors
+
+    def add_vertex(self, vertex, map_by_label=False):
         self.vertices.add(vertex)
+
+        if map_by_label:
+            self.vertices_by_label[vertex.label] = vertex
 
     def add_edge(self, edge):
         self.edges.add(edge)
         self.add_vertex(edge.source)
         self.add_vertex(edge.sink)
+
+    def neighbors_of(self, vertex) -> T.Collection[T.Tuple['Vertex', int]]:
+        """Finds the neighbors of `vertex`
+
+        This method MAY be overwritten if reusing `Vertex.in_edges` or `Vertex.out_edges`
+        This method SHOULD be overwritten if finding neighbors is custom
+
+        Returns a collection of `(Vertex, edge-weight)` pairs
+        """
+
+        neighbors = [(edge.sink, edge.sink.weight) for edge in vertex.out_edges]
+        return neighbors
+
+    ##
+    # Sorting Algorithms
 
     def topological_sort(self, strategy=None):
         if strategy is None:
@@ -130,11 +165,74 @@ class Graph:
         else:
             return L
 
+    ##
+    # Pathfinding Algorithms
+
+    def shortest_path(self, source, target):
+        path, distance = self.shortest_path__dijkstra__priority_queue(
+            source, target
+        )
+        return path, distance
+
+    def shortest_path__dijkstra__priority_queue(self, source, target):
+        """Calculates the shortest path to traverse a graph from `source` to `target` vertices
+
+        CAVEAT: Dijkstra's algorithm does not work with negative edge weights
+
+        References:
+        - https://en.wikipedia.org/wiki/Pathfinding
+        - https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm#Using_a_priority_queue
+        - https://docs.python.org/3/library/heapq.html#priority-queue-implementation-notes
+        """
+        dist = {}  # best distances to `target` from `v`
+        prev = {}  # predecessors of `v`
+        Q = PriorityQueue()
+
+        dist[source] = 0
+        Q.add_with_priority(source, 0)
+
+        for v in self.vertices:
+            if v != source:
+                dist[v] = self.INFINITY  # unknown distance from source to `v`
+                prev[v] = None  # predecessor of `v`
+
+        # the main loop
+        while not Q.is_empty:
+            priority, u = Q.extract_min()  # remove and return best vertex
+
+            # go through all `v` neighbors of `u`
+            for v, edge_weight in self.neighbors_of(u):
+                alt = dist[u] + edge_weight
+                if alt < dist[v]:
+                    # current known shortest path to `v` is...
+                    dist[v] = alt  # with distance `alt`
+                    prev[v] = u  # through vertex `u`
+
+                    if not Q.contains(v):
+                        Q.add_with_priority(v, alt)
+
+            if u == target:
+                # break as soon as `target` is reached
+                # no need to calculate shortest path between every pair of vertices
+                break
+
+        S = []  # holds the shortest path, or empty if None
+        u = target
+        if u in prev or u == source:
+            while u is not None:
+                S.append(u)
+                u = prev.get(u)
+
+        path = list(reversed(S))
+        distance = sum([v.weight for v in S])
+
+        return path, distance
+
 
 class Vertex:
     _cache = {}
 
-    def __init__(self, label, weight=None):
+    def __init__(self, label, weight: T.Optional[int] = None):
         self.label = label
         self.weight = weight
 
@@ -142,6 +240,9 @@ class Vertex:
 
         self.out_edges = set()
         self.in_edges = set()
+
+    def __str__(self):
+        return f'{self.label} ({self.weight})'
 
     @classmethod
     def reset(cls):
@@ -195,7 +296,8 @@ class Vertex:
         raise Exception('Illegal operation >=')
 
     def __hash__(self):
-        return id(self)
+        h = id(self)
+        return h
 
     @property
     def is_root(self):
@@ -219,9 +321,10 @@ class Vertex:
 
 
 class Edge:
-    def __init__(self, source, sink):
+    def __init__(self, source, sink, weight: T.Optional[int] = None):
         self.source = source
         self.sink = sink
+        self.weight = weight
 
         source.add_outgoing_edge(self)
         sink.add_incoming_edge(self)
