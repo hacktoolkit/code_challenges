@@ -1,4 +1,5 @@
 # Python Standard Library Imports
+import datetime
 import traceback
 import typing as T
 from dataclasses import dataclass
@@ -27,9 +28,17 @@ most_recent_frame = traceback.extract_stack()[0]
 solution_filename = most_recent_frame[0]
 solution_filepath = Path(solution_filename)
 
-PROBLEM_NUM = solution_filepath.stem
-DAY = int(PROBLEM_NUM)
-YEAR = int(solution_filepath.parent.name)
+if not solution_filename.endswith('.py'):
+    # loaded from shell
+    # filename could be: ('<stdin>', 'ipython')
+    PROBLEM_NUM = None
+    DAY = datetime.date.today().day
+    YEAR = datetime.date.today().year
+else:
+    PROBLEM_NUM = solution_filepath.stem
+    DAY = int(PROBLEM_NUM)
+    YEAR = int(solution_filepath.parent.name)
+
 
 # end Automatic inference of PROBLEM_NUM | DAY | YEAR
 ##################################################
