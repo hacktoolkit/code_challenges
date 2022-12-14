@@ -1,47 +1,37 @@
 # Python Standard Library Imports
-import copy
 import heapq
+import typing as T
 
 from utils import (
     BaseSolution,
-    InputConfig,
+    Graph,
+    Vertex,
+    config,
+    debug,
+    main,
+    solution,
 )
 
 
-PROBLEM_NUM = '15'
+config.EXPECTED_ANSWERS = (415, 2864)
+config.TEST_CASES = {
+    '': (40, 315),
+}
 
-TEST_MODE = False
-# TEST_MODE = True
-
-EXPECTED_ANSWERS = (415, 2864, )
-TEST_EXPECTED_ANSWERS = (40, 315, )
-
-
-def main():
-    input_config = InputConfig(
-        as_integers=False,
-        as_comma_separated_integers=False,
-        as_json=False,
-        as_groups=False,
-        as_oneline=False,
-        as_table=True,
-        row_func=lambda row: row[0],
-        cell_func=lambda line: [int(d) for d in line]
-    )
-
-    if TEST_MODE:
-        input_filename = f'{PROBLEM_NUM}.test.in'
-        expected_answers = TEST_EXPECTED_ANSWERS
-    else:
-        input_filename = f'{PROBLEM_NUM}.in'
-        expected_answers = EXPECTED_ANSWERS
-
-    solution = Solution(input_filename, input_config, expected_answers)
-
-    solution.solve()
-    solution.report()
+config.INPUT_CONFIG.as_integers = False
+config.INPUT_CONFIG.as_comma_separated_integers = False
+config.INPUT_CONFIG.as_json = False
+config.INPUT_CONFIG.as_groups = False
+config.INPUT_CONFIG.strip_lines = True
+config.INPUT_CONFIG.as_oneline = False
+config.INPUT_CONFIG.as_coordinates = False
+config.INPUT_CONFIG.coordinate_delimeter = None
+config.INPUT_CONFIG.as_table = True
+config.INPUT_CONFIG.row_func = lambda row: row[0]
+config.INPUT_CONFIG.cell_func = lambda line: [int(d) for d in line]
 
 
+@solution
 class Solution(BaseSolution):
     def process_data(self):
         data = self.data
@@ -52,11 +42,7 @@ class Solution(BaseSolution):
     def build_tiled_matrix(self, matrix, n):
         # tile horizontally first
         horizontal = [
-            [
-                (v + k - 1) % 9 + 1
-                for k in range(n)
-                for v in row
-            ]
+            [(v + k - 1) % 9 + 1 for k in range(n) for v in row]
             for row in matrix
         ]
 
@@ -78,6 +64,32 @@ class Solution(BaseSolution):
         return answer
 
     def shortest_path(self, matrix):
+        # Dijkstra's algorithm using utils.Graph data structure
+        result = self.shortest_path__graph(matrix)
+
+        # Dijkstra's algorithm in-place
+        # result = self.shortest_path__matrix(matrix)
+
+        return result
+
+    def shortest_path__graph(self, matrix):
+        graph = P15Graph()
+        for i, row in enumerate(matrix):
+            for j, weight in enumerate(row):
+                coord = (i, j)
+                vertex = Vertex(coord, weight=weight)
+                graph.add_vertex(vertex, map_by_label=True)
+
+        start_coord = (0, 0)
+        end_coord = (len(matrix) - 1, len(matrix[0]) - 1)
+        source = graph.vertices_by_label[start_coord]
+        target = graph.vertices_by_label[end_coord]
+        path, distance = graph.shortest_path(source, target)
+
+        # do not enter first cell
+        return distance - source.weight
+
+    def shortest_path__matrix(self, matrix):
         """Calculates the shortest path to traverse matrix
 
         Starting from `(0, 0)`
@@ -97,7 +109,7 @@ class Solution(BaseSolution):
         INF = 10**9
         best_distances = [[INF] * N for _ in range(M)]
 
-        pq = [(0, 0, 0, )]
+        pq = [(0, 0, 0)]  # (priority, i, j)
         while pq:
             dist, i, j = heapq.heappop(pq)
 
@@ -119,6 +131,33 @@ class Solution(BaseSolution):
 
         shortest_path = best_distances[-1][-1]
         return shortest_path
+
+
+class P15Graph(Graph):
+    def neighbors_of(self, vertex) -> T.Collection[T.Tuple['Vertex', int]]:
+        """Finds the neighbors of `vertex`
+
+        Utilizes coordinate shifts on `self.vertices_by_label`
+
+        Returns a collection of `(Vertex, edge-weight)` pairs
+        """
+        coord = vertex.label
+        i, j = coord
+
+        neighbors = set()
+
+        for (dy, dx) in [
+            (-1, 0),  # above
+            (1, 0),  # below
+            (0, -1),  # left
+            (0, 1),  # right
+        ]:
+            i2, j2 = i + dy, j + dx
+            neighbor = self.vertices_by_label.get((i2, j2))
+            if neighbor:
+                neighbors.add((neighbor, neighbor.weight))
+
+        return neighbors
 
 
 if __name__ == '__main__':

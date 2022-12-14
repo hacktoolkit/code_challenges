@@ -10,78 +10,42 @@ from utils import (
     BaseSolution,
     DataStructure,
     Edge,
-)
-from utils import Graph as BaseGraph
-from utils import (
+    Graph,
     InputConfig,
     Vertex,
+    config,
+    debug,
+    main,
+    solution,
 )
 
 
-PROBLEM_NUM = '07'
-
-TEST_MODE = False
-# TEST_MODE = True
-
-EXPECTED_ANSWERS = (
+config.EXPECTED_ANSWERS = (
     'ABGKCMVWYDEHFOPQUILSTNZRJX',
     898,  # ABGYKMWCEVDHOFQUPILTSNZRJX
 )
-TEST_EXPECTED_ANSWERS = (
-    'CABDFE',
-    15,  #  CABFDE
-)
-
-DEBUGGING = False
-# DEBUGGING = True
-
-
-def debug(s):
-    if DEBUGGING:
-        print(s)
-    else:
-        pass
-
-
-def main():
-    input_config = InputConfig(
-        as_integers=False,
-        as_comma_separated_integers=False,
-        as_json=False,
-        as_groups=False,
-        as_oneline=False,
-        as_table=False,
-        row_func=None,
-        cell_func=None,
+config.TEST_CASES = {
+    '': (
+        'CABDFE',
+        15,  #  CABFDE
     )
-
-    if TEST_MODE:
-        input_filename = f'{PROBLEM_NUM}.test.in'
-        expected_answers = TEST_EXPECTED_ANSWERS
-    else:
-        input_filename = f'{PROBLEM_NUM}.in'
-        expected_answers = EXPECTED_ANSWERS
-
-    solution = Solution(input_filename, input_config, expected_answers)
-
-    solution.solve()
-    solution.report()
+}
 
 
+@solution
 class Solution(BaseSolution):
     def process_data(self):
         # data = self.data
         pass
 
     def build_graph(self):
-        Vertex.reset()
-        graph = Graph()
+        graph = P7Graph()
 
         pattern = re.compile(
             r'^Step (?P<source>[A-Z]) must be finished before step (?P<sink>[A-Z]) can begin\.$'
         )
 
-        base_cost = 0 if TEST_MODE else 60
+        base_cost = 0 if config.TEST_MODE else 60
 
         for line in self.data:
             m = pattern.match(line)
@@ -111,7 +75,7 @@ class Solution(BaseSolution):
 
     def solve2(self):
         graph = self.build_graph()
-        n_workers = 2 if TEST_MODE else 5
+        n_workers = 2 if config.TEST_MODE else 5
         vertices, elapsed = graph.toposort_traverse_n_workers(n_workers)
 
         order = ''.join([vertex.label for vertex in vertices])
@@ -121,7 +85,7 @@ class Solution(BaseSolution):
         return answer
 
 
-class Graph(BaseGraph):
+class P7Graph(Graph):
     def toposort_traverse_n_workers(self, n_workers):
         """Modified topological sort using Kahn's algorithm
 
