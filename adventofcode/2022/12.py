@@ -1,17 +1,8 @@
 # Python Standard Library Imports
 import copy
-import heapq
-import math
-import re
-import typing as T
-from collections import (
-    defaultdict,
-    deque,
-)
-from dataclasses import dataclass
+from collections import deque
 
 from utils import (
-    RE,
     BaseSolution,
     Graph,
     InputConfig,
