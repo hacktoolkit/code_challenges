@@ -21,8 +21,6 @@ from utils import (
 config.EXPECTED_ANSWERS = (54752, 13606755504)
 config.TEST_CASES = {
     '': (10605, 2713310158),
-    # 'b': (None, None),
-    # 'c': (None, None),
 }
 
 config.INPUT_CONFIG.as_integers = False

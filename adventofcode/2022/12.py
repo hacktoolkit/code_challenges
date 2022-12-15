@@ -17,8 +17,6 @@ from utils import (
 config.EXPECTED_ANSWERS = (481, 480)
 config.TEST_CASES = {
     '': (31, 29),
-    # 'b': (None, None),
-    # 'c': (None, None),
 }
 
 

@@ -16,8 +16,6 @@ from utils import (
 config.EXPECTED_ANSWERS = (4809, 22600)
 config.TEST_CASES = {
     '': (13, 140),
-    # 'b': (None, None),
-    # 'c': (None, None),
 }
 
 config.INPUT_CONFIG.as_groups = True
