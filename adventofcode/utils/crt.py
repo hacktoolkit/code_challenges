@@ -98,7 +98,7 @@ class Font:
         'R': None,
         'S': None,
         'T': None,
-        'U': None,
+        'U': '#..#\n#..#\n#..#\n#..#\n#..#\n.##.',
         'V': None,
         'W': None,
         'Y': None,
