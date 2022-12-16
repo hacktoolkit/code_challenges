@@ -84,7 +84,7 @@ class Solution(BaseSolution):
         end_coord = (len(matrix) - 1, len(matrix[0]) - 1)
         source = graph.vertices_by_label[start_coord]
         target = graph.vertices_by_label[end_coord]
-        path, distance = graph.shortest_path(source, target)
+        path, distance, distances = graph.shortest_path(source, target)
 
         # do not enter first cell
         return distance - source.weight

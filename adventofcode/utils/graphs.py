@@ -1,6 +1,7 @@
 # Python Standard Library Imports
 import functools
 import heapq
+import math
 import typing as T
 from collections import deque
 from enum import Enum
@@ -47,12 +48,13 @@ class TriColor(Enum):
 
 
 class Graph:
-    def __init__(self, INFINITY=10**9, *args, **kwargs):
+    def __init__(self, INFINITY=math.inf, *args, **kwargs):
         """Initialized `Graph` object
 
         Parameters:
         `INFINITY` - Used for calculating shortest paths in Dijkstra's algorithm.
-          Defaults to 1B, but can be any number higher than the rest of the expected shortest paths.
+          Defaults to `math.inf`, but can be any number higher than the rest of the expected shortest paths.
+          Other values could be `int(1e9)` (1 billion, etc)
         """
         self.INFINITY = INFINITY
 
@@ -87,10 +89,13 @@ class Graph:
         This method SHOULD be overwritten if finding neighbors is custom.
 
         Returns a collection of `(Vertex, edge-weight)` pairs
+
+        Test Cases:
+        - AoC 2022.12.16
         """
 
         neighbors = [
-            (edge.sink, edge.sink.weight)
+            (edge.sink, edge.weight or edge.sink.weight)
             for edge in vertex.out_edges
             if color is None or edge.sink.color == color
         ]
@@ -227,13 +232,15 @@ class Graph:
             distance = None
         return path, distance
 
-    def shortest_path(self, source, target):
-        path, distance = self.shortest_path__dijkstra__priority_queue(
-            source, target
-        )
-        return path, distance
+    def shortest_path(self, source, target=None):
+        (
+            path,
+            distance,
+            distances,
+        ) = self.shortest_path__dijkstra__priority_queue(source, target=target)
+        return path, distance, distances
 
-    def shortest_path__dijkstra__priority_queue(self, source, target):
+    def shortest_path__dijkstra__priority_queue(self, source, target=None):
         """Calculates the shortest path to traverse a graph from `source` to `target` vertices
 
         NOTE: `source` can also be a `list`, in which case, the function will calculate
@@ -249,8 +256,9 @@ class Graph:
         Test Cases:
         - AoC 2021.12.15
         - AoC 2022.12.12
+        - AoC 2022.12.16
         """
-        dist = {}  # best distances to `target` from `v`
+        dist = {}  # best distances to `v` from `source`
         prev = {}  # predecessors of `v`
         Q = PriorityQueue()
 
@@ -278,12 +286,12 @@ class Graph:
                     if not Q.contains(v):
                         Q.add_with_priority(v, alt)
 
-            if u == target:
+            if target is not None and u == target:
                 # break as soon as `target` is reached
                 # no need to calculate shortest path between every pair of vertices
                 reached_target = True
 
-        if reached_target:
+        if target is not None and reached_target:
             S = []  # holds the shortest path, or empty if None
             u = target
             if u in prev or u == source:
@@ -297,7 +305,14 @@ class Graph:
             path = None
             distance = None
 
-        return path, distance
+        return path, distance, dist
+
+    def all_shortest_paths(self):
+        dist = {}
+        for vertex in self.vertices:
+            _, _, distances = self.shortest_path(vertex)
+            dist[vertex] = distances
+        return dist
 
 
 @functools.total_ordering
@@ -386,3 +401,6 @@ class Edge:
 
         source.add_outgoing_edge(self)
         sink.add_incoming_edge(self)
+
+    def __str__(self):
+        return f'E: {self.source} - {self.sink}'

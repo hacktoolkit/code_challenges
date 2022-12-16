@@ -1,6 +1,7 @@
 # Python Standard Library Imports
 import copy
 from collections import deque
+from functools import cache
 
 from utils import (
     BaseSolution,
@@ -137,16 +138,17 @@ class Hill:
         return (distance - 1) if distance else None
 
     def climb__dijkstra(self, source, target):
-        path, distance = self.graph.shortest_path(source, target)
+        path, distance, distances = self.graph.shortest_path(source, target)
         return (len(path) - 1) if path else None
 
-    def climb__naive(self, i, j, visited=None):
+    @cache
+    def climb__naive(self, i, j, visited: frozenset = None):
         """Returns the most optimal cost to travel from `(i, j)` to `E`
 
         Naive implementation using DFS
         """
         if visited is None:
-            visited = set()
+            visited = frozenset()
 
         debug(
             f'Finding best path from {(i,j)} to {self.end}. Visited nodes: {visited}'
@@ -155,7 +157,7 @@ class Hill:
         if self.grid[i][j] == 'E':
             result = 0
         else:
-            visited.add((i, j))
+            visited = visited.union({(i, j)})
 
             routes = []
 
@@ -166,8 +168,9 @@ class Hill:
                     )
                 else:
                     # neighbor is a valid candidate
-                    next_visted = copy.deepcopy(visited)
-                    path = self.climb__naive(i2, j2, copy.deepcopy(visited))
+                    # next_visited = copy.deepcopy(visited)
+                    next_visited = visited
+                    path = self.climb__naive(i2, j2, next_visited)
                     if path is None:
                         # not a valid path
                         pass
