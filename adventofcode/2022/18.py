@@ -98,13 +98,6 @@ class Droplet:
         for cube in cubes:
             self.spatial_map.add(cube.coords)
 
-        self.min_x = min((cube.x for cube in self.cubes))
-        self.max_x = max((cube.x for cube in self.cubes))
-        self.min_y = min((cube.y for cube in self.cubes))
-        self.max_y = max((cube.y for cube in self.cubes))
-        self.min_z = min((cube.z for cube in self.cubes))
-        self.max_z = max((cube.z for cube in self.cubes))
-
     @cached_property
     def total_surface_area(self):
         total_uncovered_surface_area = 0
@@ -123,10 +116,10 @@ class Droplet:
         uncovered_surface_area = 0
         external_surface_area = 0
         exposed = 0
-        for x, y, z in cube.neighbor_coords:
-            if (x, y, z) not in self.spatial_map:
+        for coord in cube.neighbor_coords:
+            if coord not in self.spatial_map:
                 uncovered_surface_area += 1
-                if not self.is_enclosed_air((x, y, z)):
+                if not self.is_enclosed_air(coord):
                     external_surface_area += 1
             else:
                 pass
@@ -142,16 +135,21 @@ class Droplet:
 
         Q.append(coord)
 
-        while len(Q) > 0:
+        is_enclosed = None
+
+        # assumption: need at least twice as many cubes to fully enclose pockets of air
+        max_air_pockets = len(self.cubes) // 2
+
+        while len(Q) > 0 and is_enclosed is None:
             coord2 = Q.popleft()
 
             if coord2 in self.enclosed_air:
-                return True
+                is_enclosed = True
             elif coord2 in self.external_air:
-                return False
-            elif len(visited) > len(self.cubes):
+                is_enclosed = False
+            elif len(visited) > max_air_pockets:
                 self.external_air.add(coord2)
-                return False
+                is_enclosed = False
             else:
                 for coord3 in Cube(*coord2).neighbor_coords:
                     # check previously undifferentiated air cubes
@@ -163,8 +161,20 @@ class Droplet:
                         visited.add(coord3)
                         Q.append(coord3)
 
-        self.enclosed_air.add(coord)
-        return True
+        if is_enclosed is None:
+            # all neighbors have been reached, so this must be an enclosed air pocket
+            self.enclosed_air.add(coord)
+            is_enclosed = True
+
+        # segment the remaining air cubes in the queue
+        while len(Q) > 0:
+            coord2 = Q.popleft()
+            if is_enclosed:
+                self.enclosed_air.add(coord2)
+            else:
+                self.external_air.add(coord2)
+
+        return is_enclosed
 
 
 if __name__ == '__main__':
