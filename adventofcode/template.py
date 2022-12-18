@@ -5,7 +5,10 @@ import math
 import re
 import typing as T
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import (
+    dataclass,
+    field,
+)
 
 from utils import (
     RE,
