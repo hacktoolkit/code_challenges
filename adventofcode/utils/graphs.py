@@ -202,14 +202,25 @@ class Graph:
 
         Test Cases:
         - AoC 2022.12.12
+        - AoC 2022.12.24
         """
+        source.color = TriColor.WHITE
+        target.color = TriColor.WHITE
+
         Q = deque()
         Q.append(source)
 
         while len(Q) > 0:
             v = Q.popleft()
-            v.color = TriColor.BLACK  # mark finished
+            if v.color == TriColor.BLACK:
+                # a previously finished vertex
+                # used when graph vertices (e.g. `self.neighbors_of()` is calculated dynamically)
+                continue
+            else:
+                v.color = TriColor.BLACK  # mark finished
             if v == target:
+                # re-assign `target` in case `Vertex.__eq__` has been overridden
+                target = v
                 break
 
             for w, _ in self.neighbors_of(v, color=TriColor.WHITE):
@@ -341,11 +352,13 @@ class Vertex:
     def get_or_create(cls, label, weight: T.Optional[int] = None):
         if label in cls._cache:
             vertex = cls._cache[label]
+            was_created = False
         else:
             vertex = cls(label, weight=weight)
+            was_created = True
             cls._cache[label] = vertex
 
-        return vertex
+        return vertex, was_created
 
     def reset(self):
         self.color = TriColor.WHITE

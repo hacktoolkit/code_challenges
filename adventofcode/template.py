@@ -4,7 +4,10 @@ import heapq
 import math
 import re
 import typing as T
-from collections import defaultdict
+from collections import (
+    defaultdict,
+    deque,
+)
 from dataclasses import (
     dataclass,
     field,

@@ -56,8 +56,8 @@ class Solution(BaseSolution):
             source_weight = base_cost + ord(source_label) - ord('A') + 1
             sink_weight = base_cost + ord(sink_label) - ord('A') + 1
 
-            source = Vertex.get_or_create(source_label, weight=source_weight)
-            sink = Vertex.get_or_create(sink_label, weight=sink_weight)
+            source, _ = Vertex.get_or_create(source_label, weight=source_weight)
+            sink, _ = Vertex.get_or_create(sink_label, weight=sink_weight)
 
             edge = Edge(source, sink)
 
