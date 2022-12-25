@@ -12,6 +12,19 @@ from dataclasses import (
     dataclass,
     field,
 )
+from functools import (
+    cache,
+    lru_cache,
+)
+from itertools import (
+    combinations,
+    permutations,
+    product,
+)
+from operator import (
+    add,
+    mul,
+)
 
 from utils import (
     RE,
