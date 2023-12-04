@@ -1,27 +1,6 @@
 # Python Standard Library Imports
-import copy
-import heapq
-import math
-import re
-import typing as T
-from collections import (
-    defaultdict,
-    deque,
-)
-from dataclasses import (
-    dataclass,
-    field,
-)
-from functools import (
-    cache,
-    cached_property,
-    lru_cache,
-)
-from itertools import (
-    combinations,
-    permutations,
-    product,
-)
+from dataclasses import dataclass
+from functools import cached_property
 from operator import (
     add,
     mul,
@@ -41,8 +20,6 @@ from utils import (
 config.EXPECTED_ANSWERS = (538046, 81709807)
 config.TEST_CASES = {
     '': (4361, 467835),
-    # 'b': (None, None),
-    # 'c': (None, None),
 }
 
 
