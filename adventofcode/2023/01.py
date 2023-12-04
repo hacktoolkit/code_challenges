@@ -1,30 +1,6 @@
 # Python Standard Library Imports
-import copy
-import heapq
-import math
 import re
 import typing as T
-from collections import (
-    defaultdict,
-    deque,
-)
-from dataclasses import (
-    dataclass,
-    field,
-)
-from functools import (
-    cache,
-    lru_cache,
-)
-from itertools import (
-    combinations,
-    permutations,
-    product,
-)
-from operator import (
-    add,
-    mul,
-)
 
 from utils import (
     RE,
@@ -37,11 +13,10 @@ from utils import (
 )
 
 
-config.EXPECTED_ANSWERS = (56506, None)
+config.EXPECTED_ANSWERS = (56506, 56017)
 config.TEST_CASES = {
     # '': (142, 142),
     'b': (209, 281),
-    # 'c': (None, None),
 }
 
 
@@ -98,7 +73,19 @@ class CalibrationDoc:
         value = int(str(digits[0]) + str(digits[-1]))
         return value
 
-    def _convert_words_to_digits(self, raw_line):
+    def _convert_words_to_digits(
+        self, raw_line: str, allow_overlaps: bool = True, direction: str = 'ltr'
+    ):
+        """Converts a line containing letters and numbers to a line with
+        its number-words converted to digits
+
+        The problem description is quite terrible because it is ambiguous
+        whether overlaps are allowed or not.
+
+        If someone made the assumption that overlaps were not allowed (like I did),
+        then time would be wasted on an implemenetation that didn't allow
+        overlaps.
+        """
         line = raw_line
 
         did_replace = True
@@ -112,16 +99,22 @@ class CalibrationDoc:
                     if (index := line.find(word)) >= 0
                 ],
                 key=lambda x: x[0],
+                reverse=direction == 'rtl',
             )
 
             if len(indexes) > 0:
                 _, word = indexes[0]
-                line = line.replace(word, str(self.NUMBERS[word]))
+                replacement = str(self.NUMBERS[word])
+                if allow_overlaps:
+                    # if overlaps are allowed,
+                    # replace the number word with the number,
+                    # plus the last letter of the word (for LTR)
+                    replacement += word[-1]
+
+                line = line.replace(word, replacement)
                 did_replace = True
             else:
                 did_replace = False
-
-        print(raw_line, line)
 
         return line
 
