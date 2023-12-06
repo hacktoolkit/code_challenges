@@ -1,30 +1,9 @@
 # Python Standard Library Imports
-import copy
-import heapq
-import math
-import re
 import typing as T
-from collections import (
-    defaultdict,
-    deque,
-)
-from dataclasses import (
-    dataclass,
-    field,
-)
-from functools import (
-    cache,
-    lru_cache,
-)
-from itertools import (
-    combinations,
-    permutations,
-    product,
-)
-from operator import (
-    add,
-    mul,
-)
+from functools import lru_cache
+
+# Third Party (PyPI) Imports
+from more_itertools import chunked
 
 from utils import (
     RE,
@@ -39,22 +18,10 @@ from utils import (
 
 config.EXPECTED_ANSWERS = (403695602, None)
 config.TEST_CASES = {
-    '': (35, None),
-    # 'b': (None, None),
-    # 'c': (None, None),
+    '': (35, 46),
 }
 
-config.INPUT_CONFIG.as_integers = False
-config.INPUT_CONFIG.as_comma_separated_integers = False
-config.INPUT_CONFIG.as_json = False
 config.INPUT_CONFIG.as_groups = True
-config.INPUT_CONFIG.strip_lines = True
-config.INPUT_CONFIG.as_oneline = False
-config.INPUT_CONFIG.as_coordinates = False
-config.INPUT_CONFIG.coordinate_delimeter = None
-config.INPUT_CONFIG.as_table = False
-config.INPUT_CONFIG.row_func = None
-config.INPUT_CONFIG.cell_func = None
 
 
 @solution
@@ -73,10 +40,15 @@ class Solution(BaseSolution):
         return answer
 
     def solve2(self):
-        #
-        # TODO: FILL THIS IN
-        #
-        answer = None
+        lowest_location = None
+        for (seed_start_id, range_size) in chunked(self.garden.seeds, 2):
+            for i in range(range_size):
+                seed_id = seed_start_id + i
+                location_id = self.garden.convert_seed_to_location(seed_id)
+                if lowest_location is None or location_id < lowest_location:
+                    lowest_location = location_id
+
+        answer = lowest_location
         return answer
 
 
@@ -117,6 +89,7 @@ class Garden:
 
             self.ranges = ranges
 
+        @lru_cache
         def convert(self, src):
             dest = src
             for (
@@ -145,7 +118,6 @@ class Garden:
         if category == 'seeds':
             self.seeds = [int(_) for _ in raw_group_data[0].split()[1:]]
         elif category.endswith('map'):
-            print(category)
             object_map = self.ObjectMap(raw_group_data[1:])
             setattr(self, category, object_map)
         else:
