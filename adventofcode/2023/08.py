@@ -16,15 +16,6 @@ from functools import (
     cache,
     lru_cache,
 )
-from itertools import (
-    combinations,
-    permutations,
-    product,
-)
-from operator import (
-    add,
-    mul,
-)
 
 # Third Party (PyPI) Imports
 from htk import fdb
@@ -42,8 +33,8 @@ from utils import (
 
 config.EXPECTED_ANSWERS = (12643, None)
 config.TEST_CASES = {
-    '': (2, None),
-    'b': (6, None),
+    '': (2, 2),
+    'b': (6, 6),
     # 'c': (None, None),
 }
 
@@ -60,10 +51,7 @@ class Solution(BaseSolution):
         return answer
 
     def solve2(self):
-        #
-        # TODO: FILL THIS IN
-        #
-        answer = None
+        answer = self.network_map.traverse_as_ghost('A', 'Z')
         return answer
 
 
@@ -90,14 +78,11 @@ class NetworkMap:
             else:
                 raise Exception(f'Invalid node: {raw_node}')
 
-        fdb('%s' % self.nodes)
-
     def traverse(self, start_node, end_node):
         self.steps = 0
 
         def _next(node):
             direction = self.directions[self.steps % self.num_dirs]
-            fdb(direction)
             pointer = 0 if direction == 'L' else 1
             next_node = self.nodes[node][pointer]
 
@@ -109,6 +94,31 @@ class NetworkMap:
 
         while cur_node != end_node:
             cur_node = _next(cur_node)
+
+        return self.steps
+
+    def traverse_as_ghost(self, start_node_suffix, end_node_suffix):
+        self.steps = 0
+
+        def _is_finished(nodes):
+            return all(node.endswith(end_node_suffix) for node in nodes)
+
+        def _next(nodes):
+            direction = self.directions[self.steps % self.num_dirs]
+            pointer = 0 if direction == 'L' else 1
+
+            next_nodes = [self.nodes[node][pointer] for node in nodes]
+
+            self.steps += 1
+
+            return next_nodes
+
+        cur_nodes = [
+            node for node in self.nodes if node.endswith(start_node_suffix)
+        ]
+
+        while not _is_finished(cur_nodes):
+            cur_nodes = _next(cur_nodes)
 
         return self.steps
 
