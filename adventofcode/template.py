@@ -27,14 +27,14 @@ from operator import (
 )
 
 # Third Party (PyPI) Imports
-from htk import fdb
+from htk import fdb  # noqa: F401
 
+from utils import debug  # noqa: F401
 from utils import (
     RE,
     BaseSolution,
     InputConfig,
     config,
-    debug,
     main,
     solution,
 )
@@ -65,14 +65,14 @@ class Solution(BaseSolution):
     def process_data(self):
         data = self.data
 
-    def solve1(self):
+    def solve1(self) -> T.Optional[int]:
         #
         # TODO: FILL THIS IN
         #
         answer = None
         return answer
 
-    def solve2(self):
+    def solve2(self) -> T.Optional[int]:
         #
         # TODO: FILL THIS IN
         #
