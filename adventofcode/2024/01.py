@@ -1,40 +1,14 @@
 # Python Standard Library Imports
-import copy
-import heapq
-import math
-import re
 import typing as T
-from collections import (
-    defaultdict,
-    deque,
-)
-from dataclasses import (
-    dataclass,
-    field,
-)
-from functools import (
-    cache,
-    lru_cache,
-)
-from itertools import (
-    combinations,
-    permutations,
-    product,
-)
-from operator import (
-    add,
-    mul,
-)
+from collections import defaultdict
 
 # Third Party (PyPI) Imports
-from htk import fdb
+from htk import fdb  # noqa: F401
 
+from utils import debug  # noqa: F401
 from utils import (
-    RE,
     BaseSolution,
-    InputConfig,
     config,
-    debug,
     main,
     solution,
 )
@@ -67,6 +41,7 @@ class Solution(BaseSolution):
         col1 = []
         col2 = []
         col2_occurrences = defaultdict(int)
+
         for row in data:
             col1.append(row[0])
             col2.append(row[1])
@@ -76,15 +51,15 @@ class Solution(BaseSolution):
         self.col2_sorted = sorted(col2)
         self.col2_occurrences = col2_occurrences
 
-    def solve1(self):
+    def solve1(self) -> T.Optional[int]:
         dist = 0
-        for i, (c1, c2) in enumerate(zip(self.col1_sorted, self.col2_sorted)):
+        for c1, c2 in zip(self.col1_sorted, self.col2_sorted):
             dist += abs(c1 - c2)
 
         answer = dist
         return answer
 
-    def solve2(self):
+    def solve2(self) -> T.Optional[int]:
         similarity = 0
         for c1 in self.col1_sorted:
             similarity += c1 * self.col2_occurrences[c1]
