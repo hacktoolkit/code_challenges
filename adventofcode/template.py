@@ -33,7 +33,6 @@ from utils import debug  # noqa: F401
 from utils import (
     RE,
     BaseSolution,
-    InputConfig,
     config,
     main,
     solution,
